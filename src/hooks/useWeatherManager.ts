@@ -1,0 +1,217 @@
+import { fetchWeatherApi } from "openmeteo";
+import { useState } from "react";
+import { Locale, translate } from "../misc/translations";
+
+export interface WeatherData
+{
+	current:
+	{
+		time: Date;
+		temperature_2m: number;
+		apparent_temperature: number;
+		weather_code: number;
+		surface_pressure: number;
+		wind_speed_10m: number;
+		wind_direction_10m: number;
+		wind_gusts_10m: number;
+		relative_humidity_2m: number;
+		is_day: boolean;
+	};
+	hourly:
+	{
+		time: Date[];
+		temperature_2m: number[];
+		weather_code: number[];
+		is_day: boolean[];
+	};
+	daily:
+	{
+		time: Date[];
+		weather_code: number[];
+		temperature_2m_min: number[];
+		temperature_2m_max: number[];
+		wind_direction_10m_dominant: number[];
+		wind_speed_10m_max: number[];
+	};
+}
+
+export function useWeatherManager()
+{
+	const meteoApiUrl = "https://api.open-meteo.com/v1/forecast";
+
+	var weatherFetchParams =
+	{
+		"latitude": 54.7431,
+		"longitude": 55.9678,
+		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max"],
+		"hourly": ["temperature_2m", "weather_code", "is_day"],
+		"models": "best_match",
+		"current": ["temperature_2m", "apparent_temperature", "weather_code", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "relative_humidity_2m", "is_day"],
+		"timezone": "GMT",
+		"forecast_days": 8,
+		"forecast_hours": 25,
+		"temperature_unit": "celsius", //celsius, fahrenheit
+		"wind_speed_unit": "ms", //kmh, ms, mph, kn
+		"precipitation_unit": "mm", //mm, inch
+	};
+
+	const [weatherFetchState, setWeatherFetchState] = useState<'idle' | 'fetching'>('idle');
+
+	const setLocationCoords = (latitude: number, longitude: number) =>
+	{
+		weatherFetchParams.latitude = latitude;
+		weatherFetchParams.longitude = longitude;
+	};
+
+	const setTemperatureUnit = (unit: 'celsius' | 'fahrenheit') => weatherFetchParams.temperature_unit = unit;
+	const setWindSpeedUnit = (unit: 'kmh' | 'ms' | 'mph' | 'kn') => weatherFetchParams.wind_speed_unit = unit;
+	const setPrecipitationUnit = (unit: 'mm' | 'inch') => weatherFetchParams.precipitation_unit = unit;
+
+	const fetchWeather = async (): Promise<WeatherData | null> =>
+	{
+		if (weatherFetchState === 'fetching') return null;
+
+		try
+		{
+			setWeatherFetchState('fetching');
+
+			const responses = await fetchWeatherApi(meteoApiUrl, weatherFetchParams);
+			const response = responses[0];
+
+			const latitude = response.latitude();
+			const longitude = response.longitude();
+			const elevation = response.elevation(); // meters above sea level
+			const timezone = response.timezone();
+			const timezoneAbbreviation = response.timezoneAbbreviation();
+			const utcOffsetSeconds = response.utcOffsetSeconds();
+
+			const current = response.current()!;
+			const hourly = response.hourly()!;
+			const daily = response.daily()!;
+
+			// Note: The order of weather variables in the URL query and the indices below need to match!
+			const weatherData: WeatherData =
+			{
+				current:
+				{
+					time: new Date((Number(current.time())/*  + utcOffsetSeconds */) * 1000),
+					temperature_2m: Math.round(current.variables(0)!.value()),
+					apparent_temperature: Math.round(current.variables(1)!.value()),
+					weather_code: current.variables(2)!.value(),
+					surface_pressure: current.variables(3)!.value(),
+					wind_speed_10m: current.variables(4)!.value(),
+					wind_direction_10m: current.variables(5)!.value(),
+					wind_gusts_10m: current.variables(6)!.value(),
+					relative_humidity_2m: current.variables(7)!.value(),
+					is_day: Boolean(current.variables(8)!.value()),
+				},
+				hourly:
+				{
+					time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())]
+						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)),
+					temperature_2m: Array.from(hourly.variables(0)!.valuesArray()!.map(value => Math.round(value))),
+					weather_code: Array.from(hourly.variables(1)!.valuesArray() || []),
+					is_day: Array.from(hourly.variables(2)!.valuesArray() || []).map(value => Boolean(value)),
+				},
+				daily:
+				{
+					time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())]
+						.map((_, i) => new Date((Number(daily.time()) + i * daily.interval() + utcOffsetSeconds) * 1000)),
+					weather_code: Array.from(daily.variables(0)!.valuesArray() || []),
+					temperature_2m_min: Array.from(daily.variables(1)!.valuesArray()!.map(value => Math.round(value))),
+					temperature_2m_max: Array.from(daily.variables(2)!.valuesArray()!.map(value => Math.round(value))),
+					wind_direction_10m_dominant: Array.from(daily.variables(3)!.valuesArray() || []),
+					wind_speed_10m_max: Array.from(daily.variables(4)!.valuesArray() || []),
+				}
+			};
+
+			/* console.log(weatherData.current.time); */
+			console.log(weatherData.daily);
+
+			setWeatherFetchState('idle');
+
+			return weatherData;
+		}
+		catch (error)
+		{
+			setWeatherFetchState('idle');
+			console.error("Error fetching weather data:", error);
+			return null;
+		}
+	};
+
+	return { weatherFetchState, setLocationCoords, setTemperatureUnit, setWindSpeedUnit, setPrecipitationUnit, fetchWeather };
+}
+
+export const weatherCodeToText = (code: number, locale: Locale): string =>
+{
+	const weatherTranslationKeys: Record<number, string> =
+	{
+		0: "clear",
+		1: "mainly_clear",
+		2: "partly_cloudy",
+		3: "overcast",
+		45: "fog",
+		48: "depositing_rime_fog",
+		51: "light_drizzle",
+		53: "moderate_drizzle",
+		55: "dense_drizzle",
+		56: "light_freezing_drizzle",
+		57: "dense_freezing_drizzle",
+		61: "slight_rain",
+		63: "moderate_rain",
+		65: "heavy_rain",
+		66: "light_freezing_rain",
+		67: "heavy_freezing_rain",
+		71: "slight_snow_fall",
+		73: "moderate_snow_fall",
+		75: "heavy_snow_fall",
+		77: "snow_grains",
+		80: "slight_rain_showers",
+		81: "moderate_rain_showers",
+		82: "violent_rain_showers",
+		85: "slight_snow_showers",
+		86: "heavy_snow_showers",
+		95: "thunderstorm",
+		96: "thunderstorm_with_slight_hail",
+		99: "thunderstorm_with_heavy_hail"
+	};
+
+	return translate(weatherTranslationKeys[code], locale) || "Unknown";
+};
+
+export const weatherCodeToSVGName = (code: number, isDay: boolean): string =>
+{
+	const weatherNames: Record<number, string> = {
+		0: isDay ? "sun" : "moon",
+		1: isDay ? "sun" : "moon",
+		2: isDay ? "cloudSun" : "cloudMoon",
+		3: "cloud",
+		45: "cloud",
+		48: "cloud", // maybe add a new icon (rime)
+		51: "cloudRain",
+		53: "cloudRain",
+		55: "cloudRain",
+		56: "cloudRain", // maybe add a new icon (cloudRainSnow)
+		57: "cloudRain", // maybe add a new icon (cloudHeavyRainSnow)
+		61: "cloudRain",
+		63: "cloudHeavyRain",
+		65: "cloudHeavyRain",
+		66: "cloudRain",
+		67: "cloudHeavyRain",
+		71: "snow",
+		73: "heavySnow",
+		75: "snowStorm",
+		77: "snowStorm",
+		80: "cloudHeavyRain",
+		81: "cloudHeavyRain",
+		82: "cloudHeavyRain",
+		85: "snowStorm",
+		86: "snowStorm",
+		95: "cloudThunderstorm",
+		96: "cloudThunderstorm", // maybe add a new icon (cloudHail)
+		99: "cloudThunderstorm"
+	};
+
+	return weatherNames[code] ?? "sun";
+};

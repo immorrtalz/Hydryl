@@ -1,0 +1,190 @@
+/* @font-face
+{
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('./assets/Montserrat-Regular.woff2') format('woff2');
+}
+
+@font-face
+{
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('./assets/Montserrat-Medium.woff2') format('woff2');
+}
+
+@font-face
+{
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url('./assets/Montserrat-SemiBold.woff2') format('woff2');
+} */
+
+.fontRegular
+{
+	font-family: Montserrat, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+}
+
+.fontMedium
+{
+	font-family: Montserrat, sans-serif;
+	font-style: normal;
+	font-weight: 500;
+}
+
+.fontSemibold
+{
+	font-family: Montserrat, sans-serif;
+	font-style: normal;
+	font-weight: 600;
+}
+
+:root
+{
+	--dark: #0E0E0F;
+
+	--white-0: hsl(from white h s l / 0);
+	--white-2: hsl(from white h s l / 0.02);
+	--white-5: hsl(from white h s l / 0.05);
+	--white-10: hsl(from white h s l / 0.1);
+	--white-15: hsl(from white h s l / 0.15);
+	--white-20: hsl(from white h s l / 0.20);
+	--white-25: hsl(from white h s l / 0.25);
+	--white-30: hsl(from white h s l / 0.30);
+	--white-35: hsl(from white h s l / 0.35);
+	--white-40: hsl(from white h s l / 0.40);
+	--white-45: hsl(from white h s l / 0.45);
+	--white-50: hsl(from white h s l / 0.50);
+	--white-55: hsl(from white h s l / 0.55);
+	--white-60: hsl(from white h s l / 0.60);
+	--white-65: hsl(from white h s l / 0.65);
+	--white-70: hsl(from white h s l / 0.70);
+	--white-75: hsl(from white h s l / 0.75);
+	--white-80: hsl(from white h s l / 0.80);
+	--white-85: hsl(from white h s l / 0.85);
+	--white-90: hsl(from white h s l / 0.90);
+	--white-95: hsl(from white h s l / 0.95);
+	--white-100: hsl(from white h s l / 1);
+
+	--black-0: hsl(from black h s l / 0);
+	--black-2: hsl(from black h s l / 0.02);
+	--black-5: hsl(from black h s l / 0.05);
+	--black-10: hsl(from black h s l / 0.1);
+	--black-15: hsl(from black h s l / 0.15);
+	--black-20: hsl(from black h s l / 0.20);
+	--black-25: hsl(from black h s l / 0.25);
+	--black-30: hsl(from black h s l / 0.30);
+	--black-35: hsl(from black h s l / 0.35);
+	--black-40: hsl(from black h s l / 0.40);
+	--black-45: hsl(from black h s l / 0.45);
+	--black-50: hsl(from black h s l / 0.50);
+	--black-55: hsl(from black h s l / 0.55);
+	--black-60: hsl(from black h s l / 0.60);
+	--black-65: hsl(from black h s l / 0.65);
+	--black-70: hsl(from black h s l / 0.70);
+	--black-75: hsl(from black h s l / 0.75);
+	--black-80: hsl(from black h s l / 0.80);
+	--black-85: hsl(from black h s l / 0.85);
+	--black-90: hsl(from black h s l / 0.90);
+	--black-95: hsl(from black h s l / 0.95);
+	--black-100: hsl(from black h s l / 1);
+
+	--main-text-color: var(--white-90);
+	--main-panel-bg: var(--white-5);
+
+	--blur-bg: blur(25px);
+	--main-border-radius: 32px;
+	--main-font-size: 20px;
+}
+
+*, *::before, *::after
+{
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	pointer-events: none;
+
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+
+	font-family: Montserrat;
+	font-size: var(--main-font-size);
+	font-weight: 500;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+
+	position: relative;
+	margin: 0;
+	padding: 0;
+
+	color: var(--white-90);
+
+	interpolate-size: allow-keywords;
+}
+
+*, *::before, *::after, *:not(path):not(g)
+{
+	transition: all 0.2s;
+
+	@media (prefers-reduced-motion) { transition: all 0s !important; }
+}
+
+h1, h2, h3, h4, h5, h6, p, a
+{
+	width: fit-content;
+	height: fit-content;
+	white-space: pre;
+	line-height: 100%;
+}
+
+html
+{
+	width: fit-content;
+	height: fit-content;
+	min-width: 100vw;
+	min-height: 100vh;
+	scroll-behavior: smooth;
+	overflow: clip auto;
+	pointer-events: all;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+body
+{
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	overflow: clip;
+	background: var(--dark);
+}
+
+a
+{
+	color: inherit;
+	text-decoration: none;
+	pointer-events: all;
+	cursor: pointer;
+}
+
+.font12 { font-size: 12px; }
+.font16 { font-size: 16px; }
+.font20 { font-size: 20px; }
+
+.colorWhite35 { color: var(--white-35); }
+.colorWhite50 { color: var(--white-50); }
+.colorWhite75 { color: var(--white-75); }
+.colorWhite90 { color: var(--white-90); }
+
+.displayNone { display: none !important; }
