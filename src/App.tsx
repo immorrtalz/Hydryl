@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import styles from "./App.module.scss";
 import { HourlyForecastItem } from "./components/HourlyForecastItem";
 import { DailyForecastItem } from "./components/DailyForecastItem";
