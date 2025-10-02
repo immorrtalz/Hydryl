@@ -38,14 +38,10 @@ function App()
 							<h3 className={styles.currentTempText}>ºC</h3>
 						</div>
 
-						<div className={styles.currentAdditionalTempsContainer}>
-							<p className={styles.currentApparentTempText}>{translate("feels_like", settings.locale)} {weather?.current.apparent_temperature}º</p>
-
-							<div className={styles.currentDayNightTempContainer}>
-								<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_min[0]}º</p>
-								<p className={styles.currentDayNightTempText}>/</p>
-								<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_max[0]}º</p>
-							</div>
+						<div className={styles.currentDayNightTempContainer}>
+							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_min[0]}º</p>
+							<p className={styles.currentDayNightTempText}>/</p>
+							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_max[0]}º</p>
 						</div>
 					</div>
 
@@ -57,6 +53,7 @@ function App()
 										temperature={Math.round(weather.hourly.temperature_2m[index])}
 										weatherCode={weather.hourly.weather_code[index]}
 										isDay={weather.hourly.is_day[index]}
+										precipProbability={weather.hourly.precipitation_probability[index]}
 										time={index === 0 ? "Now" : time.getHours() === 0 ?
 											`${time.getDate().toString().padStart(2, '0')}.${(time.getMonth() + 1).toString().padStart(2, '0')}` : time.getHours() + ":00"}/>)
 							}

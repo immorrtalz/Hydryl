@@ -34,6 +34,7 @@ main
 	justify-content: center;
 	flex-wrap: nowrap;
 	background: linear-gradient(to bottom, #3A4CA6, #7C53A6, #F26D99);
+	/* background: linear-gradient(to bottom, #09091A, #1B234D); */
 	border-radius: 0 0 56px 56px;
 
 	&::before
@@ -76,9 +77,9 @@ main
 
 			& .currentPrecipText
 			{
-				font-size: var(--main-font-size);
-				font-weight: 500;
-				color: hsl(from white h s l / 0.75);
+				font-size: var(--larger-font-size);
+				font-weight: 600;
+				color: var(--white-65);
 				text-align: center;
 			}
 		}
@@ -111,51 +112,31 @@ main
 					bottom: 0;
 					transform: translateX(calc(100% + 8px));
 					font-size: 48px;
-					color: hsl(from white h s l / 0.5);
+					color: var(--white-35);
 					line-height: 100%;
 				}
 			}
 		}
 
-		& .currentAdditionalTempsContainer
+		& .currentDayNightTempContainer
 		{
 			width: fit-content;
 			height: fit-content;
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			align-items: center;
 			justify-content: center;
 			flex-wrap: nowrap;
-			gap: 8px;
+			gap: 2px;
 
-			& .currentApparentTempText
+			& .currentDayNightTempText
 			{
-				font-size: var(--main-font-size);
-				font-weight: 500;
-				color: hsl(from white h s l / 0.75);
+				font-size: var(--larger-font-size);
+				font-weight: 600;
 				text-align: center;
-			}
 
-			& .currentDayNightTempContainer
-			{
-				width: fit-content;
-				height: fit-content;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: center;
-				flex-wrap: nowrap;
-				gap: 2px;
-
-				& .currentDayNightTempText
-				{
-					font-size: var(--main-font-size);
-					font-weight: 500;
-					text-align: center;
-
-					&:nth-child(odd) { color: hsl(from white h s l / 0.75); }
-					&:nth-child(2) { color: hsl(from white h s l / 0.25); }
-				}
+				&:nth-child(odd) { color: var(--white-65); }
+				&:nth-child(2) { color: var(--white-25); }
 			}
 		}
 	}
@@ -193,6 +174,7 @@ main
 			background: var(--black-35);
 			border-radius: var(--main-border-radius);
 			backdrop-filter: var(--blur-bg);
+			mix-blend-mode: darken;
 		}
 	}
 }

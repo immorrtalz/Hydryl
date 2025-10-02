@@ -48,7 +48,7 @@
 
 :root
 {
-	--dark: #0E0E0F;
+	--dark: #0A0A0A;
 
 	--white-0: hsl(from white h s l / 0);
 	--white-2: hsl(from white h s l / 0.02);
@@ -101,7 +101,10 @@
 
 	--blur-bg: blur(25px);
 	--main-border-radius: 32px;
-	--main-font-size: 20px;
+
+	--main-font-size: 16px;
+	--smaller-font-size: 12px;
+	--larger-font-size: 20px;
 }
 
 *, *::before, *::after
@@ -177,14 +180,5 @@ a
 	pointer-events: all;
 	cursor: pointer;
 }
-
-.font12 { font-size: 12px; }
-.font16 { font-size: 16px; }
-.font20 { font-size: 20px; }
-
-.colorWhite35 { color: var(--white-35); }
-.colorWhite50 { color: var(--white-50); }
-.colorWhite75 { color: var(--white-75); }
-.colorWhite90 { color: var(--white-90); }
 
 .displayNone { display: none !important; }

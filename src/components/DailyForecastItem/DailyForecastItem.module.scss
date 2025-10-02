@@ -13,7 +13,7 @@
 	& .dateText
 	{
 		font-weight: 500;
-		font-size: 16px;
+		font-size: var(--main-font-size);
 		color: var(--white-75);
 	}
 
@@ -37,7 +37,12 @@
 			font-size: var(--main-font-size);
 			font-weight: 600;
 
-			&:nth-child(2) { text-align: right; }
+			&:nth-child(2)
+			{
+				width: 30px;
+				color: var(--white-90);
+				text-align: right;
+			}
 
 			&:nth-child(3)
 			{
@@ -45,12 +50,11 @@
 				text-align: center;
 			}
 
-			&:nth-child(4) { text-align: left; }
-
-			&:nth-child(even)
+			&:nth-child(4)
 			{
-				width: 36px;
+				width: 30px;
 				color: var(--white-90);
+				text-align: left;
 			}
 		}
 	}

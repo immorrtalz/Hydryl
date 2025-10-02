@@ -8,7 +8,6 @@ export interface WeatherData
 	{
 		time: Date;
 		temperature_2m: number;
-		apparent_temperature: number;
 		weather_code: number;
 		surface_pressure: number;
 		wind_speed_10m: number;
@@ -23,6 +22,7 @@ export interface WeatherData
 		temperature_2m: number[];
 		weather_code: number[];
 		is_day: boolean[];
+		precipitation_probability: number[];
 	};
 	daily:
 	{
@@ -44,9 +44,9 @@ export function useWeatherManager()
 		"latitude": 54.7431,
 		"longitude": 55.9678,
 		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max"],
-		"hourly": ["temperature_2m", "weather_code", "is_day"],
+		"hourly": ["temperature_2m", "weather_code", "is_day", "precipitation_probability"],
 		"models": "best_match",
-		"current": ["temperature_2m", "apparent_temperature", "weather_code", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "relative_humidity_2m", "is_day"],
+		"current": ["temperature_2m", "weather_code", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "relative_humidity_2m", "is_day"],
 		"timezone": "GMT",
 		"forecast_days": 8,
 		"forecast_hours": 25,
@@ -96,14 +96,13 @@ export function useWeatherManager()
 				{
 					time: new Date((Number(current.time())/*  + utcOffsetSeconds */) * 1000),
 					temperature_2m: Math.round(current.variables(0)!.value()),
-					apparent_temperature: Math.round(current.variables(1)!.value()),
-					weather_code: current.variables(2)!.value(),
-					surface_pressure: current.variables(3)!.value(),
-					wind_speed_10m: current.variables(4)!.value(),
-					wind_direction_10m: current.variables(5)!.value(),
-					wind_gusts_10m: current.variables(6)!.value(),
-					relative_humidity_2m: current.variables(7)!.value(),
-					is_day: Boolean(current.variables(8)!.value()),
+					weather_code: current.variables(1)!.value(),
+					surface_pressure: current.variables(2)!.value(),
+					wind_speed_10m: current.variables(3)!.value(),
+					wind_direction_10m: current.variables(4)!.value(),
+					wind_gusts_10m: current.variables(5)!.value(),
+					relative_humidity_2m: current.variables(6)!.value(),
+					is_day: Boolean(current.variables(7)!.value()),
 				},
 				hourly:
 				{
@@ -112,6 +111,7 @@ export function useWeatherManager()
 					temperature_2m: Array.from(hourly.variables(0)!.valuesArray()!.map(value => Math.round(value))),
 					weather_code: Array.from(hourly.variables(1)!.valuesArray() || []),
 					is_day: Array.from(hourly.variables(2)!.valuesArray() || []).map(value => Boolean(value)),
+					precipitation_probability: Array.from(hourly.variables(3)!.valuesArray() || []).map(value => Math.round(value)),
 				},
 				daily:
 				{
@@ -126,7 +126,7 @@ export function useWeatherManager()
 			};
 
 			/* console.log(weatherData.current.time); */
-			console.log(weatherData.daily);
+			/* console.log(weatherData.daily); */
 
 			setWeatherFetchState('idle');
 
@@ -182,34 +182,35 @@ export const weatherCodeToText = (code: number, locale: Locale): string =>
 
 export const weatherCodeToSVGName = (code: number, isDay: boolean): string =>
 {
-	const weatherNames: Record<number, string> = {
+	const weatherNames: Record<number, string> =
+	{
 		0: isDay ? "sun" : "moon",
 		1: isDay ? "sun" : "moon",
 		2: isDay ? "cloudSun" : "cloudMoon",
 		3: "cloud",
-		45: "cloud",
-		48: "cloud", // maybe add a new icon (rime)
-		51: "cloudRain",
-		53: "cloudRain",
-		55: "cloudRain",
-		56: "cloudRain", // maybe add a new icon (cloudRainSnow)
-		57: "cloudRain", // maybe add a new icon (cloudHeavyRainSnow)
+		45: "fog",
+		48: "rimeFog",
+		51: "cloudDrizzle",
+		53: "cloudDrizzle",
+		55: "cloudDrizzle",
+		56: "cloudDrizzle",
+		57: "cloudDrizzle",
 		61: "cloudRain",
-		63: "cloudHeavyRain",
+		63: "cloudRain",
 		65: "cloudHeavyRain",
 		66: "cloudRain",
 		67: "cloudHeavyRain",
 		71: "snow",
 		73: "heavySnow",
 		75: "snowStorm",
-		77: "snowStorm",
+		77: "snowGrains",
 		80: "cloudHeavyRain",
 		81: "cloudHeavyRain",
 		82: "cloudHeavyRain",
 		85: "snowStorm",
 		86: "snowStorm",
 		95: "cloudThunderstorm",
-		96: "cloudThunderstorm", // maybe add a new icon (cloudHail)
+		96: "cloudThunderstorm",
 		99: "cloudThunderstorm"
 	};
 

@@ -2,13 +2,8 @@ export type Locale = 'en' | 'ru';
 
 export function translate(key: string, locale: Locale): string
 {
-	const translations: {[key: string]: { [locale: string]: string }} =
+	const translations: {[key: string]: {[locale: string]: string }} =
 	{
-		"feels_like":
-		{
-			"en": "Feels like",
-			"ru": "Ощущается как"
-		},
 		"monday":
 		{
 			"en": "Monday",
