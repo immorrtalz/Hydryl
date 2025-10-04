@@ -2,6 +2,7 @@
 
 [![Latest Release](https://img.shields.io/github/v/release/immorrtalz/Hydryl?label=latest%20release&color=limegreen)](https://github.com/immorrtalz/Hydryl/releases/latest)
 [![Total Downloads](https://img.shields.io/github/downloads/immorrtalz/Hydryl/total?label=total%20downloads&color=blue)](https://github.com/immorrtalz/Hydryl/releases)
+[![Latest Release Downloads](https://img.shields.io/github/downloads/immorrtalz/Hydryl/latest/total?label=latest%20release%20downloads&color=blue)](https://github.com/immorrtalz/Hydryl/releases/latest)
 [![License](https://img.shields.io/badge/license-GPL%20v3-yellow?color=goldenrod)](https://github.com/immorrtalz/Hydryl/blob/main/LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/immorrtalz/Hydryl?color=orange)]()
 [![CodeFactor](https://www.codefactor.io/repository/github/immorrtalz/Hydryl/badge)](https://www.codefactor.io/repository/github/immorrtalz/Hydryl)
