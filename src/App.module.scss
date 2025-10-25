@@ -13,6 +13,7 @@ main
 {
 	width: 100%;
 	height: 100vh;
+	padding-bottom: 24px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -182,8 +183,40 @@ main
 .dailyForecastContainer
 {
 	width: calc(100% - 48px);
-	margin-bottom: 24px;
+	min-height: calc(var(--main-border-radius) * 2);
 	padding: 4px 16px;
 	background: var(--white-5);
 	border-radius: var(--main-border-radius);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: nowrap;
+}
+
+.mainContentContainer
+{
+	width: 100%;
+	height: fit-content;
+	padding-bottom: 24px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: nowrap;
+	gap: 24px;
+
+	& .currentWeatherDetailsContainer
+	{
+		width: calc(100% - 48px);
+		min-height: calc(var(--main-border-radius) * 2);
+		padding: 4px 16px;
+		background: var(--white-5);
+		border-radius: var(--main-border-radius);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		flex-wrap: nowrap;
+	}
 }

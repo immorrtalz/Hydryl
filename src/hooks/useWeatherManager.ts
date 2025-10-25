@@ -7,21 +7,26 @@ export interface WeatherData
 	current:
 	{
 		time: Date;
-		temperature_2m: number;
+		is_day: boolean;
 		weather_code: number;
+		temperature_2m: number;
 		surface_pressure: number;
 		wind_speed_10m: number;
 		wind_direction_10m: number;
 		wind_gusts_10m: number;
 		relative_humidity_2m: number;
-		is_day: boolean;
+		precipitation: number;
+		precipitation_probability: number;
+		visibility: number;
+		cloud_cover: number;
+		uv_index: number;
 	};
 	hourly:
 	{
 		time: Date[];
-		temperature_2m: number[];
-		weather_code: number[];
 		is_day: boolean[];
+		weather_code: number[];
+		temperature_2m: number[];
 		precipitation_probability: number[];
 	};
 	daily:
@@ -37,16 +42,17 @@ export interface WeatherData
 
 export function useWeatherManager()
 {
-	const meteoApiUrl = "https://api.open-meteo.com/v1/forecast";
+	const apiUrl = "https://api.open-meteo.com/v1/forecast";
 
 	var weatherFetchParams =
 	{
 		"latitude": 54.7431,
 		"longitude": 55.9678,
 		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max"],
-		"hourly": ["temperature_2m", "weather_code", "is_day", "precipitation_probability"],
+		"hourly": ["is_day", "weather_code", "temperature_2m", "precipitation_probability"],
 		"models": "best_match",
-		"current": ["temperature_2m", "weather_code", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "relative_humidity_2m", "is_day"],
+		"current": ["is_day", "weather_code", "temperature_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
+			"relative_humidity_2m", "precipitation", "precipitation_probability", "visibility", "cloud_cover", "uv_index"],
 		"timezone": "GMT",
 		"forecast_days": 8,
 		"forecast_hours": 25,
@@ -75,7 +81,7 @@ export function useWeatherManager()
 		{
 			setWeatherFetchState('fetching');
 
-			const responses = await fetchWeatherApi(meteoApiUrl, weatherFetchParams);
+			const responses = await fetchWeatherApi(apiUrl, weatherFetchParams);
 			const response = responses[0];
 
 			const latitude = response.latitude();
@@ -95,23 +101,28 @@ export function useWeatherManager()
 				current:
 				{
 					time: new Date((Number(current.time())/*  + utcOffsetSeconds */) * 1000),
-					temperature_2m: Math.round(current.variables(0)!.value()),
+					is_day: Boolean(current.variables(0)!.value()),
 					weather_code: current.variables(1)!.value(),
-					surface_pressure: current.variables(2)!.value(),
-					wind_speed_10m: current.variables(3)!.value(),
-					wind_direction_10m: current.variables(4)!.value(),
-					wind_gusts_10m: current.variables(5)!.value(),
-					relative_humidity_2m: current.variables(6)!.value(),
-					is_day: Boolean(current.variables(7)!.value()),
+					temperature_2m: Math.round(current.variables(2)!.value()),
+					surface_pressure: Math.round(current.variables(3)!.value() * 0.75006156130264), // hPa to mmHg
+					wind_speed_10m: Math.round(current.variables(4)!.value() * 10) / 10,
+					wind_direction_10m: Math.round(current.variables(5)!.value()),
+					wind_gusts_10m: Math.round(current.variables(6)!.value()),
+					relative_humidity_2m: current.variables(7)!.value(),
+					precipitation: Math.round(current.variables(8)!.value()),
+					precipitation_probability: current.variables(9)!.value(),
+					visibility: Math.round(current.variables(10)!.value() / 10) / 100,
+					cloud_cover: current.variables(11)!.value(),
+					uv_index: current.variables(12)!.value(),
 				},
 				hourly:
 				{
 					time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())]
 						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)),
-					temperature_2m: Array.from(hourly.variables(0)!.valuesArray()!.map(value => Math.round(value))),
+					is_day: Array.from(hourly.variables(0)!.valuesArray() || []).map(value => Boolean(value)),
 					weather_code: Array.from(hourly.variables(1)!.valuesArray() || []),
-					is_day: Array.from(hourly.variables(2)!.valuesArray() || []).map(value => Boolean(value)),
-					precipitation_probability: Array.from(hourly.variables(3)!.valuesArray() || []).map(value => Math.round(value)),
+					temperature_2m: Array.from(hourly.variables(2)!.valuesArray()!.map(value => Math.round(value))),
+					precipitation_probability: Array.from(hourly.variables(3)!.valuesArray() || []).map(value => Math.round(value))
 				},
 				daily:
 				{
@@ -120,13 +131,13 @@ export function useWeatherManager()
 					weather_code: Array.from(daily.variables(0)!.valuesArray() || []),
 					temperature_2m_min: Array.from(daily.variables(1)!.valuesArray()!.map(value => Math.round(value))),
 					temperature_2m_max: Array.from(daily.variables(2)!.valuesArray()!.map(value => Math.round(value))),
-					wind_direction_10m_dominant: Array.from(daily.variables(3)!.valuesArray() || []),
-					wind_speed_10m_max: Array.from(daily.variables(4)!.valuesArray() || []),
+					wind_direction_10m_dominant: Array.from(daily.variables(3)!.valuesArray() || []).map(value => Math.round(value)),
+					wind_speed_10m_max: Array.from(daily.variables(4)!.valuesArray() || []).map(value => Math.round(value * 10) / 10),
 				}
 			};
 
-			/* console.log(weatherData.current.time); */
-			/* console.log(weatherData.daily); */
+			console.log(weatherData.current);
+			console.log(weatherData.hourly);
 
 			setWeatherFetchState('idle');
 
@@ -215,4 +226,16 @@ export const weatherCodeToSVGName = (code: number, isDay: boolean): string =>
 	};
 
 	return weatherNames[code] ?? "sun";
+};
+
+export const degreesToCompassDirection = (degrees: number, locale: Locale): string =>
+{
+	const directions = ["wind_N", "wind_NW", "wind_W", "wind_SW", "wind_S", "wind_SE", "wind_E", "wind_NE"];
+	return translate(directions[Math.ceil(((degrees - 22.5) / 45))], locale);
+};
+
+export const uvIndexToText = (uvIndex: number, locale: Locale): string =>
+{
+	const key = uvIndex <= 2 ? "uv_low" : uvIndex <= 5 ? "uv_moderate" : uvIndex <= 7 ? "uv_high" : uvIndex <= 10 ? "uv_very_high" : "uv_extreme";
+	return translate(key, locale);
 };

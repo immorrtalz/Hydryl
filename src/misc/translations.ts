@@ -4,6 +4,11 @@ export function translate(key: string, locale: Locale): string
 {
 	const translations: {[key: string]: {[locale: string]: string }} =
 	{
+		"tomorrow":
+		{
+			"en": "Tomorrow",
+			"ru": "Завтра"
+		},
 		"monday":
 		{
 			"en": "Monday",
@@ -273,6 +278,116 @@ export function translate(key: string, locale: Locale): string
 		{
 			"en": "Thunderstorm with heavy hail",
 			"ru": "Гроза с сильным градом"
+		},
+		"wind_N":
+		{
+			"en": "N",
+			"ru": "С"
+		},
+		"wind_NW":
+		{
+			"en": "NW",
+			"ru": "СЗ"
+		},
+		"wind_W":
+		{
+			"en": "W",
+			"ru": "З"
+		},
+		"wind_SW":
+		{
+			"en": "SW",
+			"ru": "ЮЗ"
+		},
+		"wind_S":
+		{
+			"en": "S",
+			"ru": "Ю"
+		},
+		"wind_SE":
+		{
+			"en": "SE",
+			"ru": "ЮВ"
+		},
+		"wind_E":
+		{
+			"en": "E",
+			"ru": "В"
+		},
+		"wind_NE":
+		{
+			"en": "NE",
+			"ru": "СВ"
+		},
+		"uv_low":
+		{
+			"en": "Low",
+			"ru": "Низкий"
+		},
+		"uv_moderate":
+		{
+			"en": "Moderate",
+			"ru": "Умеренный"
+		},
+		"uv_high":
+		{
+			"en": "High",
+			"ru": "Высокий"
+		},
+		"uv_very_high":
+		{
+			"en": "Very high",
+			"ru": "Очень высокий"
+		},
+		"uv_extreme":
+		{
+			"en": "Extreme",
+			"ru": "Экстремальный"
+		},
+		"wind":
+		{
+			"en": "Wind",
+			"ru": "Ветер"
+		},
+		"wind_gusts":
+		{
+			"en": "Wind gusts",
+			"ru": "Порывы ветра"
+		},
+		"humidity":
+		{
+			"en": "Humidity",
+			"ru": "Влажность"
+		},
+		"precipitation":
+		{
+			"en": "Precipitation",
+			"ru": "Осадки"
+		},
+		"precipitation_probability":
+		{
+			"en": "Precipitation probability",
+			"ru": "Вероятность осадков"
+		},
+		"pressure":
+		{
+			"en": "Pressure",
+			"ru": "Давление"
+		},
+		"cloud_cover":
+		{
+			"en": "Cloud cover",
+			"ru": "Облачность"
+		},
+		"visibility":
+		{
+			"en": "Visibility",
+			"ru": "Видимость"
+		},
+		"uv_index":
+		{
+			"en": "UV Index",
+			"ru": "UV индекс"
 		}
 	};
 

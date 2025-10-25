@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import styles from "./App.module.scss";
 import { HourlyForecastItem } from "./components/HourlyForecastItem";
 import { DailyForecastItem } from "./components/DailyForecastItem";
-import { WeatherData, useWeatherManager, weatherCodeToSVGName, weatherCodeToText } from "./hooks/useWeatherManager";
+import { WeatherData, useWeatherManager, weatherCodeToSVGName, weatherCodeToText, degreesToCompassDirection, uvIndexToText } from "./hooks/useWeatherManager";
 import { SVG } from "./components/SVG";
 import { Locale, translate, translateMonth, translateWeekday } from "./misc/translations";
+import { MainContentItem } from "./components/MainContentItem";
 
 interface Settings
 {
@@ -34,14 +35,14 @@ function App()
 						</div>
 
 						<div className={styles.currentTempContainer}>
-							<h1 className={styles.currentTempText}>{weather?.current.temperature_2m}</h1>
+							<h1 className={styles.currentTempText}>{weather?.current.temperature_2m ?? "--"}</h1>
 							<h3 className={styles.currentTempText}>ºC</h3>
 						</div>
 
 						<div className={styles.currentDayNightTempContainer}>
-							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_min[0]}º</p>
+							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_min[0] ?? "--"}º</p>
 							<p className={styles.currentDayNightTempText}>/</p>
-							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_max[0]}º</p>
+							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_max[0] ?? "--"}º</p>
 						</div>
 					</div>
 
@@ -67,12 +68,26 @@ function App()
 						weather?.daily.time.map((time, index) => (
 							index < 5 &&
 								<DailyForecastItem key={`${index}-${time}`}
-									date={index === 0 ? "Tomorrow" :
+									date={index === 0 ? translate("tomorrow", settings.locale) :
 										`${translateWeekday(time.getDay(), settings.locale, true)}, ${translateMonth(time.getMonth(), settings.locale, true)} ${time.getDate()}`}
 									weatherCode={weather.daily.weather_code[index]}
 									temperatureNight={Math.round(weather.daily.temperature_2m_min[index])}
 									temperatureDay={Math.round(weather.daily.temperature_2m_max[index])}/>))
 					}
+				</div>
+			</div>
+
+			<div className={styles.mainContentContainer}>
+				<div className={styles.currentWeatherDetailsContainer}>
+					<MainContentItem title={translate("wind", settings.locale)} content={`${weather?.current.wind_speed_10m} m/s ${degreesToCompassDirection(weather?.current.wind_direction_10m || 0, settings.locale)}`}/>
+					<MainContentItem title={translate("wind_gusts", settings.locale)} content={`${weather?.current.wind_gusts_10m} m/s`}/>
+					<MainContentItem title={translate("humidity", settings.locale)} content={`${weather?.current.relative_humidity_2m} %`}/>
+					<MainContentItem title={translate("precipitation", settings.locale)} content={`${weather?.current.precipitation} mm`}/>
+					<MainContentItem title={translate("precipitation_probability", settings.locale)} content={`${weather?.current.precipitation_probability} %`}/>
+					<MainContentItem title={translate("pressure", settings.locale)} content={`${weather?.current.surface_pressure} mmHg`}/>
+					<MainContentItem title={translate("cloud_cover", settings.locale)} content={`${weather?.current.cloud_cover} %`}/>
+					<MainContentItem title={translate("visibility", settings.locale)} content={`${weather?.current.visibility} km`}/>
+					<MainContentItem title={translate("uv_index", settings.locale)} content={`${weather?.current.uv_index} (${uvIndexToText(weather?.current.uv_index || 0, settings.locale)})`}/>
 				</div>
 			</div>
 		</main>

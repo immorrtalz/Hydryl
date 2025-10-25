@@ -1,0 +1,26 @@
+.container
+{
+	width: 100%;
+	height: 48px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+
+	&:not(:last-child) { border-bottom: 1px solid var(--white-10); }
+
+	& .titleText
+	{
+		font-weight: 500;
+		font-size: var(--main-font-size);
+		color: var(--white-75);
+	}
+
+	& .contentText
+	{
+		color: var(--white-90);
+		font-size: var(--main-font-size);
+		font-weight: 600;
+	}
+}
