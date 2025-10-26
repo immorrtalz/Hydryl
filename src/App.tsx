@@ -5,7 +5,8 @@ import { DailyForecastItem } from "./components/DailyForecastItem";
 import { WeatherData, useWeatherManager, weatherCodeToSVGName, weatherCodeToText, degreesToCompassDirection, uvIndexToText } from "./hooks/useWeatherManager";
 import { SVG } from "./components/SVG";
 import { Locale, translate, translateMonth, translateWeekday } from "./misc/translations";
-import { MainContentItem } from "./components/MainContentItem";
+import { CurrentWeatherDetailsItem } from "./components/CurrentWeatherDetailsItem";
+import { SunriseVisualElement } from "./components/SunriseVisualElement";
 
 interface Settings
 {
@@ -18,6 +19,10 @@ function App()
 
 	const weatherManager = useWeatherManager();
 	const [weather, setWeather] = useState<WeatherData | null>(null);
+
+	const currentHours: number = (weather?.current.time.getHours() ?? 0) + (weather?.current.time.getMinutes() ?? 0) / 60;
+	const sunrise: Date = weather?.daily.sunrise[0] ?? new Date(), sunset: Date = weather?.daily.sunset[0] ?? new Date();
+	const daylightHours = (sunset.getTime() - sunrise.getTime()) / 1000 / 60 / 60;
 
 	useEffect(() => { weatherManager.fetchWeather().then(weather => setWeather(weather)); }, []);
 
@@ -79,16 +84,32 @@ function App()
 
 			<div className={styles.mainContentContainer}>
 				<div className={styles.currentWeatherDetailsContainer}>
-					<MainContentItem title={translate("wind", settings.locale)} content={`${weather?.current.wind_speed_10m} m/s ${degreesToCompassDirection(weather?.current.wind_direction_10m || 0, settings.locale)}`}/>
-					<MainContentItem title={translate("wind_gusts", settings.locale)} content={`${weather?.current.wind_gusts_10m} m/s`}/>
-					<MainContentItem title={translate("humidity", settings.locale)} content={`${weather?.current.relative_humidity_2m} %`}/>
-					<MainContentItem title={translate("precipitation", settings.locale)} content={`${weather?.current.precipitation} mm`}/>
-					<MainContentItem title={translate("precipitation_probability", settings.locale)} content={`${weather?.current.precipitation_probability} %`}/>
-					<MainContentItem title={translate("pressure", settings.locale)} content={`${weather?.current.surface_pressure} mmHg`}/>
-					<MainContentItem title={translate("cloud_cover", settings.locale)} content={`${weather?.current.cloud_cover} %`}/>
-					<MainContentItem title={translate("visibility", settings.locale)} content={`${weather?.current.visibility} km`}/>
-					<MainContentItem title={translate("uv_index", settings.locale)} content={`${weather?.current.uv_index} (${uvIndexToText(weather?.current.uv_index || 0, settings.locale)})`}/>
+					<CurrentWeatherDetailsItem title={translate("wind", settings.locale)} content={`${weather?.current.wind_speed_10m} m/s ${degreesToCompassDirection(weather?.current.wind_direction_10m || 0, settings.locale)}`}/>
+					<CurrentWeatherDetailsItem title={translate("wind_gusts", settings.locale)} content={`${weather?.current.wind_gusts_10m} m/s`}/>
+					<CurrentWeatherDetailsItem title={translate("humidity", settings.locale)} content={`${weather?.current.relative_humidity_2m} %`}/>
+					<CurrentWeatherDetailsItem title={translate("precipitation", settings.locale)} content={`${weather?.current.precipitation} mm`}/>
+					<CurrentWeatherDetailsItem title={translate("precipitation_probability", settings.locale)} content={`${weather?.current.precipitation_probability} %`}/>
+					<CurrentWeatherDetailsItem title={translate("pressure", settings.locale)} content={`${weather?.current.surface_pressure} mmHg`}/>
+					<CurrentWeatherDetailsItem title={translate("cloud_cover", settings.locale)} content={`${weather?.current.cloud_cover} %`}/>
+					<CurrentWeatherDetailsItem title={translate("visibility", settings.locale)} content={`${weather?.current.visibility} km`}/>
+					<CurrentWeatherDetailsItem title={translate("uv_index", settings.locale)} content={`${weather?.current.uv_index} (${uvIndexToText(weather?.current.uv_index || 0, settings.locale)})`}/>
 				</div>
+
+				<div className={`${styles.currentWeatherDetailsContainer} ${styles.sunriseSunsetContainer}`}>
+					<div className={styles.sunriseSunsetItem}>
+						<p className={styles.sunriseSunsetItemContentText}>{sunrise.getHours()}:{sunrise.getMinutes().toString().padStart(2, '0')}</p>
+						<p className={styles.sunriseSunsetItemTitleText}>Sunrise</p>
+					</div>
+
+					<SunriseVisualElement currentHours={currentHours} daylightHours={daylightHours}/>
+
+					<div className={styles.sunriseSunsetItem}>
+						<p className={styles.sunriseSunsetItemContentText}>{sunset.getHours()}:{sunset.getMinutes().toString().padStart(2, '0')}</p>
+						<p className={styles.sunriseSunsetItemTitleText}>Sunset</p>
+					</div>
+				</div>
+
+				<p className={styles.dataProvidedByText}>Data provided by open-meteo.com</p>
 			</div>
 		</main>
 	);

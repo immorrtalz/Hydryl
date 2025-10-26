@@ -1,4 +1,4 @@
-import styles from './MainContentItem.module.scss';
+import styles from './CurrentWeatherDetailsItem.module.scss';
 
 interface Props
 {
@@ -6,7 +6,7 @@ interface Props
 	content: string;
 }
 
-export function MainContentItem(props: Props)
+export function CurrentWeatherDetailsItem(props: Props)
 {
 	return (
 		<div className={styles.container}>

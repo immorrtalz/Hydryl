@@ -37,6 +37,8 @@ export interface WeatherData
 		temperature_2m_max: number[];
 		wind_direction_10m_dominant: number[];
 		wind_speed_10m_max: number[];
+		sunrise: Date[];
+		sunset: Date[];
 	};
 }
 
@@ -48,12 +50,12 @@ export function useWeatherManager()
 	{
 		"latitude": 54.7431,
 		"longitude": 55.9678,
-		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max"],
+		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset"],
 		"hourly": ["is_day", "weather_code", "temperature_2m", "precipitation_probability"],
 		"models": "best_match",
 		"current": ["is_day", "weather_code", "temperature_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
 			"relative_humidity_2m", "precipitation", "precipitation_probability", "visibility", "cloud_cover", "uv_index"],
-		"timezone": "GMT",
+		"timezone": "GMT+5",
 		"forecast_days": 8,
 		"forecast_hours": 25,
 		"temperature_unit": "celsius", //celsius, fahrenheit
@@ -110,15 +112,15 @@ export function useWeatherManager()
 					wind_gusts_10m: Math.round(current.variables(6)!.value()),
 					relative_humidity_2m: current.variables(7)!.value(),
 					precipitation: Math.round(current.variables(8)!.value()),
-					precipitation_probability: current.variables(9)!.value(),
-					visibility: Math.round(current.variables(10)!.value() / 10) / 100,
-					cloud_cover: current.variables(11)!.value(),
-					uv_index: current.variables(12)!.value(),
+					precipitation_probability: Math.round(current.variables(9)!.value()),
+					visibility: Math.round(current.variables(10)!.value() / 100) / 10,
+					cloud_cover: Math.round(current.variables(11)!.value()),
+					uv_index: Math.round(current.variables(12)!.value() * 10) / 10,
 				},
 				hourly:
 				{
 					time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())]
-						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)),
+						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval()) * 1000)),
 					is_day: Array.from(hourly.variables(0)!.valuesArray() || []).map(value => Boolean(value)),
 					weather_code: Array.from(hourly.variables(1)!.valuesArray() || []),
 					temperature_2m: Array.from(hourly.variables(2)!.valuesArray()!.map(value => Math.round(value))),
@@ -127,17 +129,21 @@ export function useWeatherManager()
 				daily:
 				{
 					time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())]
-						.map((_, i) => new Date((Number(daily.time()) + i * daily.interval() + utcOffsetSeconds) * 1000)),
+						.map((_, i) => new Date((Number(daily.time()) + i * daily.interval()) * 1000)),
 					weather_code: Array.from(daily.variables(0)!.valuesArray() || []),
 					temperature_2m_min: Array.from(daily.variables(1)!.valuesArray()!.map(value => Math.round(value))),
 					temperature_2m_max: Array.from(daily.variables(2)!.valuesArray()!.map(value => Math.round(value))),
 					wind_direction_10m_dominant: Array.from(daily.variables(3)!.valuesArray() || []).map(value => Math.round(value)),
 					wind_speed_10m_max: Array.from(daily.variables(4)!.valuesArray() || []).map(value => Math.round(value * 10) / 10),
+					sunrise: [...Array(daily.variables(5)!.valuesInt64Length())]
+						.map((_, i) => new Date((Number(daily.variables(5)!.valuesInt64(i))) * 1000)),
+					sunset: [...Array(daily.variables(6)!.valuesInt64Length())]
+						.map((_, i) => new Date((Number(daily.variables(6)!.valuesInt64(i))) * 1000)),
 				}
 			};
 
-			console.log(weatherData.current);
-			console.log(weatherData.hourly);
+			/* console.log(weatherData.hourly); */
+			/* console.log(weatherData.daily); */
 
 			setWeatherFetchState('idle');
 

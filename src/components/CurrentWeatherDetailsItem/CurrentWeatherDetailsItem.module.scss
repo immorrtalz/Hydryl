@@ -12,15 +12,15 @@
 
 	& .titleText
 	{
-		font-weight: 500;
 		font-size: var(--main-font-size);
 		color: var(--white-75);
+		font-weight: 500;
 	}
 
 	& .contentText
 	{
-		color: var(--white-90);
 		font-size: var(--main-font-size);
+		color: var(--white-90);
 		font-weight: 600;
 	}
 }
