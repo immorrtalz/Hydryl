@@ -7,6 +7,7 @@ import { SVG } from "./components/SVG";
 import { Locale, translate, translateMonth, translateWeekday } from "./misc/translations";
 import { CurrentWeatherDetailsItem } from "./components/CurrentWeatherDetailsItem";
 import { SunriseVisualElement } from "./components/SunriseVisualElement";
+import { Button, ButtonType } from "./components/Button";
 
 interface Settings
 {
@@ -28,7 +29,15 @@ function App()
 
 	return (
 		<main>
-			<div className={styles.topBar}></div>
+			<div className={styles.topBar}>
+				<Button type={ButtonType.Secondary} square>
+					<SVG name="menu" className={styles.currentPrecipIcon}/>
+				</Button>
+				<p className={styles.currentLocationNameText}>Fukuoka</p>
+				<Button type={ButtonType.Secondary} square>
+					<SVG name="location" className={styles.currentPrecipIcon}/>
+				</Button>
+			</div>
 
 			<div className={styles.heroContainer}>
 				<div className={styles.mainInfoContainer}>
@@ -76,6 +85,7 @@ function App()
 									date={index === 0 ? translate("tomorrow", settings.locale) :
 										`${translateWeekday(time.getDay(), settings.locale, true)}, ${translateMonth(time.getMonth(), settings.locale, true)} ${time.getDate()}`}
 									weatherCode={weather.daily.weather_code[index]}
+									precipitationProbability={weather.daily.precipitation_probability_max[index]}
 									temperatureNight={Math.round(weather.daily.temperature_2m_min[index])}
 									temperatureDay={Math.round(weather.daily.temperature_2m_max[index])}/>))
 					}

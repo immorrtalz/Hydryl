@@ -6,6 +6,7 @@ interface Props
 {
 	date: string;
 	weatherCode: number;
+	precipitationProbability: number;
 	temperatureNight: number;
 	temperatureDay: number;
 }
@@ -17,6 +18,8 @@ export function DailyForecastItem(props: Props)
 			<p className={styles.dateText}>{props.date}</p>
 
 			<div className={styles.weatherContainer}>
+				<p className={styles.precipitationText}>{props.precipitationProbability}%</p>
+
 				<SVG name={weatherCodeToSVGName(props.weatherCode, true)} className={styles.weatherIcon}/>
 
 				<p className={styles.temperatureText}>{props.temperatureNight}º</p>

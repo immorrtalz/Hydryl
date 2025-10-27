@@ -156,7 +156,7 @@ export function translate(key: string, locale: Locale): string
 		},
 		"overcast":
 		{
-			"en": "Overcast",
+			"en": "Cloudy",
 			"ru": "Облачно"
 		},
 		"fog":

@@ -1,0 +1,66 @@
+.button
+{
+	appearance: none;
+	-webkit-appearance: none;
+	outline: none;
+	border: none;
+	width: fit-content;
+	height: 50px !important;
+	padding: 0 16px;
+	border-radius: 20px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex-shrink: 0;
+	pointer-events: all;
+	font-size: var(--main-font-size);
+	backdrop-filter: var(--blur-bg);
+	transition: all 0.1s;
+
+	&:disabled
+	{
+		background: var(--black-5) !important;
+		color: rgba(255, 255, 255, 0.25) !important;
+		fill: rgba(255, 255, 255, 0.25) !important;
+		pointer-events: none !important;
+	}
+
+	& > svg
+	{
+		width: 40px;
+		height: 40px;
+	}
+}
+
+.primaryButton
+{
+	background: var(--white-90);
+	color: var(--black-80);
+	fill: var(--black-80);
+
+	&:active
+	{
+		background: var(--white-50);
+		color: var(--black-50);
+		fill: var(--black-50);
+	}
+}
+
+.secondaryButton
+{
+	background: var(--black-50);
+	color: var(--white-90);
+	fill: var(--white-90);
+
+	&:active
+	{
+		background: var(--black-25);
+		color: var(--white-50);
+		fill: var(--white-50);
+	}
+}
+
+.squareButton { width: 50px; padding: 0; }

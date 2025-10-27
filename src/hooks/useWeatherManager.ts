@@ -39,6 +39,7 @@ export interface WeatherData
 		wind_speed_10m_max: number[];
 		sunrise: Date[];
 		sunset: Date[];
+		precipitation_probability_max: number[];
 	};
 }
 
@@ -50,7 +51,7 @@ export function useWeatherManager()
 	{
 		"latitude": 54.7431,
 		"longitude": 55.9678,
-		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset"],
+		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset", "precipitation_probability_max"],
 		"hourly": ["is_day", "weather_code", "temperature_2m", "precipitation_probability"],
 		"models": "best_match",
 		"current": ["is_day", "weather_code", "temperature_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
@@ -139,6 +140,7 @@ export function useWeatherManager()
 						.map((_, i) => new Date((Number(daily.variables(5)!.valuesInt64(i))) * 1000)),
 					sunset: [...Array(daily.variables(6)!.valuesInt64Length())]
 						.map((_, i) => new Date((Number(daily.variables(6)!.valuesInt64(i))) * 1000)),
+					precipitation_probability_max: Array.from(daily.variables(7)!.valuesArray() || []).map(value => Math.round(value))
 				}
 			};
 

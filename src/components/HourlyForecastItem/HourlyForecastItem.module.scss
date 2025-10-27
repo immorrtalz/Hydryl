@@ -1,13 +1,20 @@
 .container
 {
-	width: 48px;
-	height: 110px;
+	width: 52px;
+	height: 120px;
+	padding: 12px 0;
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: nowrap;
+
+	&:nth-child(odd)
+	{
+		background: var(--black-25);
+		border-radius: calc(var(--main-border-radius) - 8px);
+	}
 
 	& .temperatureText
 	{

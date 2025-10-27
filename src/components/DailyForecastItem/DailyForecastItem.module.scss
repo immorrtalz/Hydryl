@@ -26,6 +26,13 @@
 		flex-wrap: nowrap;
 		gap: 2px;
 
+		& .precipitationText
+		{
+			font-size: var(--smaller-font-size);
+			font-weight: 500;
+			color: var(--white-50);
+		}
+
 		& .weatherIcon
 		{
 			width: 40px;
@@ -37,20 +44,20 @@
 			font-size: var(--main-font-size);
 			font-weight: 600;
 
-			&:nth-child(2)
+			&:nth-child(3)
 			{
 				width: 30px;
 				color: var(--white-90);
 				text-align: right;
 			}
 
-			&:nth-child(3)
+			&:nth-child(4)
 			{
 				color: var(--white-25);
 				text-align: center;
 			}
 
-			&:nth-child(4)
+			&:nth-child(5)
 			{
 				width: 30px;
 				color: var(--white-90);
