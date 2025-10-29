@@ -1,4 +1,4 @@
-# <img src="https://github.com/user-attachments/assets/b5c29a3f-4346-470f-92db-5ab3a350e8cd" style="object-fit: contain; height: 24px;"/> Hydryl
+# <img src="https://github.com/user-attachments/assets/2aa86679-8b25-44c1-96ed-6852d2acad07" style="object-fit: contain; height: 24px;"/> Hydryl
 
 [![Latest Release](https://img.shields.io/github/v/release/immorrtalz/Hydryl?label=latest%20release&color=limegreen)](https://github.com/immorrtalz/Hydryl/releases/latest)
 [![Total Downloads](https://img.shields.io/github/downloads/immorrtalz/Hydryl/total?label=total%20downloads&color=blue)](https://github.com/immorrtalz/Hydryl/releases)
