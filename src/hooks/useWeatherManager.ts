@@ -107,7 +107,7 @@ export function useWeatherManager()
 					is_day: Boolean(current.variables(0)!.value()),
 					weather_code: current.variables(1)!.value(),
 					temperature_2m: Math.round(current.variables(2)!.value()),
-					surface_pressure: Math.round(current.variables(3)!.value() * 0.75006156130264), // hPa to mmHg
+					surface_pressure: Math.round(current.variables(3)!.value() * 0.75006156130264), // mbar (hPa) to mmHg
 					wind_speed_10m: Math.round(current.variables(4)!.value() * 10) / 10,
 					wind_direction_10m: Math.round(current.variables(5)!.value()),
 					wind_gusts_10m: Math.round(current.variables(6)!.value()),
