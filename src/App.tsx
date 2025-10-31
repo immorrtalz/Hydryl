@@ -31,7 +31,7 @@ function App()
 		<main>
 			<div className={styles.topBar}>
 				<Button type={ButtonType.Secondary} square>
-					<SVG name="menu" className={styles.currentPrecipIcon}/>
+					<SVG name="settings" className={styles.currentPrecipIcon}/>
 				</Button>
 				<p className={styles.currentLocationNameText}>Fukuoka</p>
 				<Button type={ButtonType.Secondary} square>
