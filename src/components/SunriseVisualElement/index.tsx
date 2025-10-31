@@ -12,9 +12,10 @@ export function SunriseVisualElement(props: Props)
 	const sunriseElementHeight = 40;
 	const curvePoints = [];
 
-	for (let i = -Math.PI * 0.5; i <= Math.PI * 1.5; i += Math.PI * 0.085) // for exactly 24 points (24 hours)
+	const xIncrement = Math.PI * 2 / 23;
+
+	for (let x = -Math.PI * 0.5, i = 0; i < 24; x += xIncrement, i++)
 	{
-		const x = i;
 		const y = Math.sin(x);
 		const scaledX = ((x + Math.PI * 0.5) / (Math.PI * 2)) * (sunriseElementWidth - 12) + 6;
 		const scaledY = (1 - y) * 0.5 * (sunriseElementHeight - 12) + 6;
