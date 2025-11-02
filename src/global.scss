@@ -118,6 +118,12 @@
 	--main-font-size: 16px;
 	--smaller-font-size: 12px;
 	--larger-font-size: 20px;
+
+	--early-gradient: linear-gradient(to bottom, #09091A, #402040, #B25071); // early morning, late evening
+	--mid-gradient: linear-gradient(to bottom, #3B2D59, #A6536F, #FF9059); // mid morning, mid evening
+	--late-gradient: linear-gradient(to bottom, #2D5AB2, #6088BF, #E5C37E); // late morning, early evening
+	--day-gradient: linear-gradient(to bottom, #3060BF, #679CE5); // daytime
+	--night-gradient: linear-gradient(to bottom, #09091A, #1B234D); // nighttime
 }
 
 *, *::before, *::after
