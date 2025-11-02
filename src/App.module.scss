@@ -61,8 +61,6 @@ main
 	align-items: center;
 	justify-content: center;
 	flex-wrap: nowrap;
-	background: linear-gradient(to bottom, #3A4CA6, #7C53A6, #F26D99);
-	/* background: linear-gradient(to bottom, #09091A, #1B234D); */
 	border-radius: 0 0 56px 56px;
 
 	&::before
@@ -179,7 +177,7 @@ main
 		border-radius: var(--main-border-radius);
 		overflow: clip;
 
-		& .hourlyForecastMaskedItems
+		& .hourlyForecastItems
 		{
 			width: 100%;
 			height: fit-content;

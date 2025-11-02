@@ -25,6 +25,27 @@ function App()
 	const sunrise: Date = weather?.daily.sunrise[0] ?? new Date(), sunset: Date = weather?.daily.sunset[0] ?? new Date();
 	const daylightHours = (sunset.getTime() - sunrise.getTime()) / 1000 / 60 / 60;
 
+	const timeBackgroundGradients = ["early", "mid", "late", "day", "night"];
+
+	const timeBackgroundGradient = (): string =>
+	{
+		const currentDateTime = new Date().getTime();
+		const sunriseMinusCurrentTime = sunrise.getTime() - currentDateTime;
+		const sunsetMinusCurrentTime = sunset.getTime() - currentDateTime;
+
+		const thirtyMinutesInMs = 1000 * 60 * 30;
+
+		var gradientIndex;
+
+		if (Math.abs(sunriseMinusCurrentTime) <= thirtyMinutesInMs * 2) // around sunrise
+			gradientIndex = Math.abs(sunriseMinusCurrentTime) <= thirtyMinutesInMs ? 1 : sunriseMinusCurrentTime > 0 ? 0 : 2;
+		else if (Math.abs(sunsetMinusCurrentTime) <= thirtyMinutesInMs * 2) // around sunset
+			gradientIndex = Math.abs(sunsetMinusCurrentTime) <= thirtyMinutesInMs ? 1 : sunsetMinusCurrentTime > 0 ? 2 : 0;
+		else gradientIndex = sunriseMinusCurrentTime < 0 && sunsetMinusCurrentTime > 0 ? 3 : 4; // daytime or nighttime
+
+		return timeBackgroundGradients[gradientIndex];
+	};
+
 	useEffect(() => { weatherManager.fetchWeather().then(weather => setWeather(weather)); }, []);
 
 	return (
@@ -40,7 +61,7 @@ function App()
 			</div>
 
 			<div className={styles.heroContainer}>
-				<div className={styles.mainInfoContainer}>
+				<div className={styles.mainInfoContainer} style={{background: `var(--${timeBackgroundGradient()}-gradient)`}}>
 
 					<div className={styles.currentWeatherContainer}>
 						<div className={styles.currentPrecipContainer}>
@@ -61,7 +82,7 @@ function App()
 					</div>
 
 					<div className={styles.hourlyForecastContainer}>
-						<div className={styles.hourlyForecastMaskedItems}>
+						<div className={styles.hourlyForecastItems}>
 							{
 								weather?.hourly.time.map((time, index) =>
 									<HourlyForecastItem key={`${index}-${time}`}
