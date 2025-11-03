@@ -1,5 +1,8 @@
-main
+.page
 {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100svw;
 	height: fit-content;
 	min-height: 100svh;
@@ -7,6 +10,8 @@ main
 	flex-direction: column;
 	align-items: center;
 	flex-wrap: nowrap;
+	transition: none;
+	z-index: 0;
 }
 
 .topBar
@@ -174,6 +179,7 @@ main
 		bottom: 24px;
 		left: 24px;
 		height: fit-content;
+		min-height: 120px;
 		border-radius: var(--main-border-radius);
 		overflow: clip;
 
@@ -210,7 +216,7 @@ main
 .dailyForecastContainer
 {
 	width: calc(100% - 48px);
-	min-height: calc(var(--main-border-radius) * 2);
+	min-height: 240px;
 	padding: 4px 16px;
 	background: var(--white-5);
 	border-radius: var(--main-border-radius);

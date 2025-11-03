@@ -1,0 +1,134 @@
+.page
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100svw;
+	height: fit-content;
+	min-height: 100svh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-wrap: nowrap;
+	transition: none;
+	z-index: 1;
+	background: var(--dark);
+}
+
+.topBar
+{
+	position: absolute;
+	top: calc(24px + env(safe-area-inset-top));
+	left: 24px;
+	right: 24px;
+	height: 50px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+	z-index: 1;
+
+	& .currentPageNameText
+	{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: var(--larger-font-size);
+		font-weight: 600;
+		color: var(--white-75);
+		text-align: center;
+	}
+}
+
+.mainContentContainer
+{
+	width: 100%;
+	height: fit-content;
+	padding: calc(24px + env(safe-area-inset-top) + 50px + 32px) 24px 24px 24px;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 16px;
+
+	& .settingsGroupContainer
+	{
+		width: 100%;
+		height: fit-content;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+
+		& .settingsGroupTitleText
+		{
+			width: 100%;
+			height: 32px;
+			padding: 0 16px;
+			line-height: 32px;
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--white-50);
+		}
+
+		& .settingsItem
+		{
+			width: 100%;
+			height: fit-content;
+			padding: 16px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: nowrap;
+			gap: 32px;
+
+			& .settingsItemTextsContainer
+			{
+				width: fit-content;
+				height: fit-content;
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				flex-shrink: 1;
+				gap: 8px;
+			}
+
+			& .settingsItemTitleText
+			{
+				font-size: var(--main-font-size);
+				font-weight: 600;
+				color: var(--white-75);
+				line-break: normal;
+				white-space: normal;
+			}
+
+			& .settingsItemDescriptionText
+			{
+				font-size: var(--smaller-font-size);
+				font-weight: 500;
+				line-height: 16px;
+				color: var(--white-50);
+				line-break: normal;
+				white-space: normal;
+			}
+
+			& button { flex-shrink: 0; }
+		}
+	}
+
+	& .settingsGroupSeparator
+	{
+		width: 100%;
+		height: 1.5px;
+		background: var(--white-10);
+	}
+}
+
+.dataProvidedByText
+{
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--white-25);
+	text-align: center;
+}

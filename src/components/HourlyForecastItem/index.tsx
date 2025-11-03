@@ -1,4 +1,4 @@
-import { weatherCodeToSVGName } from '../../hooks/useWeatherManager';
+import { useWeatherUtils } from '../../hooks/useWeatherUtils';
 import { SVG } from '../SVG';
 import styles from './HourlyForecastItem.module.scss';
 
@@ -13,6 +13,8 @@ interface Props
 
 export function HourlyForecastItem(props: Props)
 {
+	const { weatherCodeToSVGName } = useWeatherUtils();
+
 	return (
 		<div className={styles.container}>
 			<p className={styles.temperatureText}>{props.temperature}º</p>

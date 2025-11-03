@@ -10,7 +10,7 @@ export function useGeoLocation()
 
 		if (permissions.location === 'granted')
 		{
-			const pos = await getCurrentPosition({ enableHighAccuracy: true, timeout: 0, maximumAge: 0 });
+			const pos = await getCurrentPosition({ enableHighAccuracy: false, timeout: 0, maximumAge: 0 });
 			console.log(pos);
 			return { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
 		}
