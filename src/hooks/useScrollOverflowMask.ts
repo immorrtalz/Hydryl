@@ -11,8 +11,6 @@ export function useScrollOverflowMask(elementRef: RefObject<HTMLElement | null>)
 
 	useMotionValueEvent(scrollXProgress, "change", (value) =>
 	{
-		console.log(value, scrollXProgress.getPrevious());
-
 		if (value <= 0.005) animate(maskImage, `linear-gradient(to right, ${opaque}, ${opaque} ${left}, ${opaque} ${rightInset}, ${transparent})`);
 		else if (value >= 0.995) animate(maskImage, `linear-gradient(to right, ${transparent}, ${opaque} ${leftInset}, ${opaque} ${right}, ${opaque})`);
 		else if ((scrollXProgress.getPrevious() ?? 0) <= 0.005 || (scrollXProgress.getPrevious() ?? 0) >= 0.995)

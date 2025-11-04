@@ -46,7 +46,7 @@
 {
 	width: 100%;
 	height: fit-content;
-	padding: calc(24px + env(safe-area-inset-top) + 50px + 32px) 24px 24px 24px;
+	padding: calc(24px + env(safe-area-inset-top) + 50px + 32px) 24px 24px;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -75,7 +75,7 @@
 		{
 			width: 100%;
 			height: fit-content;
-			padding: 16px;
+			padding: 8px 0 8px 16px;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
