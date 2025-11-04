@@ -1,15 +1,5 @@
-import { createContext, useContext } from 'react';
-import { Locale } from "../hooks/useTranslate";
-
-export interface Settings
-{
-	locale: Locale;
-}
-
-export const initialSettings: Settings =
-{
-	locale: 'en',
-};
+import { createContext } from 'react';
+import { initialSettings, Settings } from '../misc/settings';
 
 const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([initialSettings, () => {}]);
 

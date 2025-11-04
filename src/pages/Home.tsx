@@ -86,7 +86,7 @@ function Home()
 
 						<div className={styles.currentTempContainer}>
 							<h1 className={styles.currentTempText}>{weather?.current.temperature_2m ?? "--"}</h1>
-							<h3 className={styles.currentTempText}>ºC</h3>
+							<h3 className={styles.currentTempText}>{settings.temperature === "celsius" ? "ºC" : "ºF"}</h3>
 						</div>
 
 						<div className={styles.currentDayNightTempContainer}>

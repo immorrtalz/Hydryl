@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { AnimatePresence } from "motion/react";
-import SettingsContext, { Settings, initialSettings } from './context/SettingsContext';
+import SettingsContext from './context/SettingsContext';
+import { initialSettings, Settings } from "./misc/settings";
 import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
 
@@ -17,7 +18,7 @@ function AnimatedRoutes()
 {
 	const location = useLocation();
 	const [settings, setSettings] = useState<Settings>(initialSettings);
-	
+
 	return (
 		<SettingsContext value={[settings, setSettings]}>
 			<AnimatePresence>
