@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import styles from "./Home.module.scss";
-import { WeatherData, useWeatherManager } from "../hooks/useWeatherManager";
+import { useWeatherManager } from "../hooks/useWeatherManager";
 import { useWeatherUtils } from "../hooks/useWeatherUtils";
 import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
 import { HourlyForecastItem } from "../components/HourlyForecastItem";
@@ -11,8 +11,9 @@ import { SVG } from "../components/SVG";
 import { CurrentWeatherDetailsItem } from "../components/CurrentWeatherDetailsItem";
 import { SunriseVisualElement } from "../components/SunriseVisualElement";
 import { Button, ButtonType } from "../components/Button";
-import { useTranslations } from "../hooks/useTranslate";
+import { useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
+import { settingOptions, settingTranslationKeys } from "../misc/settings";
 
 function Home()
 {
@@ -20,13 +21,14 @@ function Home()
 	const [isTransitionPending, startTransition] = useTransition();
 	const [settings] = useContext(SettingsContext);
 	const { translate, translateWeekday, translateMonth } = useTranslations();
-	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText } = useWeatherUtils();
+	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
+		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
 
-	const weatherManager = useWeatherManager();
-	const [weather, setWeather] = useState<WeatherData | null>(null);
+	const { weather, fetchWeather } = useWeatherManager();
+	const [isWeatherFetched, setIsWeatherFetched] = useState(false);
 
-	const currentHours: number = (weather?.current.time.getHours() ?? 0) + (weather?.current.time.getMinutes() ?? 0) / 60;
-	const sunrise: Date = weather?.daily.sunrise[0] ?? new Date(), sunset: Date = weather?.daily.sunset[0] ?? new Date();
+	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
+	const sunrise: Date = weather.daily.sunrise[0] ?? new Date(), sunset: Date = weather.daily.sunset[0] ?? new Date();
 	const daylightHours = (sunset.getTime() - sunrise.getTime()) / 1000 / 60 / 60;
 
 	const timeBackgroundGradients = ["early", "mid", "late", "day", "night"];
@@ -50,11 +52,29 @@ function Home()
 		return timeBackgroundGradients[gradientIndex];
 	};
 
-	const hourlyForecastRef = useRef(null);
-	const hourlyForecastMaskImage = useScrollOverflowMask(hourlyForecastRef);
+	const hoursTo12Format = (hours: number, minutes?: number): string =>
+	{
+		const adjustedHours = hours - (hours == 24 ? 24 : hours > 12 ? 12 : 0);
+		return `${adjustedHours}${minutes ? ':' + minutes?.toString().padStart(2, '0') : ''} ${hours < 12 ? 'A' : 'P'}M`
+	}
 
-	useEffect(() => console.log("Current locale in Home:", settings.locale), [settings.locale]);
-	useEffect(() => { weatherManager.fetchWeather().then(weather => setWeather(weather)); }, []);
+	const hourlyForecastRef = useRef(null);
+	const hourlyForecastMaskImage = weather ? useScrollOverflowMask(hourlyForecastRef) : '';
+
+	useEffect(() =>
+	{
+		const fetchWeatherAsync = async () =>
+		{
+			try
+			{
+				await fetchWeather();
+				setIsWeatherFetched(true);
+			}
+			catch(error) { console.warn("Failed to fetch weather:", error) }
+		};
+
+		if (!isWeatherFetched) fetchWeatherAsync();
+	}, []);
 
 	return (
 		<motion.div className={styles.page}
@@ -80,33 +100,39 @@ function Home()
 
 					<div className={styles.currentWeatherContainer}>
 						<div className={styles.currentPrecipContainer}>
-							<SVG name={weatherCodeToSVGName(weather?.current.weather_code ?? -1, weather?.current.is_day ?? true)} className={styles.currentPrecipIcon}/>
-							<p className={styles.currentPrecipText}>{weatherCodeToText(weather?.current.weather_code ?? -1)}</p>
+							<SVG name={weatherCodeToSVGName(weather.current.weather_code ?? -1, weather.current.is_day ?? true)} className={styles.currentPrecipIcon}/>
+							<p className={styles.currentPrecipText}>{weatherCodeToText(weather.current.weather_code ?? -1)}</p>
 						</div>
 
 						<div className={styles.currentTempContainer}>
-							<h1 className={styles.currentTempText}>{weather?.current.temperature_2m ?? "--"}</h1>
+							<h1 className={styles.currentTempText}>{settings.temperature === "celsius" ? weather.current.temperature_2m :
+								Math.round(weather.current.temperature_2m * 9 / 5 + 32)}</h1>
 							<h3 className={styles.currentTempText}>{settings.temperature === "celsius" ? "ºC" : "ºF"}</h3>
 						</div>
 
 						<div className={styles.currentDayNightTempContainer}>
-							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_min[0] ?? "--"}º</p>
+							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperature_2m_min[0] :
+								celsiusToFahrenheit(weather.daily.temperature_2m_min[0])}º</p>
 							<p className={styles.currentDayNightTempText}>/</p>
-							<p className={styles.currentDayNightTempText}>{weather?.daily.temperature_2m_max[0] ?? "--"}º</p>
+							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperature_2m_max[0] :
+								celsiusToFahrenheit(weather.daily.temperature_2m_max[0])}º</p>
 						</div>
 					</div>
 
 					<div className={styles.hourlyForecastContainer}>
 						<motion.div className={styles.hourlyForecastItems} ref={hourlyForecastRef} style={{ maskImage: hourlyForecastMaskImage }}>
 							{
-								weather?.hourly.time.map((time, index) =>
+								weather.hourly.time.map((time, index) =>
 									<HourlyForecastItem key={`${index}-${time}`}
 										temperature={Math.round(weather.hourly.temperature_2m[index])}
 										weatherCode={weather.hourly.weather_code[index]}
 										isDay={weather.hourly.is_day[index]}
+										isNightVariant={!weather.hourly.is_day[0]}
 										precipProbability={weather.hourly.precipitation_probability[index]}
-										time={index === 0 ? "Now" : time.getHours() === 0 ?
-											`${time.getDate().toString().padStart(2, '0')}.${(time.getMonth() + 1).toString().padStart(2, '0')}` : time.getHours() + ":00"}/>)
+										time={index === 0 ? "Now" :
+											time.getHours() === 0 ? `${time.getDate().toString().padStart(2, '0')}.${(time.getMonth() + 1).toString().padStart(2, '0')}` :
+											settings.time === "12" ? hoursTo12Format(time.getHours()) :
+											time.getHours() + ":00"}/>)
 							}
 						</motion.div>
 					</div>
@@ -115,48 +141,62 @@ function Home()
 
 				<div className={styles.dailyForecastContainer}>
 					{
-						weather?.daily.time.map((time, index) => (
+						weather.daily.time.map((time, index) => (
 							index < 5 &&
 								<DailyForecastItem key={`${index}-${time}`}
 									date={index === 0 ? translate("tomorrow") :
 										`${translateWeekday(time.getDay(), true)}, ${translateMonth(time.getMonth(), true)} ${time.getDate()}`}
 									weatherCode={weather.daily.weather_code[index]}
 									precipitationProbability={weather.daily.precipitation_probability_max[index]}
-									temperatureNight={Math.round(weather.daily.temperature_2m_min[index])}
-									temperatureDay={Math.round(weather.daily.temperature_2m_max[index])}/>))
+									temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index]) :
+										celsiusToFahrenheit(weather.daily.temperature_2m_min[index])}
+									temperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_max[index]) :
+										celsiusToFahrenheit(weather.daily.temperature_2m_max[index])}/>))
 					}
 				</div>
 			</div>
 
 			<div className={styles.mainContentContainer}>
 				<div className={styles.currentWeatherDetailsContainer}>
-					<CurrentWeatherDetailsItem title={translate("wind")} content={`${weather?.current.wind_speed_10m} m/s ${degreesToCompassDirection(weather?.current.wind_direction_10m || 0)}`}/>
-					<CurrentWeatherDetailsItem title={translate("wind_gusts")} content={`${weather?.current.wind_gusts_10m} m/s`}/>
-					<CurrentWeatherDetailsItem title={translate("humidity")} content={`${weather?.current.relative_humidity_2m} %`}/>
-					<CurrentWeatherDetailsItem title={translate("precipitation")} content={`${weather?.current.precipitation} mm`}/>
-					<CurrentWeatherDetailsItem title={translate("precipitation_probability")} content={`${weather?.current.precipitation_probability} %`}/>
-					<CurrentWeatherDetailsItem title={translate("pressure")} content={`${weather?.current.surface_pressure} mmHg`}/>
-					<CurrentWeatherDetailsItem title={translate("cloud_cover")} content={`${weather?.current.cloud_cover} %`}/>
-					<CurrentWeatherDetailsItem title={translate("visibility")} content={`${weather?.current.visibility} km`}/>
-					<CurrentWeatherDetailsItem title={translate("uv_index")} content={`${weather?.current.uv_index} (${uvIndexToText(weather?.current.uv_index || 0)})`}/>
+					<CurrentWeatherDetailsItem title={translate("wind")}
+						content={`${windSpeedToText(weather.current.wind_speed_10m, settings.windSpeed)} ${degreesToCompassDirection(weather.current.wind_direction_10m || 0)}`}/>
+					<CurrentWeatherDetailsItem title={translate("wind_gusts")}
+						content={`${windSpeedToText(weather.current.wind_gusts_10m, settings.windSpeed)}`}/>
+					<CurrentWeatherDetailsItem title={translate("humidity")}
+						content={`${weather.current.relative_humidity_2m} %`}/>
+					<CurrentWeatherDetailsItem title={translate("precipitation")}
+						content={`${precipitationToText(weather.current.precipitation, settings.precipitation)}`}/>
+					<CurrentWeatherDetailsItem title={translate("precipitation_probability")}
+						content={`${weather.current.precipitation_probability} %`}/>
+					<CurrentWeatherDetailsItem title={translate("pressure")}
+						content={`${pressureToText(weather.current.surface_pressure, settings.pressure)}`}/>
+					<CurrentWeatherDetailsItem title={translate("cloud_cover")}
+						content={`${weather.current.cloud_cover} %`}/>
+					<CurrentWeatherDetailsItem title={translate("visibility")}
+						content={`${distanceToText(weather.current.visibility, settings.distance)}`}/>
+					<CurrentWeatherDetailsItem title={translate("uv_index")}
+						content={`${weather.current.uv_index} (${uvIndexToText(weather.current.uv_index || 0)})`}/>
 				</div>
 
 				<div className={`${styles.currentWeatherDetailsContainer} ${styles.sunriseSunsetContainer}`}>
 					<div className={styles.sunriseSunsetItem}>
-						<p className={styles.sunriseSunsetItemContentText}>{sunrise.getHours()}:{sunrise.getMinutes().toString().padStart(2, '0')}</p>
+						<p className={styles.sunriseSunsetItemContentText}>{settings.time === "12" ? hoursTo12Format(sunrise.getHours(), sunrise.getMinutes()) :
+							sunrise.getHours() + ":" + sunrise.getMinutes().toString().padStart(2, "0")}</p>
 						<p className={styles.sunriseSunsetItemTitleText}>{translate("sunrise")}</p>
 					</div>
 
 					<SunriseVisualElement currentHours={currentHours} daylightHours={daylightHours}/>
 
 					<div className={styles.sunriseSunsetItem}>
-						<p className={styles.sunriseSunsetItemContentText}>{sunset.getHours()}:{sunset.getMinutes().toString().padStart(2, '0')}</p>
+						<p className={styles.sunriseSunsetItemContentText}>{settings.time === "12" ? hoursTo12Format(sunset.getHours(), sunset.getMinutes()) :
+							sunset.getHours() + ":" + sunset.getMinutes().toString().padStart(2, "0")}</p>
 						<p className={styles.sunriseSunsetItemTitleText}>{translate("sunset")}</p>
 					</div>
 				</div>
 
 				<p className={styles.dataProvidedByText}>{translate("data_provided_by")}</p>
 			</div>
+
 		</motion.div>
 	);
 }

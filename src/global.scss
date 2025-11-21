@@ -153,6 +153,7 @@
 	color: var(--white-90);
 
 	interpolate-size: allow-keywords;
+	-webkit-tap-highlight-color: transparent;
 }
 
 *, *::before, *::after, *:not(path):not(g)

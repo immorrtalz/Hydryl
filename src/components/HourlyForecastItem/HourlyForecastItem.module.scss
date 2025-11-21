@@ -14,6 +14,8 @@
 	{
 		background: var(--black-20);
 		border-radius: calc(var(--main-border-radius) - 8px);
+
+		&.nightVariant { background: var(--white-5); }
 	}
 
 	& .temperatureText

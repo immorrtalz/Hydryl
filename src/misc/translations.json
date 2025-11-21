@@ -19,6 +19,66 @@
 		"en": "General",
 		"ru": "Общие"
 	},
+	"language":
+	{
+		"en": "Language",
+		"ru": "Язык"
+	},
+	"time":
+	{
+		"en": "Time",
+		"ru": "Время"
+	},
+	"measure_units":
+	{
+		"en": "Measure units",
+		"ru": "Единицы измерения"
+	},
+	"temperature":
+	{
+		"en": "Temperature",
+		"ru": "Температура"
+	},
+	"wind_speed":
+	{
+		"en": "Wind speed",
+		"ru": "Скорость ветра"
+	},
+	"distance":
+	{
+		"en": "Distance",
+		"ru": "Расстояние"
+	},
+	"about_app_title":
+	{
+		"en": "About",
+		"ru": "О приложении"
+	},
+	"source_code_title":
+	{
+		"en": "Source",
+		"ru": "Исходный код"
+	},
+	"source_code_text":
+	{
+		"en": "This app is open source",
+		"ru": "Это приложение с открытым исходным кодом"
+	},
+	"check_for_updates_title":
+	{
+		"en": "Updates",
+		"ru": "Обновления"
+	},
+	"check_for_updates_text":
+	{
+		"en": "Official releases from GitHub",
+		"ru": "Официальные релизы с GitHub"
+	},
+	"check_for_updates_button":
+	{
+		"en": "Check",
+		"ru": "Проверить"
+	},
 	"tomorrow":
 	{
 		"en": "Tomorrow",
@@ -402,7 +462,7 @@
 	"uv_index":
 	{
 		"en": "UV Index",
-		"ru": "UV индекс"
+		"ru": "УФ индекс"
 	},
 	"sunrise":
 	{
@@ -418,5 +478,100 @@
 	{
 		"en": "Data provided by open-meteo.com",
 		"ru": "Данные предоставлены open-meteo.com"
+	},
+	"setting_locale_en":
+	{
+		"en": "English",
+		"ru": "English"
+	},
+	"setting_locale_ru":
+	{
+		"en": "Русский",
+		"ru": "Русский"
+	},
+	"setting_time_12":
+	{
+		"en": "12 h",
+		"ru": "12 ч"
+	},
+	"setting_time_24":
+	{
+		"en": "24 h",
+		"ru": "24 ч"
+	},
+	"setting_temperature_celsius":
+	{
+		"en": "ºC",
+		"ru": "ºC"
+	},
+	"setting_temperature_fahrenheit":
+	{
+		"en": "ºF",
+		"ru": "ºF"
+	},
+	"setting_windSpeed_kmh":
+	{
+		"en": "km/h",
+		"ru": "км/ч"
+	},
+	"setting_windSpeed_ms":
+	{
+		"en": "m/s",
+		"ru": "м/с"
+	},
+	"setting_windSpeed_mph":
+	{
+		"en": "mi/h",
+		"ru": "миль/ч"
+	},
+	"setting_windSpeed_knots":
+	{
+		"en": "knots",
+		"ru": "узл."
+	},
+	"setting_precipitation_mm":
+	{
+		"en": "mm",
+		"ru": "мм"
+	},
+	"setting_precipitation_inch":
+	{
+		"en": "in",
+		"ru": "дюйм"
+	},
+	"setting_pressure_atm":
+	{
+		"en": "atm",
+		"ru": "атм"
+	},
+	"setting_pressure_mmHg":
+	{
+		"en": "mmHg",
+		"ru": "мм рт. ст."
+	},
+	"setting_pressure_mbar":
+	{
+		"en": "mbar",
+		"ru": "мбар"
+	},
+	"setting_pressure_psi":
+	{
+		"en": "psi",
+		"ru": "psi"
+	},
+	"setting_distance_m":
+	{
+		"en": "m",
+		"ru": "м"
+	},
+	"setting_distance_km":
+	{
+		"en": "km",
+		"ru": "км"
+	},
+	"setting_distance_mi":
+	{
+		"en": "mi",
+		"ru": "мил"
 	}
 }

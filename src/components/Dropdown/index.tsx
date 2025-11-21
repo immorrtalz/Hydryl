@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './Dropdown.module.scss';
 import { SVG } from '../SVG';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from '../../hooks/useTranslations';
 
 interface DropdownOption
 {
@@ -12,7 +13,7 @@ interface DropdownOption
 interface Props
 {
 	options: DropdownOption[];
-	currentOptionIndex?: number;
+	defaultOptionIndex?: number;
 	disabled?: boolean;
 	onClick?: (...args: any[]) => any;
 	onOptionClick?: (...args: any[]) => any;
@@ -22,7 +23,7 @@ export function Dropdown(props: Props)
 {
 	if (props.options.length == 0) return (<></>);
 
-	const [currentOptionIndex, setCurrentOptionIndex] = useState(props.currentOptionIndex ?? 0);
+	const [currentOptionIndex, setCurrentOptionIndex] = useState(props.defaultOptionIndex ?? 0);
 	const [isOpen, setIsOpen] = useState(false);
 
 	function onClick(_e: React.MouseEvent<HTMLElement> | null = null)
