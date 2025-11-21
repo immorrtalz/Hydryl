@@ -1,4 +1,5 @@
-import { useTranslations } from "./useTranslate";
+import { Distance, Precipitation, Pressure, settingOptions, settingTranslationKeys, WindSpeed } from "../misc/settings";
+import { TranslationKey, useTranslations } from "./useTranslations";
 
 export function useWeatherUtils()
 {
@@ -7,7 +8,7 @@ export function useWeatherUtils()
 	return {
 		weatherCodeToText: (code: number): string =>
 		{
-			const weatherTranslationKeys: Record<number, string> =
+			const weatherTranslationKeys: Record<number, TranslationKey> =
 			{
 				0: "clear",
 				1: "mainly_clear",
@@ -81,14 +82,65 @@ export function useWeatherUtils()
 
 		degreesToCompassDirection: (degrees: number): string =>
 		{
-			const directions = ["wind_N", "wind_NW", "wind_W", "wind_SW", "wind_S", "wind_SE", "wind_E", "wind_NE"];
-			return translate(directions[Math.ceil(((degrees - 22.5) / 45))]);
+			const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+			return translate("wind_" + directions[Math.round(degrees / 45) % directions.length] as TranslationKey);
 		},
 
 		uvIndexToText: (uvIndex: number): string =>
 		{
 			const key = uvIndex <= 2 ? "uv_low" : uvIndex <= 5 ? "uv_moderate" : uvIndex <= 7 ? "uv_high" : uvIndex <= 10 ? "uv_very_high" : "uv_extreme";
 			return translate(key);
+		},
+
+		celsiusToFahrenheit: (celsius: number): number => Math.round((celsius * 9 / 5) + 32),
+
+		windSpeedToText: (windSpeed: number, windSpeedUnit: WindSpeed): string =>
+		{
+			const conversionMultipliers: Record<WindSpeed, number> =
+			{
+				ms: 1,
+				kmh: 3.6,
+				mph: 2.237,
+				knots: 1.94384
+			};
+
+			return `${Math.round(windSpeed * conversionMultipliers[windSpeedUnit])} ${translate(settingTranslationKeys["windSpeed"][settingOptions.windSpeed.indexOf(windSpeedUnit)])}`;
+		},
+
+		precipitationToText: (precipitation: number, precipitationUnit: Precipitation): string =>
+		{
+			const conversionMultipliers: Record<Precipitation, number> =
+			{
+				mm: 1,
+				inch: 0.03937,
+			};
+
+			return `${Math.round(precipitation * conversionMultipliers[precipitationUnit])} ${translate(settingTranslationKeys["precipitation"][settingOptions.precipitation.indexOf(precipitationUnit)])}`;
+		},
+
+		pressureToText: (pressure: number, pressureUnit: Pressure): string =>
+		{
+			const conversionMultipliers: Record<Pressure, number> =
+			{
+				atm: 0.00131579,
+				mmHg: 1,
+				mbar: 1.33322,
+				psi: 0.0193368
+			};
+
+			return `${Math.round(pressure * conversionMultipliers[pressureUnit])} ${translate(settingTranslationKeys["pressure"][settingOptions.pressure.indexOf(pressureUnit)])}`;
+		},
+
+		distanceToText: (distance: number, distanceUnit: Distance): string =>
+		{
+			const conversionMultipliers: Record<Distance, number> =
+			{
+				m: 1000,
+				km: 1,
+				mi: 0.621371
+			};
+
+			return `${Math.round(distance * conversionMultipliers[distanceUnit])} ${translate(settingTranslationKeys["distance"][settingOptions.distance.indexOf(distanceUnit)])}`;
 		}
 	};
 }

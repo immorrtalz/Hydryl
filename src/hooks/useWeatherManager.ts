@@ -1,5 +1,5 @@
 import { fetchWeatherApi } from "openmeteo";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export interface WeatherData
 {
@@ -42,6 +42,47 @@ export interface WeatherData
 	};
 }
 
+const initialWeatherData: WeatherData =
+{
+	current:
+	{
+		time: new Date(),
+		is_day: true,
+		weather_code: 0,
+		temperature_2m: 0,
+		surface_pressure: 0,
+		wind_speed_10m: 0,
+		wind_direction_10m: 0,
+		wind_gusts_10m: 0,
+		relative_humidity_2m: 0,
+		precipitation: 0,
+		precipitation_probability: 0,
+		visibility: 0,
+		cloud_cover: 0,
+		uv_index: 0
+	},
+	hourly:
+	{
+		time: [],
+		is_day: [],
+		weather_code: [],
+		temperature_2m: [],
+		precipitation_probability: []
+	},
+	daily:
+	{
+		time: [],
+		weather_code: [],
+		temperature_2m_min: [],
+		temperature_2m_max: [],
+		wind_direction_10m_dominant: [],
+		wind_speed_10m_max: [],
+		sunrise: [],
+		sunset: [],
+		precipitation_probability_max: []
+	}
+};
+
 export function useWeatherManager()
 {
 	const apiUrl = "https://api.open-meteo.com/v1/forecast";
@@ -64,6 +105,7 @@ export function useWeatherManager()
 	};
 
 	const [weatherFetchState, setWeatherFetchState] = useState<'idle' | 'fetching'>('idle');
+	const [weather, setWeather] = useState<WeatherData>(initialWeatherData);
 
 	const setLocationCoords = (latitude: number, longitude: number) =>
 	{
@@ -75,9 +117,9 @@ export function useWeatherManager()
 	const setWindSpeedUnit = (unit: 'kmh' | 'ms' | 'mph' | 'kn') => weatherFetchParams.wind_speed_unit = unit;
 	const setPrecipitationUnit = (unit: 'mm' | 'inch') => weatherFetchParams.precipitation_unit = unit;
 
-	const fetchWeather = async (): Promise<WeatherData | null> =>
+	const fetchWeather = async (): Promise<void> =>
 	{
-		if (weatherFetchState === 'fetching') return null;
+		if (weatherFetchState === 'fetching') return;
 
 		try
 		{
@@ -143,20 +185,16 @@ export function useWeatherManager()
 				}
 			};
 
-			/* console.log(weatherData.hourly); */
-			/* console.log(weatherData.daily); */
-
 			setWeatherFetchState('idle');
-
-			return weatherData;
+			setWeather(weatherData);
 		}
 		catch (error)
 		{
 			setWeatherFetchState('idle');
 			console.error("Error fetching weather data:", error);
-			return null;
+			return;
 		}
 	};
 
-	return { weatherFetchState, setLocationCoords, setTemperatureUnit, setWindSpeedUnit, setPrecipitationUnit, fetchWeather };
+	return { weatherFetchState, weather, fetchWeather, setLocationCoords };
 }

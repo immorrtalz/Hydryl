@@ -46,7 +46,7 @@
 {
 	width: 100%;
 	height: fit-content;
-	padding: calc(24px + env(safe-area-inset-top) + 50px + 32px) 24px 24px;
+	padding: calc(24px + env(safe-area-inset-top) + 50px + 32px) 16px 24px;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -101,6 +101,7 @@
 				color: var(--white-75);
 				line-break: normal;
 				white-space: normal;
+				letter-spacing: -0.5px;
 			}
 
 			& .settingsItemDescriptionText
@@ -111,6 +112,7 @@
 				color: var(--white-50);
 				line-break: normal;
 				white-space: normal;
+				letter-spacing: -0.25px;
 			}
 
 			& button { flex-shrink: 0; }
