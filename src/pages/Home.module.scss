@@ -1,3 +1,33 @@
+::view-transition-old(homeTransition), ::view-transition-new(homeTransition)
+{
+	animation-duration: 0.3s;
+	animation-timing-function: cubic-bezier(0.66, 0, 0.34, 1);
+}
+
+::view-transition-group(homeTransition) { z-index: 0; }
+::view-transition-old(homeTransition) { animation-name: out; }
+::view-transition-new(homeTransition) { animation-name: in; }
+
+@keyframes out
+{
+	to
+	{
+		pointer-events: none;
+		visibility: hidden;
+		opacity: 0.5;
+	}
+}
+
+@keyframes in
+{
+	from
+	{
+		pointer-events: none;
+		visibility: hidden;
+		opacity: 0.5;
+	}
+}
+
 .page
 {
 	position: absolute;
@@ -12,6 +42,7 @@
 	flex-wrap: nowrap;
 	transition: none;
 	z-index: 0;
+	view-transition-name: homeTransition;
 }
 
 .topBar

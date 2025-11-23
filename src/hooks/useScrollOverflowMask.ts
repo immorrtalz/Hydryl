@@ -1,21 +1,68 @@
-import { animate } from "motion"
-import { useMotionValue, useMotionValueEvent, useScroll } from "motion/react"
-import { RefObject } from "react";
+import { useEffect, useRef } from "react";
 
-export function useScrollOverflowMask(elementRef: RefObject<HTMLElement | null>)
+const leftInset = 15, rightInset = 85, scrollEdgeThreshold = 0.005, scrollStopThreshold = 0.05;
+
+const getScrollXProgress = (element: HTMLElement): number => element.scrollLeft / (element.scrollWidth - element.clientWidth);
+
+export function useScrollOverflowMask(elementRef: React.RefObject<HTMLElement | null>)
 {
-	const left = `0%`, right = `100%`, leftInset = `15%`, rightInset = `85%`, transparent = `#0000`, opaque = `#000`;
+	const animationIdRef = useRef<number | null>(null);
 
-	const { scrollXProgress } = useScroll({ container: elementRef });
-	const maskImage = useMotionValue(`linear-gradient(to right, ${opaque}, ${opaque} ${left}, ${opaque} ${rightInset}, ${transparent})`);
-
-	useMotionValueEvent(scrollXProgress, "change", (value) =>
+	useEffect(() =>
 	{
-		if (value <= 0.005) animate(maskImage, `linear-gradient(to right, ${opaque}, ${opaque} ${left}, ${opaque} ${rightInset}, ${transparent})`);
-		else if (value >= 0.995) animate(maskImage, `linear-gradient(to right, ${transparent}, ${opaque} ${leftInset}, ${opaque} ${right}, ${opaque})`);
-		else if ((scrollXProgress.getPrevious() ?? 0) <= 0.005 || (scrollXProgress.getPrevious() ?? 0) >= 0.995)
-			animate(maskImage, `linear-gradient(to right, ${transparent}, ${opaque} ${leftInset}, ${opaque} ${rightInset}, ${transparent})`);
-	});
+		const element = elementRef.current;
+		if (!element) return;
 
-	return maskImage;
+		element.style.setProperty('--mask-left-stop', '0%');
+		element.style.setProperty('--mask-right-stop', '85%');
+		element.style.maskImage = `linear-gradient(to right, #0000, #000 var(--mask-left-stop), #000 var(--mask-right-stop), #0000)`;
+
+		const updateStops = () =>
+		{
+			if (!element.isConnected)
+			{
+				if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+				return;
+			}
+
+			const currentScrollXProgress = getScrollXProgress(element);
+
+			const currentLeftStop = Number.parseFloat(element.style.getPropertyValue('--mask-left-stop')) || 0;
+			const currentRightStop = Number.parseFloat(element.style.getPropertyValue('--mask-right-stop')) || 0;
+
+			const targetLeftStop = currentScrollXProgress <= scrollEdgeThreshold ? 0 : leftInset;
+			const targetRightStop = currentScrollXProgress >= 1 - scrollEdgeThreshold ? 100 : rightInset;
+
+			if (currentLeftStop !== targetLeftStop || currentRightStop !== targetRightStop)
+			{
+				const newLeftStop = Math.abs(currentLeftStop - targetLeftStop) > scrollStopThreshold ?
+					Math.round(lerp(currentLeftStop, targetLeftStop, 0.1) * 10) / 10 : targetLeftStop;
+
+				const newRightStop = Math.abs(currentRightStop - targetRightStop) > scrollStopThreshold ?
+					Math.round(lerp(currentRightStop, targetRightStop, 0.1) * 10) / 10 : targetRightStop;
+
+				element.style.setProperty('--mask-left-stop', newLeftStop + '%');
+				element.style.setProperty('--mask-right-stop', newRightStop + '%');
+
+				if (newLeftStop !== targetLeftStop || newRightStop !== targetRightStop)
+					animationIdRef.current = requestAnimationFrame(updateStops);
+			}
+		};
+
+		const handleScroll = () =>
+		{
+			if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+			animationIdRef.current = requestAnimationFrame(updateStops);
+		};
+
+		element.addEventListener('scroll', handleScroll);
+
+		return () =>
+		{
+			element.removeEventListener('scroll', handleScroll)
+			if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+		};
+	}, []);
 }
+
+const lerp = (start: number, end: number, t: number): number => start + (end - start) * t;
