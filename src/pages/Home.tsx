@@ -1,8 +1,7 @@
-import { useContext, useEffect, useRef, useState, useTransition } from "react";
-import { useNavigate } from "react-router";
-import { motion } from "motion/react";
+import { useContext, useRef, useTransition } from "react";
+import { useLoaderData, useNavigate } from "react-router";
 import styles from "./Home.module.scss";
-import { useWeatherManager } from "../hooks/useWeatherManager";
+import { WeatherData } from "../hooks/useWeatherManager";
 import { useWeatherUtils } from "../hooks/useWeatherUtils";
 import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
 import { HourlyForecastItem } from "../components/HourlyForecastItem";
@@ -13,7 +12,6 @@ import { SunriseVisualElement } from "../components/SunriseVisualElement";
 import { Button, ButtonType } from "../components/Button";
 import { useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
-import { settingOptions, settingTranslationKeys } from "../misc/settings";
 
 function Home()
 {
@@ -24,8 +22,9 @@ function Home()
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
 
-	const { weather, fetchWeather } = useWeatherManager();
-	const [isWeatherFetched, setIsWeatherFetched] = useState(false);
+	const { weather, isWeatherFetched } = useLoaderData() as {weather: WeatherData, isWeatherFetched: boolean};
+
+	if (!isWeatherFetched) return <div className={styles.page}/>;
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
 	const sunrise: Date = weather.daily.sunrise[0] ?? new Date(), sunset: Date = weather.daily.sunset[0] ?? new Date();
@@ -58,33 +57,14 @@ function Home()
 		return `${adjustedHours}${minutes ? ':' + minutes?.toString().padStart(2, '0') : ''} ${hours < 12 ? 'A' : 'P'}M`
 	}
 
-	const hourlyForecastRef = useRef(null);
-	const hourlyForecastMaskImage = weather ? useScrollOverflowMask(hourlyForecastRef) : '';
-
-	useEffect(() =>
-	{
-		const fetchWeatherAsync = async () =>
-		{
-			try
-			{
-				await fetchWeather();
-				setIsWeatherFetched(true);
-			}
-			catch(error) { console.warn("Failed to fetch weather:", error) }
-		};
-
-		if (!isWeatherFetched) fetchWeatherAsync();
-	}, []);
+	const hourlyForecastRef = useRef<HTMLDivElement | null>(null);
+	useScrollOverflowMask(hourlyForecastRef);
 
 	return (
-		<motion.div className={styles.page}
-			initial={{ opacity: 0.5, pointerEvents: "none" }}
-			animate={{ opacity: 1, pointerEvents: "all" }}
-			exit={{ opacity: 0.5, pointerEvents: "none" }}
-			transition={{ duration: 0.3, ease: [0.66, 0, 0.34, 1] }}>
+		<div className={styles.page}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/settings"))}>
+				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/settings", { viewTransition: true }))}>
 					<SVG name="settings"/>
 				</Button>
 
@@ -120,7 +100,7 @@ function Home()
 					</div>
 
 					<div className={styles.hourlyForecastContainer}>
-						<motion.div className={styles.hourlyForecastItems} ref={hourlyForecastRef} style={{ maskImage: hourlyForecastMaskImage }}>
+						<div className={styles.hourlyForecastItems} ref={hourlyForecastRef} /* style={{ maskImage: hourlyForecastMaskImage }} */>
 							{
 								weather.hourly.time.map((time, index) =>
 									<HourlyForecastItem key={`${index}-${time}`}
@@ -134,7 +114,7 @@ function Home()
 											settings.time === "12" ? hoursTo12Format(time.getHours()) :
 											time.getHours() + ":00"}/>)
 							}
-						</motion.div>
+						</div>
 					</div>
 
 				</div>
@@ -197,7 +177,7 @@ function Home()
 				<p className={styles.dataProvidedByText}>{translate("data_provided_by")}</p>
 			</div>
 
-		</motion.div>
+		</div>
 	);
 }
 

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import styles from './Dropdown.module.scss';
 import { SVG } from '../SVG';
 import { AnimatePresence, motion } from 'motion/react';
-import { useTranslations } from '../../hooks/useTranslations';
 
 interface DropdownOption
 {

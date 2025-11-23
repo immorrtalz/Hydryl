@@ -1,6 +1,5 @@
-import { useCallback, useContext, useEffect, useState, useTransition } from "react";
+import { useContext, useEffect, useState, useTransition } from "react";
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
 import styles from "./Settings.module.scss";
 import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
@@ -20,14 +19,14 @@ function SettingsPage()
 
 	const [envParams, setEnvParams] = useState<string[]>(["", "", "", ""]);
 
-	const getSettingOptions = useCallback((key: keyof Settings) =>
+	const getSettingOptions = (key: keyof Settings) =>
 		settingOptions[key].map((value, index) => (
 		{
 			title: translate(settingTranslationKeys[key][index]),
 			value
-		})), [translate]);
+		}));
 
-	const changeSetting = useCallback((key: keyof Settings, value: Settings[typeof key]) => setSettings({...settings, [key]: value}), [setSettings]);
+	const changeSetting = (key: keyof Settings, value: Settings[typeof key]) => setSettings({...settings, [key]: value});
 
 	useEffect(() =>
 	{
@@ -42,21 +41,22 @@ function SettingsPage()
 
 				setEnvParams([appVersion, osArch, osPlatform, osVer]);
 			}
-			catch(error) { console.warn("Failed to get environment info:", error) }
+			catch (error) { /* console.warn("Failed to get environment info:", error) */ }
 		};
 
 		updateEnvParams();
 	}, []);
 
+	useEffect(() =>
+	{
+		console.log("Settings Loaded");
+	}, []);
+
 	return (
-		<motion.div className={styles.page}
-			initial={{ pointerEvents: "none", visibility: "hidden", x: "-100%" }}
-			animate={{ pointerEvents: "all", visibility: "visible", x: "0" }}
-			exit={{ pointerEvents: "none", visibility: "hidden", x: "-100%" }}
-			transition={{ duration: 0.3, ease: [0.66, 0, 0.34, 1] }}>
+		<div className={styles.page}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/"))}>
+				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/", { viewTransition: true }))}>
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p className={styles.currentPageNameText}>{translate("settings")}</p>
@@ -158,9 +158,8 @@ function SettingsPage()
 				</div>
 
 			</div>
-		</motion.div>
+		</div>
 	);
 }
 
 export default SettingsPage;
-//export default React.memo(SettingsPage);

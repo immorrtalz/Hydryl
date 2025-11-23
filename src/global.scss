@@ -156,12 +156,7 @@
 	-webkit-tap-highlight-color: transparent;
 }
 
-*, *::before, *::after, *:not(path):not(g)
-{
-	transition: all 0.2s;
-
-	@media (prefers-reduced-motion) { transition: all 0s !important; }
-}
+*, *::before, *::after, *:not(path):not(g) { transition: all 0.2s; }
 
 h1, h2, h3, h4, h5, h6, p, a
 {
