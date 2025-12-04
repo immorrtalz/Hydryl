@@ -1,6 +1,6 @@
 [package]
 name = "hydryl"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["EVERMEDIA PROJECT"]
 edition = "2021"
 
@@ -20,6 +20,7 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 tauri-plugin-fs = "2"
+tauri-plugin-os = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-geolocation = "2"
 serde = { version = "1", features = ["derive"] }

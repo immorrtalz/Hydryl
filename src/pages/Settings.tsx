@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useTransition } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import styles from "./Settings.module.scss";
 import { SVG } from "../components/SVG";
@@ -7,17 +7,19 @@ import { Button, ButtonType } from "../components/Button";
 import SettingsContext from '../context/SettingsContext';
 import { Dropdown } from "../components/Dropdown";
 import { getVersion } from '@tauri-apps/api/app';
-import { arch, platform, version as osVersion } from '@tauri-apps/plugin-os';
+import { arch, version as osVersion, type } from '@tauri-apps/plugin-os';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { settingTranslationKeys, settingOptions, Settings } from "../misc/settings";
+import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
+import { confirm, message } from '@tauri-apps/plugin-dialog';
 
 function SettingsPage()
 {
 	const navigate = useNavigate();
-	const [isTransitionPending, startTransition] = useTransition();
 	const [settings, setSettings] = useContext(SettingsContext);
 	const { translate } = useTranslations();
 
-	const [envParams, setEnvParams] = useState<string[]>(["", "", "", ""]);
+	const [envParams, setEnvParams] = useState<string[]>(["", ""]);
 
 	const getSettingOptions = (key: keyof Settings) =>
 		settingOptions[key].map((value, index) => (
@@ -28,6 +30,23 @@ function SettingsPage()
 
 	const changeSetting = (key: keyof Settings, value: Settings[typeof key]) => setSettings({...settings, [key]: value});
 
+	const openGitHubRepo = async () => await openUrl('https://github.com/immorrtalz/Hydryl').catch(e => console.error(e));
+
+	const { getUpdateUrl } = useGitHubReleaseCheck();
+
+	const checkForUpdate = async () =>
+	{
+		const updateUrl = await getUpdateUrl();
+
+		if (updateUrl !== "")
+		{
+			const userConfirmedDownload = await confirm('Download update directly from GitHub?\nYou will need to install it manually', { title: 'Update available', kind: 'info' });
+			if (userConfirmedDownload) await openUrl(updateUrl)
+				.catch(async e => await message(`Url: ${updateUrl}\n` + (e instanceof Error ? e.message : String(e)), { title: "Couldn't open the url", kind: 'error' }));
+		}
+		else await message('You are using the latest version already', { title: 'No updates available', kind: 'info' });
+	};
+
 	useEffect(() =>
 	{
 		const updateEnvParams = async () =>
@@ -35,28 +54,25 @@ function SettingsPage()
 			try
 			{
 				const appVersion = await getVersion();
-				const osArch = arch();
-				const osPlatform = platform();
+				const osType = type();
 				const osVer = osVersion();
+				const osArch = arch();
 
-				setEnvParams([appVersion, osArch, osPlatform, osVer]);
+				const appInfo = `v${appVersion}${' ' + import.meta.env.VITE_APP_BUILD_PROFILE || ' --'}`;
+				const osInfo = `${osType} ${osVer} ${osArch}`;
+				setEnvParams([appInfo, osInfo]);
 			}
-			catch (error) { /* console.warn("Failed to get environment info:", error) */ }
+			catch (error) { console.warn("Failed to get environment info:", error) }
 		};
 
 		updateEnvParams();
-	}, []);
-
-	useEffect(() =>
-	{
-		console.log("Settings Loaded");
 	}, []);
 
 	return (
 		<div className={styles.page}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/", { viewTransition: true }))}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigate("/", { viewTransition: true })}>
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p className={styles.currentPageNameText}>{translate("settings")}</p>
@@ -134,7 +150,7 @@ function SettingsPage()
 							<p className={styles.settingsItemDescriptionText}>{translate("source_code_text")}</p>
 						</div>
 
-						<Button type={ButtonType.Secondary}>Github</Button>
+						<Button type={ButtonType.Secondary} onClick={openGitHubRepo}>Github</Button>
 					</div>
 
 					<div className={styles.settingsItem}>
@@ -143,15 +159,17 @@ function SettingsPage()
 							<p className={styles.settingsItemDescriptionText}>{translate("check_for_updates_text")}</p>
 						</div>
 
-						<Button type={ButtonType.Secondary}>{translate("check_for_updates_button")}</Button>
+						<Button type={ButtonType.Secondary} onClick={checkForUpdate}>
+							{translate("check_for_updates_button")}
+						</Button>
 					</div>
 
 					{
-						(envParams.some(param => param)) &&
+						envParams[0] &&
 							<div className={styles.settingsItem}>
 								<div className={styles.settingsItemTextsContainer}>
 									<p className={styles.settingsItemTitleText}>Hydryl</p>
-									<p className={styles.settingsItemDescriptionText}>{envParams.join(" ")}</p>
+									<p className={styles.settingsItemDescriptionText}>{envParams.join("\n")}</p>
 								</div>
 							</div>
 					}

@@ -1,4 +1,4 @@
-import { useContext, useRef, useTransition } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import styles from "./Home.module.scss";
 import { WeatherData } from "../hooks/useWeatherManager";
@@ -12,12 +12,14 @@ import { SunriseVisualElement } from "../components/SunriseVisualElement";
 import { Button, ButtonType } from "../components/Button";
 import { useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
+import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
+import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
+import { locale } from "@tauri-apps/plugin-os";
 
 function Home()
 {
 	const navigate = useNavigate();
-	const [isTransitionPending, startTransition] = useTransition();
-	const [settings] = useContext(SettingsContext);
+	const [settings, setSettings] = useContext(SettingsContext);
 	const { translate, translateWeekday, translateMonth } = useTranslations();
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
@@ -30,53 +32,46 @@ function Home()
 	const sunrise: Date = weather.daily.sunrise[0] ?? new Date(), sunset: Date = weather.daily.sunset[0] ?? new Date();
 	const daylightHours = (sunset.getTime() - sunrise.getTime()) / 1000 / 60 / 60;
 
-	const timeBackgroundGradients = ["early", "mid", "late", "day", "night"];
-
-	const timeBackgroundGradient = (): string =>
-	{
-		const currentDateTime = new Date().getTime();
-		const sunriseMinusCurrentTime = sunrise.getTime() - currentDateTime;
-		const sunsetMinusCurrentTime = sunset.getTime() - currentDateTime;
-
-		const thirtyMinutesInMs = 1000 * 60 * 30;
-
-		var gradientIndex;
-
-		if (Math.abs(sunriseMinusCurrentTime) <= thirtyMinutesInMs * 2) // around sunrise
-			gradientIndex = Math.abs(sunriseMinusCurrentTime) <= thirtyMinutesInMs ? 1 : sunriseMinusCurrentTime > 0 ? 0 : 2;
-		else if (Math.abs(sunsetMinusCurrentTime) <= thirtyMinutesInMs * 2) // around sunset
-			gradientIndex = Math.abs(sunsetMinusCurrentTime) <= thirtyMinutesInMs ? 1 : sunsetMinusCurrentTime > 0 ? 2 : 0;
-		else gradientIndex = sunriseMinusCurrentTime < 0 && sunsetMinusCurrentTime > 0 ? 3 : 4; // daytime or nighttime
-
-		return timeBackgroundGradients[gradientIndex];
-	};
-
-	const hoursTo12Format = (hours: number, minutes?: number): string =>
-	{
-		const adjustedHours = hours - (hours == 24 ? 24 : hours > 12 ? 12 : 0);
-		return `${adjustedHours}${minutes ? ':' + minutes?.toString().padStart(2, '0') : ''} ${hours < 12 ? 'A' : 'P'}M`
-	}
+	const { getCSSGradient } = useTimeWeatherBg();
 
 	const hourlyForecastRef = useRef<HTMLDivElement | null>(null);
 	useScrollOverflowMask(hourlyForecastRef);
+
+	/* useEffect(() =>
+	{
+		const checkOSLocale = async () =>
+		{
+			try
+			{
+				const osLocale = await locale();
+				if (!osLocale) return;
+				const osLocaleSliced = osLocale.slice(0, 2).toLowerCase();
+
+				if (osLocaleSliced === 'ru' || osLocaleSliced === 'en') setSettings({...settings, ['locale']: osLocaleSliced});
+			}
+			catch (error) { console.warn("Failed to get OS locale:", error) }
+		};
+
+		checkOSLocale();
+	}, []); */
 
 	return (
 		<div className={styles.page}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => startTransition(() => navigate("/settings", { viewTransition: true }))}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", { viewTransition: true })}>
 					<SVG name="settings"/>
 				</Button>
 
 				<p className={styles.currentLocationNameText}>Fukuoka</p>
 
-				<Button type={ButtonType.Secondary} square /* onClick={() => startTransition(() => navigate("/locations"))} */>
+				<Button type={ButtonType.Secondary} square /* onClick={() => navigate("/locations", { viewTransition: true })} */>
 					<SVG name="location"/>
 				</Button>
 			</div>
 
 			<div className={styles.heroContainer}>
-				<div className={styles.mainInfoContainer} style={{ background: `var(--${timeBackgroundGradient()}-gradient)` }}>
+				<div className={styles.mainInfoContainer} style={{ background: getCSSGradient(sunrise, sunset, weather.current.weather_code ?? 0) }}>
 
 					<div className={styles.currentWeatherContainer}>
 						<div className={styles.currentPrecipContainer}>
@@ -100,19 +95,19 @@ function Home()
 					</div>
 
 					<div className={styles.hourlyForecastContainer}>
-						<div className={styles.hourlyForecastItems} ref={hourlyForecastRef} /* style={{ maskImage: hourlyForecastMaskImage }} */>
+						<div className={styles.hourlyForecastItems} ref={hourlyForecastRef}>
 							{
 								weather.hourly.time.map((time, index) =>
 									<HourlyForecastItem key={`${index}-${time}`}
-										temperature={Math.round(weather.hourly.temperature_2m[index])}
+										temperature={settings.temperature === "celsius" ? Math.round(weather.hourly.temperature_2m[index]) :
+											celsiusToFahrenheit(Math.round(weather.hourly.temperature_2m[index]))}
 										weatherCode={weather.hourly.weather_code[index]}
 										isDay={weather.hourly.is_day[index]}
 										isNightVariant={!weather.hourly.is_day[0]}
 										precipProbability={weather.hourly.precipitation_probability[index]}
 										time={index === 0 ? "Now" :
 											time.getHours() === 0 ? `${time.getDate().toString().padStart(2, '0')}.${(time.getMonth() + 1).toString().padStart(2, '0')}` :
-											settings.time === "12" ? hoursTo12Format(time.getHours()) :
-											time.getHours() + ":00"}/>)
+											formatHoursFromDate(time, settings.time === "12")}/>)
 							}
 						</div>
 					</div>
@@ -160,16 +155,14 @@ function Home()
 
 				<div className={`${styles.currentWeatherDetailsContainer} ${styles.sunriseSunsetContainer}`}>
 					<div className={styles.sunriseSunsetItem}>
-						<p className={styles.sunriseSunsetItemContentText}>{settings.time === "12" ? hoursTo12Format(sunrise.getHours(), sunrise.getMinutes()) :
-							sunrise.getHours() + ":" + sunrise.getMinutes().toString().padStart(2, "0")}</p>
+						<p className={styles.sunriseSunsetItemContentText}>{formatTimeFromDate(sunrise, settings.time === "12")}</p>
 						<p className={styles.sunriseSunsetItemTitleText}>{translate("sunrise")}</p>
 					</div>
 
 					<SunriseVisualElement currentHours={currentHours} daylightHours={daylightHours}/>
 
 					<div className={styles.sunriseSunsetItem}>
-						<p className={styles.sunriseSunsetItemContentText}>{settings.time === "12" ? hoursTo12Format(sunset.getHours(), sunset.getMinutes()) :
-							sunset.getHours() + ":" + sunset.getMinutes().toString().padStart(2, "0")}</p>
+						<p className={styles.sunriseSunsetItemContentText}>{formatTimeFromDate(sunset, settings.time === "12")}</p>
 						<p className={styles.sunriseSunsetItemTitleText}>{translate("sunset")}</p>
 					</div>
 				</div>

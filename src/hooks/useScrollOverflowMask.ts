@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { lerp } from "../misc/utils";
 
 const leftInset = 15, rightInset = 85, scrollEdgeThreshold = 0.005, scrollStopThreshold = 0.05;
 
@@ -64,5 +65,3 @@ export function useScrollOverflowMask(elementRef: React.RefObject<HTMLElement | 
 		};
 	}, []);
 }
-
-const lerp = (start: number, end: number, t: number): number => start + (end - start) * t;

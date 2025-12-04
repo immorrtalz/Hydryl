@@ -1,4 +1,5 @@
 export const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
+export const lerp = (start: number, end: number, t: number): number => start + (end - start) * t;
 
 export const lerpHexColors = (color1: string, color2: string, t: number): string =>
 {
@@ -34,4 +35,36 @@ export const lerpHexColorsWithStops = (stops: Array<{ color: string; position: n
 	}
 
 	return sortedStops[0].color;
+};
+
+export const formatTimeFromDate = (date: Date, is12HourFormat: boolean = false, zeroMinutes: boolean = false): string =>
+	formatTime(date.getHours(), date.getMinutes(), is12HourFormat, zeroMinutes);
+
+export const formatTime = (hours: number, minutes: number, is12HourFormat: boolean = false, zeroMinutes: boolean = false): string =>
+{
+	const newHours = formatHoursAsNumber(hours, is12HourFormat);
+	const suffix = is12HourFormat ? ` ${hours < 12 ? 'A' : 'P'}M` : '';
+	return `${newHours}:${zeroMinutes ? "00" : minutes.toString().padStart(2, '0')}${suffix}`;
+};
+
+export const formatHoursFromDate = (date: Date, is12HourFormat: boolean = false): string =>
+	formatHours(date.getHours(), is12HourFormat);
+
+export const formatHours = (hours: number, is12HourFormat: boolean = false): string =>
+{
+	const suffix = is12HourFormat ? ` ${hours < 12 ? 'A' : 'P'}M` : ':00';
+	return `${formatHoursAsNumber(hours, is12HourFormat)}${suffix}`;
+};
+
+const formatHoursAsNumber = (hours: number, is12HourFormat: boolean = false): number =>
+{
+	var newHours = hours;
+
+	if (is12HourFormat && hours > 12)
+	{
+		newHours %= 12;
+		if (newHours === 0) newHours = 12;
+	}
+
+	return newHours;
 };

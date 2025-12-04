@@ -3,14 +3,16 @@
 	"identifier": "default",
 	"description": "Capability for the main window",
 	"windows": ["main"],
-	"platforms": ["android"],
+	"platforms": ["android", "windows"],
 	"permissions": [
 		"core:default",
 		"core:app:default",
 		"core:app:allow-version",
 		"dialog:default",
 		"fs:default",
+		"os:default",
 		"opener:default",
+		"opener:allow-open-url",
 		"geolocation:allow-check-permissions",
 		"geolocation:allow-request-permissions",
 		"geolocation:allow-get-current-position"
