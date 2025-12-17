@@ -146,38 +146,17 @@
 			}
 		}
 
-		& .currentTempContainer
+		& .currentTempText
 		{
 			width: fit-content;
 			height: fit-content;
-
-			& .currentTempText
-			{
-				display: inline;
-				font-weight: 600;
-				text-align: center;
-
-				&:nth-child(1)
-				{
-					font-size: 128px;
-					color: transparent;
-					background: linear-gradient(107.56deg, hsl(from white h s l / 0.9) 0%, hsl(from white h s l / 0.75) 100%);
-					background-clip: text;
-					-webkit-background-clip: text;
-					line-height: 100px;
-				}
-
-				&:nth-child(2)
-				{
-					position: absolute;
-					right: 0;
-					bottom: 0;
-					transform: translateX(calc(100% + 8px));
-					font-size: 48px;
-					color: var(--white-35);
-					line-height: 100%;
-				}
-			}
+			font-weight: 600;
+			text-align: center;
+			font-size: 128px;
+			color: transparent;
+			background: linear-gradient(to bottom right, var(--white-90), var(--white-65));
+			background-clip: text;
+			-webkit-background-clip: text;
 		}
 
 		& .currentDayNightTempContainer

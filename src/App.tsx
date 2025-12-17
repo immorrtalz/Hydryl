@@ -1,20 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import SettingsContext from './context/SettingsContext';
-import { initialSettings, Settings } from "./misc/settings";
 import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
 import { useWeatherManager } from "./hooks/useWeatherManager";
+import { useSettingsLoader } from "./hooks/useSettingsLoader";
 
 function App()
 {
-	const [settings, setSettings] = useState<Settings>(initialSettings);
+	const { loadSettingsFromFile } = useSettingsLoader();
 	const { weather, fetchWeather } = useWeatherManager();
 	const [isWeatherFetched, setIsWeatherFetched] = useState(false);
 
+	useEffect(() => { loadSettingsFromFile() }, []);
+
 	let router = createBrowserRouter([
 		{
-			path: "/",
+			index: true,
 			Component: Home,
 			loader: async () =>
 			{
@@ -24,30 +25,18 @@ function App()
 					await fetchWeather();
 					setIsWeatherFetched(true);
 				}
-				catch (error) { console.warn("Failed to fetch weather:", error) }
+				catch (e) { console.warn("Failed to fetch weather:", e) }
 
 				return { weather, isWeatherFetched };
-			},
+			}
 		},
 		{
 			path: "settings",
-			Component: SettingsPage,
-		},
+			Component: SettingsPage
+		}
 	]);
 
-	return (
-		<SettingsContext value={[settings, setSettings]}>
-			<RouterProvider router={router}/>
-			{/* <Routes location={location} key={location.pathname}>
-				<Route index element={<Home/>}/>
-				<Route path="settings" element={<SettingsPage/>}/> */}
-				{/* <Route path="locations">
-					<Route index element={<Locations/>}/>
-					<Route path="add" element={<AddLocation/>}/>
-				</Route> */}
-			{/* </Routes> */}
-		</SettingsContext>
-	);
+	return <RouterProvider router={router}/>;
 }
 
 export default App;

@@ -1,5 +1,5 @@
 import { fetchWeatherApi } from "openmeteo";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 export interface WeatherData
 {
@@ -113,10 +113,6 @@ export function useWeatherManager()
 		weatherFetchParams.longitude = longitude;
 	};
 
-	const setTemperatureUnit = (unit: 'celsius' | 'fahrenheit') => weatherFetchParams.temperature_unit = unit;
-	const setWindSpeedUnit = (unit: 'kmh' | 'ms' | 'mph' | 'kn') => weatherFetchParams.wind_speed_unit = unit;
-	const setPrecipitationUnit = (unit: 'mm' | 'inch') => weatherFetchParams.precipitation_unit = unit;
-
 	const fetchWeather = async (): Promise<void> =>
 	{
 		if (weatherFetchState === 'fetching') return;
@@ -128,12 +124,12 @@ export function useWeatherManager()
 			const responses = await fetchWeatherApi(apiUrl, weatherFetchParams);
 			const response = responses[0];
 
-			const latitude = response.latitude();
+			/* const latitude = response.latitude();
 			const longitude = response.longitude();
 			const elevation = response.elevation(); // meters above sea level
 			const timezone = response.timezone();
 			const timezoneAbbreviation = response.timezoneAbbreviation();
-			const utcOffsetSeconds = response.utcOffsetSeconds();
+			const utcOffsetSeconds = response.utcOffsetSeconds(); */
 
 			const current = response.current()!;
 			const hourly = response.hourly()!;
@@ -188,10 +184,10 @@ export function useWeatherManager()
 			setWeatherFetchState('idle');
 			setWeather(weatherData);
 		}
-		catch (error)
+		catch (e)
 		{
 			setWeatherFetchState('idle');
-			console.error("Error fetching weather data:", error);
+			console.error("Error fetching weather data:", e);
 			return;
 		}
 	};

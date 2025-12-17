@@ -296,17 +296,17 @@
 	},
 	"slight_snow_fall":
 	{
-		"en": "Slight snow fall",
+		"en": "Slight snowfall",
 		"ru": "Небольшой снег"
 	},
 	"moderate_snow_fall":
 	{
-		"en": "Moderate snow fall",
+		"en": "Moderate snowfall",
 		"ru": "Снег"
 	},
 	"heavy_snow_fall":
 	{
-		"en": "Heavy snow fall",
+		"en": "Heavy snowfall",
 		"ru": "Сильный снег"
 	},
 	"snow_grains":
@@ -573,5 +573,30 @@
 	{
 		"en": "mi",
 		"ru": "мил"
+	},
+	"update_available_title":
+	{
+		"en": "Update available",
+		"ru": "Доступно обновление"
+	},
+	"no_updates_available_title":
+	{
+		"en": "No updates available",
+		"ru": "Обновлений нет"
+	},
+	"update_available_message":
+	{
+		"en": "Download update directly from GitHub?\nYou will need to install it manually",
+		"ru": "Скачать обновление напрямую с GitHub?\nВам нужно будет установить его вручную"
+	},
+	"no_updates_available_message":
+	{
+		"en": "You are using the latest version already",
+		"ru": "Вы уже используете последнюю версию"
+	},
+	"couldnt_open_url_title":
+	{
+		"en": "Couldn't open the url",
+		"ru": "Не удалось открыть ссылку"
 	}
 }
