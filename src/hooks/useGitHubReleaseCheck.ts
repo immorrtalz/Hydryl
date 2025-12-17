@@ -43,8 +43,6 @@ export function useGitHubReleaseCheck()
 							}
 						}
 
-						console.log(`Update available: ${currentVersion}->${release.tag_name} (link: ${downloadLink})`);
-
 						return downloadLink;
 					}
 				}
@@ -52,9 +50,9 @@ export function useGitHubReleaseCheck()
 				if (data.length < 5) return "";
 			}
 		}
-		catch (error)
+		catch (e)
 		{
-			await message(error instanceof Error ? error.message : String(error), { title: "Couldn't check for an update", kind: 'error' });
+			await message(e instanceof Error ? e.message : String(e), { title: "Couldn't check for an update", kind: 'error' });
 			return "";
 		}
 	};

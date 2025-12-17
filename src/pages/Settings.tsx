@@ -28,7 +28,7 @@ function SettingsPage()
 			value
 		}));
 
-	const changeSetting = (key: keyof Settings, value: Settings[typeof key]) => setSettings({...settings, [key]: value});
+	const changeSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings({...settings, [key]: value});
 
 	const openGitHubRepo = async () => await openUrl('https://github.com/immorrtalz/Hydryl').catch(e => console.error(e));
 
@@ -40,11 +40,15 @@ function SettingsPage()
 
 		if (updateUrl !== "")
 		{
-			const userConfirmedDownload = await confirm('Download update directly from GitHub?\nYou will need to install it manually', { title: 'Update available', kind: 'info' });
-			if (userConfirmedDownload) await openUrl(updateUrl)
-				.catch(async e => await message(`Url: ${updateUrl}\n` + (e instanceof Error ? e.message : String(e)), { title: "Couldn't open the url", kind: 'error' }));
+			const userConfirmedDownload = await confirm(translate('update_available_message'), { title: translate('update_available_title'), kind: 'info' });
+
+			if (userConfirmedDownload)
+			{
+				await openUrl(updateUrl)
+					.catch(async e => await message(`Url: ${updateUrl}\n` + (e instanceof Error ? e.message : String(e)), { title: translate('couldnt_open_url_title'), kind: 'error' }));
+			}
 		}
-		else await message('You are using the latest version already', { title: 'No updates available', kind: 'info' });
+		else await message(translate('no_updates_available_message'), { title: translate('no_updates_available_title'), kind: 'info' });
 	};
 
 	useEffect(() =>
@@ -58,11 +62,11 @@ function SettingsPage()
 				const osVer = osVersion();
 				const osArch = arch();
 
-				const appInfo = `v${appVersion}${' ' + import.meta.env.VITE_APP_BUILD_PROFILE || ' --'}`;
+				const appInfo = `v${appVersion} ${import.meta.env.VITE_APP_BUILD_PROFILE}`;
 				const osInfo = `${osType} ${osVer} ${osArch}`;
 				setEnvParams([appInfo, osInfo]);
 			}
-			catch (error) { console.warn("Failed to get environment info:", error) }
+			catch (e) { console.warn("Failed to get environment info:", e) }
 		};
 
 		updateEnvParams();

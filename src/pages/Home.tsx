@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import styles from "./Home.module.scss";
 import { WeatherData } from "../hooks/useWeatherManager";
@@ -14,17 +14,16 @@ import { useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
 import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
 import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
-import { locale } from "@tauri-apps/plugin-os";
 
 function Home()
 {
 	const navigate = useNavigate();
-	const [settings, setSettings] = useContext(SettingsContext);
+	const [settings] = useContext(SettingsContext);
 	const { translate, translateWeekday, translateMonth } = useTranslations();
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
 
-	const { weather, isWeatherFetched } = useLoaderData() as {weather: WeatherData, isWeatherFetched: boolean};
+	const { weather, isWeatherFetched } = useLoaderData() as { weather: WeatherData, isWeatherFetched: boolean };
 
 	if (!isWeatherFetched) return <div className={styles.page}/>;
 
@@ -37,24 +36,6 @@ function Home()
 	const hourlyForecastRef = useRef<HTMLDivElement | null>(null);
 	useScrollOverflowMask(hourlyForecastRef);
 
-	/* useEffect(() =>
-	{
-		const checkOSLocale = async () =>
-		{
-			try
-			{
-				const osLocale = await locale();
-				if (!osLocale) return;
-				const osLocaleSliced = osLocale.slice(0, 2).toLowerCase();
-
-				if (osLocaleSliced === 'ru' || osLocaleSliced === 'en') setSettings({...settings, ['locale']: osLocaleSliced});
-			}
-			catch (error) { console.warn("Failed to get OS locale:", error) }
-		};
-
-		checkOSLocale();
-	}, []); */
-
 	return (
 		<div className={styles.page}>
 
@@ -63,7 +44,7 @@ function Home()
 					<SVG name="settings"/>
 				</Button>
 
-				<p className={styles.currentLocationNameText}>Fukuoka</p>
+				<p className={styles.currentLocationNameText}>Ufa</p>
 
 				<Button type={ButtonType.Secondary} square /* onClick={() => navigate("/locations", { viewTransition: true })} */>
 					<SVG name="location"/>
@@ -79,11 +60,9 @@ function Home()
 							<p className={styles.currentPrecipText}>{weatherCodeToText(weather.current.weather_code ?? -1)}</p>
 						</div>
 
-						<div className={styles.currentTempContainer}>
-							<h1 className={styles.currentTempText}>{settings.temperature === "celsius" ? weather.current.temperature_2m :
-								Math.round(weather.current.temperature_2m * 9 / 5 + 32)}</h1>
-							<h3 className={styles.currentTempText}>{settings.temperature === "celsius" ? "ºC" : "ºF"}</h3>
-						</div>
+						<h1 className={styles.currentTempText}>
+							{settings.temperature === "celsius" ? weather.current.temperature_2m + 'º' : Math.round(weather.current.temperature_2m * 9 / 5 + 32) + 'º'}
+						</h1>
 
 						<div className={styles.currentDayNightTempContainer}>
 							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperature_2m_min[0] :
@@ -120,7 +99,7 @@ function Home()
 							index < 5 &&
 								<DailyForecastItem key={`${index}-${time}`}
 									date={index === 0 ? translate("tomorrow") :
-										`${translateWeekday(time.getDay(), true)}, ${translateMonth(time.getMonth(), true)} ${time.getDate()}`}
+										`${translateWeekday(time.getDay(), true)}, ${translateMonth(time.getMonth(), true).toLowerCase()} ${time.getDate()}`}
 									weatherCode={weather.daily.weather_code[index]}
 									precipitationProbability={weather.daily.precipitation_probability_max[index]}
 									temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index]) :

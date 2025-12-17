@@ -1,9 +1,0 @@
-{
-	"locale": "en",
-	"time": "24",
-	"temperature": "celsius",
-	"windSpeed": "ms",
-	"precipitation": "mm",
-	"pressure": "mmHg",
-	"distance": "km"
-}
