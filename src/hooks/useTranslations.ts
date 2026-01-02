@@ -22,7 +22,7 @@ export function useTranslations()
 		translateWeekday: (weekday: number, useShortWeekday: boolean = false): string =>
 		{
 			if (weekday < 0 || weekday > 6) return "??";
-			const weekdaysKeys: TranslationKey[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+			const weekdaysKeys: TranslationKey[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 			return translate(weekdaysKeys[weekday] + (useShortWeekday ? "_short" : "") as TranslationKey);
 		},
 

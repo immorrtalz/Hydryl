@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Settings.module.scss";
 import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
@@ -12,12 +11,15 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 import { settingTranslationKeys, settingOptions, Settings } from "../misc/settings";
 import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
 import { confirm, message } from '@tauri-apps/plugin-dialog';
+import { useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 
 function SettingsPage()
 {
-	const navigate = useNavigate();
 	const [settings, setSettings] = useContext(SettingsContext);
 	const { translate } = useTranslations();
+
+	const pageRef = useRef<HTMLDivElement | null>(null);
+	const { transitionedFromDirection, initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
 	const [envParams, setEnvParams] = useState<string[]>(["", ""]);
 
@@ -31,7 +33,6 @@ function SettingsPage()
 	const changeSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings({...settings, [key]: value});
 
 	const openGitHubRepo = async () => await openUrl('https://github.com/immorrtalz/Hydryl').catch(e => console.error(e));
-
 	const { getUpdateUrl } = useGitHubReleaseCheck();
 
 	const checkForUpdate = async () =>
@@ -70,13 +71,15 @@ function SettingsPage()
 		};
 
 		updateEnvParams();
+
+		initialNavigateSetup();
 	}, []);
 
 	return (
-		<div className={styles.page}>
+		<div className={styles.page} ref={pageRef}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => navigate("/", { viewTransition: true })}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", transitionedFromDirection)}>
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p className={styles.currentPageNameText}>{translate("settings")}</p>

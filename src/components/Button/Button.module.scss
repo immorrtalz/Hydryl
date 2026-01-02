@@ -40,6 +40,7 @@
 	background: var(--white-90);
 	color: var(--black-80);
 	fill: var(--black-80);
+	border: 1px solid var(--white-10);
 
 	&:active
 	{
@@ -54,6 +55,7 @@
 	background: var(--black-50);
 	color: var(--white-90);
 	fill: var(--white-90);
+	border: 2px solid var(--white-10);
 
 	&:active
 	{

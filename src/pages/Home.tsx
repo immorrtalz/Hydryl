@@ -1,7 +1,5 @@
-import { useContext, useRef } from "react";
-import { useLoaderData, useNavigate } from "react-router";
+import { useContext, useEffect, useRef } from "react";
 import styles from "./Home.module.scss";
-import { WeatherData } from "../hooks/useWeatherManager";
 import { useWeatherUtils } from "../hooks/useWeatherUtils";
 import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
 import { HourlyForecastItem } from "../components/HourlyForecastItem";
@@ -10,22 +8,27 @@ import { SVG } from "../components/SVG";
 import { CurrentWeatherDetailsItem } from "../components/CurrentWeatherDetailsItem";
 import { SunriseVisualElement } from "../components/SunriseVisualElement";
 import { Button, ButtonType } from "../components/Button";
-import { useTranslations } from "../hooks/useTranslations";
+import { TranslationKey, useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
 import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
 import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
+import WeatherContext from "../context/WeatherContext";
+import { AnimatePresence, motion } from "motion/react";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { useWeatherManager } from "../hooks/useWeatherManager";
 
 function Home()
 {
-	const navigate = useNavigate();
 	const [settings] = useContext(SettingsContext);
 	const { translate, translateWeekday, translateMonth } = useTranslations();
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
+	const { fetchWeather } = useWeatherManager();
 
-	const { weather, isWeatherFetched } = useLoaderData() as { weather: WeatherData, isWeatherFetched: boolean };
+	const pageRef = useRef<HTMLDivElement | null>(null);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
-	if (!isWeatherFetched) return <div className={styles.page}/>;
+	const [weather,, weatherFetchStatus] = useContext(WeatherContext);
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
 	const sunrise: Date = weather.daily.sunrise[0] ?? new Date(), sunset: Date = weather.daily.sunset[0] ?? new Date();
@@ -36,22 +39,41 @@ function Home()
 	const hourlyForecastRef = useRef<HTMLDivElement | null>(null);
 	useScrollOverflowMask(hourlyForecastRef);
 
+	const updateWeatherBehindPageRef = useRef<HTMLDivElement | null>(null);
+	const updateWeatherBehindPageTextRef = useRef<HTMLDivElement | null>(null);
+	//const { isTriggerable, refreshElementStyles } = usePullToRefresh(pageRef, updateWeatherBehindPageRef, updateWeatherBehindPageTextRef, fetchWeather);
+
+	useEffect(initialNavigateSetup, []);
+
 	return (
-		<div className={styles.page}>
+		<div className={styles.page} ref={pageRef}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", { viewTransition: true })}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/settings", NavigateDirection.Left)}>
 					<SVG name="settings"/>
 				</Button>
 
 				<p className={styles.currentLocationNameText}>Ufa</p>
 
-				<Button type={ButtonType.Secondary} square /* onClick={() => navigate("/locations", { viewTransition: true })} */>
+				<Button type={ButtonType.Secondary} square /* onClick={() => navigateTo("/locations", NavigateDirection.Right)} */>
 					<SVG name="location"/>
 				</Button>
 			</div>
 
 			<div className={styles.heroContainer}>
+				<AnimatePresence>
+					{
+						weatherFetchStatus !== 1 &&
+						<motion.div className={`${styles.weatherFetchingNotifContainer} ${weatherFetchStatus < 0 ? styles.weatherFetchingNotifContainerError : ''}`}
+							initial={{ opacity: 0, y: "-50%" }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: "-50%" }}
+							transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}>
+							<p className={styles.weatherFetchingNotifText}>{translate(weatherFetchStatus === 0 ? "fetching_up_to_date_weather" : "weather_fetch_failed")}</p>
+						</motion.div>
+					}
+				</AnimatePresence>
+
 				<div className={styles.mainInfoContainer} style={{ background: getCSSGradient(sunrise, sunset, weather.current.weather_code ?? 0) }}>
 
 					<div className={styles.currentWeatherContainer}>
@@ -95,41 +117,49 @@ function Home()
 
 				<div className={styles.dailyForecastContainer}>
 					{
-						weather.daily.time.map((time, index) => (
-							index < 5 &&
-								<DailyForecastItem key={`${index}-${time}`}
-									date={index === 0 ? translate("tomorrow") :
-										`${translateWeekday(time.getDay(), true)}, ${translateMonth(time.getMonth(), true).toLowerCase()} ${time.getDate()}`}
-									weatherCode={weather.daily.weather_code[index]}
-									precipitationProbability={weather.daily.precipitation_probability_max[index]}
-									temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index]) :
-										celsiusToFahrenheit(weather.daily.temperature_2m_min[index])}
-									temperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_max[index]) :
-										celsiusToFahrenheit(weather.daily.temperature_2m_max[index])}/>))
+						weather.daily.time.map((time, index) =>
+							{
+								var weekday = translateWeekday(time.getDay(), true);
+								if (index === 1) weekday = weekday.toLowerCase();
+
+								return ( index >= 1 &&
+									<DailyForecastItem key={`${index}-${time}`}
+										date={`${index === 1 ? translate("tomorrow") + ', ' : ''}${weekday}, ${translateMonth(time.getMonth(), true).toLowerCase()} ${time.getDate()}`}
+										weatherCode={weather.daily.weather_code[index]}
+										precipitationProbability={weather.daily.precipitation_probability_max[index]}
+										temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index]) :
+											celsiusToFahrenheit(weather.daily.temperature_2m_min[index])}
+										temperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_max[index]) :
+											celsiusToFahrenheit(weather.daily.temperature_2m_max[index])}/>)
+							})
 					}
 				</div>
 			</div>
 
 			<div className={styles.mainContentContainer}>
 				<div className={styles.currentWeatherDetailsContainer}>
-					<CurrentWeatherDetailsItem title={translate("wind")}
-						content={`${windSpeedToText(weather.current.wind_speed_10m, settings.windSpeed)} ${degreesToCompassDirection(weather.current.wind_direction_10m || 0)}`}/>
-					<CurrentWeatherDetailsItem title={translate("wind_gusts")}
-						content={`${windSpeedToText(weather.current.wind_gusts_10m, settings.windSpeed)}`}/>
-					<CurrentWeatherDetailsItem title={translate("humidity")}
-						content={`${weather.current.relative_humidity_2m} %`}/>
-					<CurrentWeatherDetailsItem title={translate("precipitation")}
-						content={`${precipitationToText(weather.current.precipitation, settings.precipitation)}`}/>
-					<CurrentWeatherDetailsItem title={translate("precipitation_probability")}
-						content={`${weather.current.precipitation_probability} %`}/>
-					<CurrentWeatherDetailsItem title={translate("pressure")}
-						content={`${pressureToText(weather.current.surface_pressure, settings.pressure)}`}/>
-					<CurrentWeatherDetailsItem title={translate("cloud_cover")}
-						content={`${weather.current.cloud_cover} %`}/>
-					<CurrentWeatherDetailsItem title={translate("visibility")}
-						content={`${distanceToText(weather.current.visibility, settings.distance)}`}/>
-					<CurrentWeatherDetailsItem title={translate("uv_index")}
-						content={`${weather.current.uv_index} (${uvIndexToText(weather.current.uv_index || 0)})`}/>
+					{
+						[
+							{ titleKey: "wind" as TranslationKey,
+								content: `${windSpeedToText(weather.current.wind_speed_10m, settings.windSpeed)} ${degreesToCompassDirection(weather.current.wind_direction_10m)}` },
+							{ titleKey: "wind_gusts" as TranslationKey,
+								content: `${translate("up_to")} ${windSpeedToText(weather.current.wind_gusts_10m, settings.windSpeed)}` },
+							{ titleKey: "humidity" as TranslationKey,
+								content: `${weather.current.relative_humidity_2m} %` },
+							{ titleKey: "precipitation" as TranslationKey,
+								content: precipitationToText(weather.current.precipitation, settings.precipitation) },
+							{ titleKey: "precipitation_probability" as TranslationKey,
+								content: `${weather.current.precipitation_probability} %` },
+							{ titleKey: "pressure" as TranslationKey,
+								content: pressureToText(weather.current.surface_pressure, settings.pressure) },
+							{ titleKey: "cloud_cover" as TranslationKey,
+								content: `${weather.current.cloud_cover} %` },
+							{ titleKey: "visibility" as TranslationKey,
+								content: distanceToText(weather.current.visibility, settings.distance) },
+							{ titleKey: "uv_index" as TranslationKey,
+								content: `${weather.current.uv_index} (${uvIndexToText(weather.current.uv_index)})` }
+						].map(({ titleKey, content }) => <CurrentWeatherDetailsItem key={`weather-details-${titleKey}`} title={translate(titleKey)} content={content}/>)
+					}
 				</div>
 
 				<div className={`${styles.currentWeatherDetailsContainer} ${styles.sunriseSunsetContainer}`}>

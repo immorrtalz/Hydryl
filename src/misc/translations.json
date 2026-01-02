@@ -396,28 +396,28 @@
 	},
 	"uv_low":
 	{
-		"en": "Low",
-		"ru": "Низкий"
+		"en": "low",
+		"ru": "низкий"
 	},
 	"uv_moderate":
 	{
-		"en": "Moderate",
-		"ru": "Умеренный"
+		"en": "moderate",
+		"ru": "умеренный"
 	},
 	"uv_high":
 	{
-		"en": "High",
-		"ru": "Высокий"
+		"en": "high",
+		"ru": "высокий"
 	},
 	"uv_very_high":
 	{
-		"en": "Very high",
-		"ru": "Очень высокий"
+		"en": "very high",
+		"ru": "очень высокий"
 	},
 	"uv_extreme":
 	{
-		"en": "Extreme",
-		"ru": "Экстремальный"
+		"en": "extreme",
+		"ru": "экстремальный"
 	},
 	"wind":
 	{
@@ -598,5 +598,30 @@
 	{
 		"en": "Couldn't open the url",
 		"ru": "Не удалось открыть ссылку"
+	},
+	"fetching_up_to_date_weather":
+	{
+		"en": "Fetching up-to-date weather...",
+		"ru": "Загрузка актуальной погоды..."
+	},
+	"weather_fetch_failed":
+	{
+		"en": "Failed to update the weather",
+		"ru": "Не удалось обновить погоду"
+	},
+	"up_to":
+	{
+		"en": "up to",
+		"ru": "до"
+	},
+	"pull_to_refresh":
+	{
+		"en": "Pull to refresh",
+		"ru": "Тяните, чтобы обновить"
+	},
+	"release_to_refresh":
+	{
+		"en": "Release to refresh",
+		"ru": "Отпустите, чтобы обновить"
 	}
 }

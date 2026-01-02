@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
@@ -8,27 +8,18 @@ import { useSettingsLoader } from "./hooks/useSettingsLoader";
 function App()
 {
 	const { loadSettingsFromFile } = useSettingsLoader();
-	const { weather, fetchWeather } = useWeatherManager();
-	const [isWeatherFetched, setIsWeatherFetched] = useState(false);
+	const { loadWeatherFromFile } = useWeatherManager();
 
-	useEffect(() => { loadSettingsFromFile() }, []);
+	useEffect(() =>
+	{
+		loadSettingsFromFile();
+		loadWeatherFromFile(true);
+	}, []);
 
-	let router = createBrowserRouter([
+	const router = createBrowserRouter([
 		{
 			index: true,
-			Component: Home,
-			loader: async () =>
-			{
-				try
-				{
-					if (isWeatherFetched) return { weather, isWeatherFetched };
-					await fetchWeather();
-					setIsWeatherFetched(true);
-				}
-				catch (e) { console.warn("Failed to fetch weather:", e) }
-
-				return { weather, isWeatherFetched };
-			}
+			Component: Home
 		},
 		{
 			path: "settings",

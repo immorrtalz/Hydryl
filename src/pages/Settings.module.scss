@@ -1,14 +1,17 @@
-::view-transition-old(settingsTransition), ::view-transition-new(settingsTransition)
+::view-transition-old(settingsTransitionLeft), ::view-transition-new(settingsTransitionLeft),
+::view-transition-old(settingsTransitionRight), ::view-transition-new(settingsTransitionRight)
 {
 	animation-duration: 0.3s;
-	animation-timing-function: cubic-bezier(0.66, 0, 0.34, 1);
+	animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-::view-transition-group(settingsTransition) { z-index: 1; }
-::view-transition-old(settingsTransition) { animation-name: out; }
-::view-transition-new(settingsTransition) { animation-name: in; }
+::view-transition-group(settingsTransitionLeft), ::view-transition-group(settingsTransitionRight) { z-index: 1; }
+::view-transition-old(settingsTransitionLeft) { animation-name: outLeft; }
+::view-transition-new(settingsTransitionLeft) { animation-name: inLeft; }
+::view-transition-old(settingsTransitionRight) { animation-name: outRight; }
+::view-transition-new(settingsTransitionRight) { animation-name: inRight; }
 
-@keyframes out
+@keyframes outLeft
 {
 	to
 	{
@@ -18,7 +21,7 @@
 	}
 }
 
-@keyframes in
+@keyframes inLeft
 {
 	from
 	{
@@ -28,11 +31,28 @@
 	}
 }
 
+@keyframes outRight
+{
+	to
+	{
+		pointer-events: none;
+		transform: translateX(100%);
+		opacity: 1;
+	}
+}
+
+@keyframes inRight
+{
+	from
+	{
+		pointer-events: none;
+		transform: translateX(100%);
+		opacity: 1;
+	}
+}
+
 .page
 {
-	position: absolute;
-	top: 0;
-	left: 0;
 	width: 100svw;
 	height: fit-content;
 	min-height: 100svh;
@@ -43,7 +63,9 @@
 	transition: none;
 	z-index: 1;
 	background: var(--dark);
-	view-transition-name: settingsTransition;
+
+	&.viewTransitionLeft { view-transition-name: settingsTransitionLeft; }
+	&.viewTransitionRight { view-transition-name: settingsTransitionRight; }
 }
 
 .topBar
