@@ -68,14 +68,14 @@ export const initialWeatherData: WeatherData =
 	},
 	daily:
 	{
-		time: Array(5).fill(new Date()),
-		weather_code: Array(5).fill(0),
-		temperature_2m_min: Array(5).fill(0),
-		temperature_2m_max: Array(5).fill(0),
-		wind_direction_10m_dominant: Array(5).fill(0),
-		wind_speed_10m_max: Array(5).fill(0),
-		sunrise: Array(5).fill(new Date()),
-		sunset: Array(5).fill(new Date()),
-		precipitation_probability_max: Array(5).fill(0)
+		time: Array(6).fill(new Date()),
+		weather_code: Array(6).fill(0),
+		temperature_2m_min: Array(6).fill(0),
+		temperature_2m_max: Array(6).fill(0),
+		wind_direction_10m_dominant: Array(6).fill(0),
+		wind_speed_10m_max: Array(6).fill(0),
+		sunrise: Array(6).fill(new Date()),
+		sunset: Array(6).fill(new Date()),
+		precipitation_probability_max: Array(6).fill(0)
 	}
 };

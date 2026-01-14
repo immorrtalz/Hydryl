@@ -1,6 +1,6 @@
 import { fetchWeatherApi } from "openmeteo";
 import { useContext, useState } from "react";
-import WeatherContext from "../context/WeatherContext";
+import WeatherContext, { WeatherFetchStatus } from "../context/WeatherContext";
 import { initialWeatherData, WeatherData } from "../misc/weather";
 import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 
@@ -27,8 +27,8 @@ export function useWeatherManager()
 		"precipitation_unit": "mm", //mm, inch
 	};
 
-	const [isWeatherFetching, setWeatherFetching] = useState<boolean>(false);
-	const [, setWeather,, setWeatherFetchStatus] = useContext(WeatherContext);
+	const [, setWeather, weatherFetchStatus, setWeatherFetchStatus] = useContext(WeatherContext);
+	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<NodeJS.Timeout | null>(null);
 
 	/* const setLocationCoords = (latitude: number, longitude: number, refetchWeather: boolean = false) =>
 	{
@@ -40,12 +40,12 @@ export function useWeatherManager()
 
 	const fetchWeather = async () =>
 	{
-		if (isWeatherFetching) return;
+		if (weatherFetchStatus === 2 || weatherFetchCooldown !== null) return;
+		setWeatherFetchCooldown(setTimeout(() => setWeatherFetchCooldown(null), 2000));
 
 		try
 		{
-			setWeatherFetching(true);
-			setWeatherFetchStatus(0);
+			setWeatherFetchStatus(WeatherFetchStatus.Fetching);
 
 			const responses = await fetchWeatherApi(apiUrl, weatherFetchParams);
 			const response = responses[0];
@@ -100,13 +100,11 @@ export function useWeatherManager()
 				}
 			};
 
-			setWeatherFetching(false);
-			setWeather(weatherData, 1);
+			setWeather(weatherData, WeatherFetchStatus.Fetched);
 		}
 		catch (e)
 		{
-			setWeatherFetching(false);
-			setWeatherFetchStatus(-1);
+			setWeatherFetchStatus(WeatherFetchStatus.Error);
 			const errorHeader = "Error fetching weather data:";
 			console.error(errorHeader, e);
 			return Promise.reject(`${errorHeader} ${e}`);

@@ -5,7 +5,7 @@ import App from "./App";
 import SettingsContext from "./context/SettingsContext";
 import { initialSettings, Settings } from "./misc/settings";
 import { useSettingsLoader } from "./hooks/useSettingsLoader";
-import WeatherContext from "./context/WeatherContext";
+import WeatherContext, { WeatherFetchStatus } from "./context/WeatherContext";
 import { initialWeatherData, WeatherData } from "./misc/weather";
 import { useWeatherManager } from "./hooks/useWeatherManager";
 import React from "react";
@@ -25,10 +25,10 @@ function AppRoot()
 		saveSettingsToFile(newSettings);
 	};
 
-	const setWeather = (newWeather: WeatherData, weatherFetchStatus: 0 | 1 | -1 = 1) =>
+	const setWeather = (newWeather: WeatherData, _weatherFetchStatus: WeatherFetchStatus = WeatherFetchStatus.Fetched) =>
 	{
 		internal_setWeather(newWeather);
-		setWeatherFetchStatus(weatherFetchStatus);
+		setWeatherFetchStatus(_weatherFetchStatus);
 		saveWeatherToFile(newWeather);
 	};
 

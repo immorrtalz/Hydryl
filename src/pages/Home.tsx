@@ -12,7 +12,7 @@ import { TranslationKey, useTranslations } from "../hooks/useTranslations";
 import SettingsContext from "../context/SettingsContext";
 import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
 import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
-import WeatherContext from "../context/WeatherContext";
+import WeatherContext, { WeatherFetchStatus } from "../context/WeatherContext";
 import { AnimatePresence, motion } from "motion/react";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { useWeatherManager } from "../hooks/useWeatherManager";
@@ -28,6 +28,11 @@ function Home()
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
+	const navigate = (path: string, direction: NavigateDirection) =>
+	{
+		if (weatherFetchStatus !== WeatherFetchStatus.Fetching) navigateTo(path, direction);
+	};
+
 	const [weather,, weatherFetchStatus] = useContext(WeatherContext);
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
@@ -35,13 +40,8 @@ function Home()
 	const daylightHours = (sunset.getTime() - sunrise.getTime()) / 1000 / 60 / 60;
 
 	const { getCSSGradient } = useTimeWeatherBg();
-
 	const hourlyForecastRef = useRef<HTMLDivElement | null>(null);
 	useScrollOverflowMask(hourlyForecastRef);
-
-	const updateWeatherBehindPageRef = useRef<HTMLDivElement | null>(null);
-	const updateWeatherBehindPageTextRef = useRef<HTMLDivElement | null>(null);
-	//const { isTriggerable, refreshElementStyles } = usePullToRefresh(pageRef, updateWeatherBehindPageRef, updateWeatherBehindPageTextRef, fetchWeather);
 
 	useEffect(initialNavigateSetup, []);
 
@@ -49,27 +49,29 @@ function Home()
 		<div className={styles.page} ref={pageRef}>
 
 			<div className={styles.topBar}>
-				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/settings", NavigateDirection.Left)}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", NavigateDirection.Left)}>
 					<SVG name="settings"/>
 				</Button>
 
-				<p className={styles.currentLocationNameText}>Ufa</p>
+				<div className={styles.currentLocationClickableContainer} /* onClick={() => navigate("/locations", NavigateDirection.Right)} */>
+					<p className={styles.currentLocationText}>Ufa</p>
+				</div>
 
-				<Button type={ButtonType.Secondary} square /* onClick={() => navigateTo("/locations", NavigateDirection.Right)} */>
-					<SVG name="location"/>
+				<Button type={ButtonType.Secondary} square onClick={fetchWeather}>
+					<SVG name="update"/>
 				</Button>
 			</div>
 
 			<div className={styles.heroContainer}>
 				<AnimatePresence>
 					{
-						weatherFetchStatus !== 1 &&
-						<motion.div className={`${styles.weatherFetchingNotifContainer} ${weatherFetchStatus < 0 ? styles.weatherFetchingNotifContainerError : ''}`}
+						weatherFetchStatus !== WeatherFetchStatus.Fetched &&
+						<motion.div className={`${styles.weatherFetchingNotifContainer} ${weatherFetchStatus === WeatherFetchStatus.Error ? styles.weatherFetchingNotifContainerError : ''}`}
 							initial={{ opacity: 0, y: "-50%" }}
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: "-50%" }}
 							transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}>
-							<p className={styles.weatherFetchingNotifText}>{translate(weatherFetchStatus === 0 ? "fetching_up_to_date_weather" : "weather_fetch_failed")}</p>
+							<p className={styles.weatherFetchingNotifText}>{translate(weatherFetchStatus === WeatherFetchStatus.Fetching ? "fetching_up_to_date_weather" : "weather_fetch_failed")}</p>
 						</motion.div>
 					}
 				</AnimatePresence>

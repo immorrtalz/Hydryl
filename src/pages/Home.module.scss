@@ -51,47 +51,6 @@
 	}
 }
 
-.updateWeatherBehindPage
-{
-	position: absolute;
-	top: calc(var(--maxPageOffset) * -1);
-	right: 0;
-	left: 0;
-	height: var(--maxPageOffset);
-	background: var(--backgroundVar);
-	--defaultBg: hsl(215, 0%, 70%);
-	--triggerableBg: var(--white-90);
-	z-index: -1;
-	transition: none;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	flex-wrap: nowrap;
-	will-change: transform;
-	overflow: visible;
-
-	&::before
-	{
-		content: "";
-		position: absolute;
-		inset: 0;
-		//background: linear-gradient(to bottom, var(--black-30), var(--black-0));
-	}
-
-	& .updateWeatherBehindPageText
-	{
-		font-size: var(--main-font-size);
-		font-weight: 600;
-		color: var(--black-80);
-		text-align: center;
-		transform: translateY(var(--textTranslateY));
-		transition: none;
-		opacity: var(--textOpacity);
-		will-change: transform;
-	}
-}
-
 .page
 {
 	width: 100svw;
@@ -104,7 +63,6 @@
 	transition: none;
 	z-index: 0;
 	overscroll-behavior-y: none;
-	will-change: transform;
 
 	&.viewTransitionLeft { view-transition-name: homeTransitionLeft; }
 	&.viewTransitionRight { view-transition-name: homeTransitionRight; }
@@ -124,16 +82,25 @@
 	flex-wrap: nowrap;
 	z-index: 1;
 
-	& .currentLocationNameText
+	& .currentLocationClickableContainer
 	{
+		width: fit-content;
+		height: fit-content;
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		font-size: var(--larger-font-size);
-		font-weight: 600;
-		color: var(--white-75);
-		text-align: center;
+		border: 1px solid var(--white-15);
+		border-radius: var(--main-border-radius);
+		padding: 8px 16px;
+
+		& .currentLocationText
+		{
+			font-size: var(--larger-font-size);
+			font-weight: 600;
+			color: var(--white-75);
+			text-align: center;
+		}
 	}
 }
 

@@ -63,6 +63,7 @@
 	transition: none;
 	z-index: 1;
 	background: var(--dark);
+	overscroll-behavior-y: none;
 
 	&.viewTransitionLeft { view-transition-name: settingsTransitionLeft; }
 	&.viewTransitionRight { view-transition-name: settingsTransitionRight; }
