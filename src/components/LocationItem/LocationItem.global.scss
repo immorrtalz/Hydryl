@@ -1,0 +1,11 @@
+.dragZone
+{
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 56px;
+	border-top-left-radius: inherit;
+	border-bottom-left-radius: inherit;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	pointer-events: all;
+}

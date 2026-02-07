@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
 import { useWeatherManager } from "./hooks/useWeatherManager";
 import { useSettingsLoader } from "./hooks/useSettingsLoader";
+import Locations from "./pages/Locations";
 
 function App()
 {
@@ -24,6 +25,10 @@ function App()
 		{
 			path: "settings",
 			Component: SettingsPage
+		},
+		{
+			path: "locations",
+			Component: Locations
 		}
 	]);
 

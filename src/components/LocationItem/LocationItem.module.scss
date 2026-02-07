@@ -1,0 +1,89 @@
+.locationItem
+{
+	width: 100%;
+	height: 64px;
+	padding: 0 16px 0 8px;
+	border-radius: 20px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: space-between;
+	flex-shrink: 0;
+	pointer-events: all;
+	font-size: var(--main-font-size);
+	transition: all 0.1s;
+	background: var(--white-5);
+
+	& .mainContainer
+	{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: nowrap;
+		gap: 8px;
+
+		& > svg
+		{
+			width: 40px;
+			height: 40px;
+			fill: var(--white-25);
+		}
+
+		& .locationNameContainer
+		{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex-wrap: nowrap;
+			gap: 2px;
+
+			& p:nth-child(2)
+			{
+				font-size: 12px;
+				color: var(--white-50);
+			}
+		}
+	}
+
+	& .detailsContainer
+	{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 2px;
+
+		& .timeContainer
+		{
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+			flex-wrap: nowrap;
+			gap: 2px;
+
+			& p
+			{
+				font-size: 12px;
+				color: var(--white-50);
+			}
+		}
+
+		& > svg
+		{
+			width: 40px;
+			height: 40px;
+		}
+
+		& .temperatureText
+		{
+			font-size: var(--main-font-size);
+			font-weight: 600;
+			color: var(--white-90);
+			width: 30px;
+			text-align: right;
+		}
+	}
+}

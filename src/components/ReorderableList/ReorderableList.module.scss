@@ -1,0 +1,16 @@
+.listContainer, .reorderableItem { pointer-events: all; }
+
+.placeholder
+{
+	margin: 0 !important;
+	height: 0;
+	display: none;
+
+	&::before
+	{
+		content: "";
+		position: absolute;
+		inset: -1px 0 -1px;
+		background: var(--white-25);
+	}
+}
