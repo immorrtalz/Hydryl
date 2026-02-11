@@ -93,6 +93,7 @@
 		border: 1px solid var(--white-15);
 		border-radius: var(--main-border-radius);
 		padding: 8px 16px;
+		pointer-events: all;
 
 		& .currentLocationText
 		{
