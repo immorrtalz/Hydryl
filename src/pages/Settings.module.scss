@@ -69,33 +69,6 @@
 	&.viewTransitionRight { view-transition-name: settingsTransitionRight; }
 }
 
-.topBar
-{
-	position: absolute;
-	top: calc(24px + env(safe-area-inset-top));
-	left: 24px;
-	right: 24px;
-	height: 50px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	flex-wrap: nowrap;
-	z-index: 1;
-
-	& .currentPageNameText
-	{
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		font-size: var(--larger-font-size);
-		font-weight: 600;
-		color: var(--white-75);
-		text-align: center;
-	}
-}
-
 .mainContentContainer
 {
 	width: 100%;

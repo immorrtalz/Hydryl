@@ -16,6 +16,7 @@ import WeatherContext, { WeatherFetchStatus } from "../context/WeatherContext";
 import { AnimatePresence, motion } from "motion/react";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { useWeatherManager } from "../hooks/useWeatherManager";
+import { TopBar } from "../components/TopBar";
 
 function Home()
 {
@@ -48,19 +49,19 @@ function Home()
 	return (
 		<div className={styles.page} ref={pageRef}>
 
-			<div className={styles.topBar}>
+			<TopBar>
 				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", NavigateDirection.Left)}>
 					<SVG name="settings"/>
 				</Button>
 
-				<div className={styles.currentLocationClickableContainer} /* onClick={() => navigate("/locations", NavigateDirection.Right)} */>
+				<div className={styles.currentLocationClickableContainer} onClick={() => navigate("/locations", NavigateDirection.Right)}>
 					<p className={styles.currentLocationText}>Ufa</p>
 				</div>
 
 				<Button type={ButtonType.Secondary} square onClick={fetchWeather}>
 					<SVG name="update"/>
 				</Button>
-			</div>
+			</TopBar>
 
 			<div className={styles.heroContainer}>
 				<AnimatePresence>

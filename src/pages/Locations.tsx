@@ -6,6 +6,7 @@ import { Button, ButtonType } from "../components/Button";
 import { useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { LocationItem } from "../components/LocationItem";
 import { ReorderableList } from "../components/ReorderableList";
+import { TopBar } from "../components/TopBar";
 
 function Locations()
 {
@@ -40,12 +41,12 @@ function Locations()
 	return (
 		<div className={styles.page} ref={pageRef}>
 
-			<div className={styles.topBar}>
+			<TopBar>
 				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", transitionedFromDirection)}>
 					<SVG name="chevronLeft"/>
 				</Button>
-				<p className={styles.currentPageNameText}>{translate("locations")}</p>
-			</div>
+				<p>{translate("locations")}</p>
+			</TopBar>
 
 			<ReorderableList key={reorderKey} className={styles.mainContentContainer} ghostItemClassName='ghostLocationItem' onReorder={onReorder}>
 			{

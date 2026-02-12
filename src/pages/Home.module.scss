@@ -68,40 +68,43 @@
 	&.viewTransitionRight { view-transition-name: homeTransitionRight; }
 }
 
-.topBar
+.currentLocationClickableContainer
 {
-	position: absolute;
-	top: calc(24px + env(safe-area-inset-top));
-	left: 24px;
-	right: 24px;
+	width: fit-content;
+	max-width: calc(100vw - 50px * 2 - 24px * 4);
 	height: 50px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	display: flex;
-	flex-direction: row;
 	align-items: center;
-	justify-content: space-between;
-	flex-wrap: nowrap;
-	z-index: 1;
+	justify-content: center;
+	background: hsl(from white h s l / 0.03);
+	color: var(--white-90);
+	border: 1px solid var(--white-15);
+	border-radius: 20px;
+	padding: 0 24px;
+	pointer-events: all;
+	flex-shrink: 1;
+	overflow: hidden;
 
-	& .currentLocationClickableContainer
+	&:active
 	{
-		width: fit-content;
-		height: fit-content;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		border: 1px solid var(--white-15);
-		border-radius: var(--main-border-radius);
-		padding: 8px 16px;
-		pointer-events: all;
+		background: var(--white-10);
+		color: var(--white-50);
+		border: 1px solid var(--white-0);
+	}
 
-		& .currentLocationText
-		{
-			font-size: var(--larger-font-size);
-			font-weight: 600;
-			color: var(--white-75);
-			text-align: center;
-		}
+	& .currentLocationText
+	{
+		font-size: var(--larger-font-size);
+		font-weight: 600;
+		color: inherit;
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 

@@ -12,6 +12,7 @@ import { settingTranslationKeys, settingOptions, Settings } from "../misc/settin
 import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
 import { confirm, message } from '@tauri-apps/plugin-dialog';
 import { useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { TopBar } from "../components/TopBar";
 
 function SettingsPage()
 {
@@ -78,12 +79,12 @@ function SettingsPage()
 	return (
 		<div className={styles.page} ref={pageRef}>
 
-			<div className={styles.topBar}>
+			<TopBar>
 				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", transitionedFromDirection)}>
 					<SVG name="chevronLeft"/>
 				</Button>
-				<p className={styles.currentPageNameText}>{translate("settings")}</p>
-			</div>
+				<p>{translate("settings")}</p>
+			</TopBar>
 
 			<div className={styles.mainContentContainer}>
 

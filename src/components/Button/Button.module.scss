@@ -52,16 +52,17 @@
 
 .secondaryButton
 {
-	background: var(--black-50);
+	background: hsl(from white h s l / 0.03);
 	color: var(--white-90);
 	fill: var(--white-90);
-	border: 2px solid var(--white-10);
+	border: 1px solid var(--white-15);
 
 	&:active
 	{
-		background: var(--black-25);
+		background: var(--white-10);
 		color: var(--white-50);
 		fill: var(--white-50);
+		border: 1px solid var(--white-0);
 	}
 }
 

@@ -1,0 +1,49 @@
+.topBar
+{
+	position: fixed;
+	top: calc(24px + env(safe-area-inset-top));
+	left: 24px;
+	right: 24px;
+	height: 50px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+	z-index: 1;
+
+	&::before
+	{
+		content: "";
+		position: absolute;
+		inset: calc(-1 * (24px + env(safe-area-inset-top))) -24px -24px -24px;
+		pointer-events: none;
+		background: var(--black-0);
+		backdrop-filter: blur(0px);
+		border-bottom: 1px solid var(--white-0);
+	}
+
+	&.scrolledTopBar
+	{
+		height: 24px;
+
+		&::before
+		{
+			background: var(--black-25);
+			backdrop-filter: var(--blur-bg);
+			border-bottom: 1px solid var(--white-10);
+		}
+	}
+
+	& > p
+	{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: var(--larger-font-size);
+		font-weight: 600;
+		color: var(--white-75);
+		text-align: center;
+	}
+}
