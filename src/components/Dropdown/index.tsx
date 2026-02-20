@@ -3,7 +3,7 @@ import styles from './Dropdown.module.scss';
 import { SVG } from '../SVG';
 import { AnimatePresence, motion } from 'motion/react';
 
-interface DropdownOption
+export interface DropdownOption
 {
 	title: string;
 	value: string;

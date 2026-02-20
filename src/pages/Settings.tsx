@@ -4,7 +4,6 @@ import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
 import SettingsContext from '../context/SettingsContext';
-import { Dropdown } from "../components/Dropdown";
 import { getVersion } from '@tauri-apps/api/app';
 import { arch, version as osVersion, type } from '@tauri-apps/plugin-os';
 import { openUrl } from '@tauri-apps/plugin-opener';
@@ -13,6 +12,8 @@ import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
 import { confirm, message } from '@tauri-apps/plugin-dialog';
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { TopBar } from "../components/TopBar";
+import { GroupTitle } from "../components/GroupTitle";
+import { SettingsItem } from "../components/SettingsItem";
 
 function SettingsPage()
 {
@@ -89,98 +90,72 @@ function SettingsPage()
 			<div className={styles.mainContentContainer}>
 
 				<div className={styles.settingsGroupContainer}>
-					<p className={styles.settingsGroupTitleText}>{translate("general_settings")}</p>
+					<GroupTitle>{translate("general_settings")}</GroupTitle>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("language")}</p>
-						<Dropdown onOptionClick={value => changeSetting("locale", value)}
-							options={getSettingOptions("locale")}
-							defaultOptionIndex={settingOptions.locale.indexOf(settings.locale)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("language")}
+						options={getSettingOptions("locale")}
+						defaultValue={settings.locale}
+						onChange={value => changeSetting("locale", value)}/>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("time")}</p>
-						<Dropdown onOptionClick={value => changeSetting("time", value)}
-							options={getSettingOptions("time")}
-							defaultOptionIndex={settingOptions.time.indexOf(settings.time)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("time")}
+						options={getSettingOptions("time")}
+						defaultValue={settings.time}
+						onChange={value => changeSetting("time", value)}/>
+
 				</div>
 
 				<div className={styles.settingsGroupSeparator}/>
 
 				<div className={styles.settingsGroupContainer}>
-					<p className={styles.settingsGroupTitleText}>{translate("measure_units")}</p>
+					<GroupTitle>{translate("measure_units")}</GroupTitle>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("temperature")}</p>
-						<Dropdown onOptionClick={value => changeSetting("temperature", value)}
-							options={getSettingOptions("temperature")}
-							defaultOptionIndex={settingOptions.temperature.indexOf(settings.temperature)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("temperature")}
+						options={getSettingOptions("temperature")}
+						defaultValue={settings.temperature}
+						onChange={value => changeSetting("temperature", value)}/>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("wind_speed")}</p>
-						<Dropdown onOptionClick={value => changeSetting("windSpeed", value)}
-							options={getSettingOptions("windSpeed")}
-							defaultOptionIndex={settingOptions.windSpeed.indexOf(settings.windSpeed)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("wind_speed")}
+						options={getSettingOptions("windSpeed")}
+						defaultValue={settings.windSpeed}
+						onChange={value => changeSetting("windSpeed", value)}/>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("precipitation")}</p>
-						<Dropdown onOptionClick={value => changeSetting("precipitation", value)}
-							options={getSettingOptions("precipitation")}
-							defaultOptionIndex={settingOptions.precipitation.indexOf(settings.precipitation)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("precipitation")}
+						options={getSettingOptions("precipitation")}
+						defaultValue={settings.precipitation}
+						onChange={value => changeSetting("precipitation", value)}/>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("pressure")}</p>
-						<Dropdown onOptionClick={value => changeSetting("pressure", value)}
-							options={getSettingOptions("pressure")}
-							defaultOptionIndex={settingOptions.pressure.indexOf(settings.pressure)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("pressure")}
+						options={getSettingOptions("pressure")}
+						defaultValue={settings.pressure}
+						onChange={value => changeSetting("pressure", value)}/>
 
-					<div className={styles.settingsItem}>
-						<p className={styles.settingsItemTitleText}>{translate("distance")}</p>
-						<Dropdown onOptionClick={value => changeSetting("distance", value)}
-							options={getSettingOptions("distance")}
-							defaultOptionIndex={settingOptions.distance.indexOf(settings.distance)}/>
-					</div>
+					<SettingsItem
+						titleText={translate("distance")}
+						options={getSettingOptions("distance")}
+						defaultValue={settings.distance}
+						onChange={value => changeSetting("distance", value)}/>
 				</div>
 
 				<div className={styles.settingsGroupSeparator}/>
 
 				<div className={styles.settingsGroupContainer}>
-					<p className={styles.settingsGroupTitleText}>{translate("about_app_title")}</p>
+					<GroupTitle>{translate("about_app_title")}</GroupTitle>
 
-					<div className={styles.settingsItem}>
-						<div className={styles.settingsItemTextsContainer}>
-							<p className={styles.settingsItemTitleText}>{translate("source_code_title")}</p>
-							<p className={styles.settingsItemDescriptionText}>{translate("source_code_text")}</p>
-						</div>
-
+					<SettingsItem titleText={translate("source_code_title")} descriptionText={translate("source_code_text")}>
 						<Button type={ButtonType.Secondary} onClick={openGitHubRepo}>Github</Button>
-					</div>
+					</SettingsItem>
 
-					<div className={styles.settingsItem}>
-						<div className={styles.settingsItemTextsContainer}>
-							<p className={styles.settingsItemTitleText}>{translate("check_for_updates_title")}</p>
-							<p className={styles.settingsItemDescriptionText}>{translate("check_for_updates_text")}</p>
-						</div>
+					<SettingsItem titleText={translate("check_for_updates_title")} descriptionText={translate("check_for_updates_text")}>
+						<Button type={ButtonType.Secondary} onClick={checkForUpdate}>{translate("check_for_updates_button")}</Button>
+					</SettingsItem>
 
-						<Button type={ButtonType.Secondary} onClick={checkForUpdate}>
-							{translate("check_for_updates_button")}
-						</Button>
-					</div>
-
-					{
-						envParams[0] &&
-							<div className={styles.settingsItem}>
-								<div className={styles.settingsItemTextsContainer}>
-									<p className={styles.settingsItemTitleText}>Hydryl</p>
-									<p className={styles.settingsItemDescriptionText}>{envParams.join("\n")}</p>
-								</div>
-							</div>
-					}
+					{ envParams[0] && <SettingsItem titleText="Hydryl" descriptionText={envParams.join("\n")}/> }
 				</div>
 
 			</div>

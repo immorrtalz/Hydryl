@@ -30,64 +30,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
-
-		& .settingsGroupTitleText
-		{
-			width: 100%;
-			height: 32px;
-			padding: 0 16px;
-			line-height: 32px;
-			font-size: 14px;
-			font-weight: 500;
-			color: var(--white-50);
-		}
-
-		& .settingsItem
-		{
-			width: 100%;
-			height: fit-content;
-			padding: 8px 0 8px 16px;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-			flex-wrap: nowrap;
-			gap: 32px;
-
-			& .settingsItemTextsContainer
-			{
-				width: fit-content;
-				height: fit-content;
-				display: flex;
-				flex-direction: column;
-				flex-wrap: nowrap;
-				flex-shrink: 1;
-				gap: 8px;
-			}
-
-			& .settingsItemTitleText
-			{
-				font-size: var(--main-font-size);
-				font-weight: 600;
-				color: var(--white-75);
-				line-break: normal;
-				white-space: normal;
-				letter-spacing: -0.5px;
-			}
-
-			& .settingsItemDescriptionText
-			{
-				font-size: var(--smaller-font-size);
-				font-weight: 500;
-				line-height: 16px;
-				color: var(--white-50);
-				line-break: normal;
-				white-space: pre-line;
-				letter-spacing: -0.25px;
-			}
-
-			& button { flex-shrink: 0; }
-		}
 	}
 
 	& .settingsGroupSeparator
