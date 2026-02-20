@@ -11,7 +11,7 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 import { settingTranslationKeys, settingOptions, Settings } from "../misc/settings";
 import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
 import { confirm, message } from '@tauri-apps/plugin-dialog';
-import { useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { TopBar } from "../components/TopBar";
 
 function SettingsPage()
@@ -20,7 +20,7 @@ function SettingsPage()
 	const { translate } = useTranslations();
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { transitionedFromDirection, initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
 	const [envParams, setEnvParams] = useState<string[]>(["", ""]);
 
@@ -80,7 +80,7 @@ function SettingsPage()
 		<div className={styles.page} ref={pageRef}>
 
 			<TopBar>
-				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", transitionedFromDirection)}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", NavigateDirection.Right)}>
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p>{translate("settings")}</p>

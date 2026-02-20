@@ -205,3 +205,67 @@ a
 }
 
 .displayNone { display: none !important; }
+
+::view-transition-old(firstTransitionLeft), ::view-transition-new(firstTransitionLeft),
+::view-transition-old(firstTransitionRight), ::view-transition-new(firstTransitionRight),
+::view-transition-old(secondTransitionLeft), ::view-transition-new(secondTransitionLeft),
+::view-transition-old(secondTransitionRight), ::view-transition-new(secondTransitionRight)
+{
+	animation-duration: 0.3s;
+	animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+::view-transition-group(firstTransitionLeft), ::view-transition-group(firstTransitionRight),
+::view-transition-group(secondTransitionLeft), ::view-transition-group(secondTransitionRight)
+{ z-index: 1; }
+
+::view-transition-old(firstTransitionLeft), ::view-transition-old(secondTransitionLeft) { animation-name: outLeft; }
+::view-transition-new(firstTransitionLeft), ::view-transition-new(secondTransitionLeft) { animation-name: inLeft; }
+::view-transition-old(firstTransitionRight), ::view-transition-old(secondTransitionRight) { animation-name: outRight; }
+::view-transition-new(firstTransitionRight), ::view-transition-new(secondTransitionRight) { animation-name: inRight; }
+
+@keyframes outLeft
+{
+	to
+	{
+		pointer-events: none;
+		transform: translateX(-100%);
+		opacity: 1;
+	}
+}
+
+@keyframes inLeft
+{
+	from
+	{
+		pointer-events: none;
+		transform: translateX(-100%);
+		opacity: 1;
+	}
+}
+
+@keyframes outRight
+{
+	to
+	{
+		pointer-events: none;
+		transform: translateX(100%);
+		opacity: 1;
+	}
+}
+
+@keyframes inRight
+{
+	from
+	{
+		pointer-events: none;
+		transform: translateX(100%);
+		opacity: 1;
+	}
+}
+
+.viewTransitionLeftFirst { view-transition-name: firstTransitionLeft; }
+.viewTransitionRightFirst { view-transition-name: firstTransitionRight; }
+
+.viewTransitionLeftSecond { view-transition-name: secondTransitionLeft; }
+.viewTransitionRightSecond { view-transition-name: secondTransitionRight; }

@@ -3,7 +3,7 @@ import styles from "./Locations.module.scss";
 import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
-import { useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { LocationItem } from "../components/LocationItem";
 import { ReorderableList } from "../components/ReorderableList";
 import { TopBar } from "../components/TopBar";
@@ -13,7 +13,7 @@ function Locations()
 	const { translate } = useTranslations();
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { transitionedFromDirection, initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
 	const [locations, setLocations] = useState([
 		{ locationName: "Ufa", countryName: "Russia", currentTime: "17:08", timezone: "UTC+5", currentWeatherCode: 61, currentTemperature: 25 },
@@ -42,10 +42,13 @@ function Locations()
 		<div className={styles.page} ref={pageRef}>
 
 			<TopBar>
-				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", transitionedFromDirection)}>
+				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", NavigateDirection.Left)}>
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p>{translate("locations")}</p>
+				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/addlocation", NavigateDirection.Right)}>
+					<SVG name="plus"/>
+				</Button>
 			</TopBar>
 
 			<ReorderableList key={reorderKey} className={styles.mainContentContainer} ghostItemClassName='ghostLocationItem' onReorder={onReorder}>

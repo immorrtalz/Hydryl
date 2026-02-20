@@ -109,7 +109,7 @@ function Home()
 										isDay={weather.hourly.is_day[index]}
 										isNightVariant={!weather.hourly.is_day[0]}
 										precipProbability={weather.hourly.precipitation_probability[index]}
-										time={index === 0 ? "Now" :
+										time={index === 0 ? translate("now") :
 											time.getHours() === 0 ? `${time.getDate().toString().padStart(2, '0')}.${(time.getMonth() + 1).toString().padStart(2, '0')}` :
 											formatHoursFromDate(time, settings.time === "12")}/>)
 							}

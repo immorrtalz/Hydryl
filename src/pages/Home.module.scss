@@ -1,56 +1,3 @@
-::view-transition-old(homeTransitionLeft), ::view-transition-new(homeTransitionLeft),
-::view-transition-old(homeTransitionRight), ::view-transition-new(homeTransitionRight)
-{
-	animation-duration: 0.3s;
-	animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-::view-transition-group(homeTransitionLeft), ::view-transition-group(homeTransitionRight) { z-index: 0; }
-::view-transition-old(homeTransitionLeft) { animation-name: outLeft; }
-::view-transition-new(homeTransitionLeft) { animation-name: inLeft; }
-::view-transition-old(homeTransitionRight) { animation-name: outRight; }
-::view-transition-new(homeTransitionRight) { animation-name: inRight; }
-
-@keyframes outLeft
-{
-	to
-	{
-		pointer-events: none;
-		visibility: hidden;
-		transform: translateX(25%);
-	}
-}
-
-@keyframes inLeft
-{
-	from
-	{
-		pointer-events: none;
-		visibility: hidden;
-		transform: translateX(25%);
-	}
-}
-
-@keyframes outRight
-{
-	to
-	{
-		pointer-events: none;
-		visibility: hidden;
-		transform: translateX(-25%);
-	}
-}
-
-@keyframes inRight
-{
-	from
-	{
-		pointer-events: none;
-		visibility: hidden;
-		transform: translateX(-25%);
-	}
-}
-
 .page
 {
 	width: 100svw;
@@ -63,9 +10,6 @@
 	transition: none;
 	z-index: 0;
 	overscroll-behavior-y: none;
-
-	&.viewTransitionLeft { view-transition-name: homeTransitionLeft; }
-	&.viewTransitionRight { view-transition-name: homeTransitionRight; }
 }
 
 .currentLocationClickableContainer

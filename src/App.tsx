@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
+import Locations from "./pages/Locations";
+import AddLocation from "./pages/AddLocation";
 import { useWeatherManager } from "./hooks/useWeatherManager";
 import { useSettingsLoader } from "./hooks/useSettingsLoader";
-import Locations from "./pages/Locations";
 
 function App()
 {
@@ -29,6 +30,10 @@ function App()
 		{
 			path: "locations",
 			Component: Locations
+		},
+		{
+			path: "addlocation",
+			Component: AddLocation
 		}
 	]);
 
