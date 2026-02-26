@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-const names = ['menu', 'search', 'chevronLeft', 'chevronRight', 'chevronUp', 'chevronDown', 'reset', 'update', 'drag', 'settings', 'plus', 'cross', 'sun', 'moon', 'fog', 'rimeFog',
+export const names = ['menu', 'search', 'chevronLeft', 'chevronRight', 'chevronUp', 'chevronDown', 'reset', 'update', 'drag', 'settings', 'plus', 'cross', 'sun', 'moon', 'fog', 'rimeFog',
 	'cloud', 'cloudSun', 'cloudMoon', 'cloudDrizzle', 'cloudRain', 'cloudHeavyRain', 'cloudThunderstorm', 'snow', 'heavySnow', 'snowStorm', 'snowGrains', 'windArrow', 'location'];
 
 interface Props

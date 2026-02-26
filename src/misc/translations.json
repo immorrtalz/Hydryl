@@ -628,5 +628,35 @@
 	{
 		"en": "Now",
 		"ru": "Сейч."
+	},
+	"search":
+	{
+		"en": "Search",
+		"ru": "Поиск"
+	},
+	"search_a_city":
+	{
+		"en": "Search a city",
+		"ru": "Поиск города"
+	},
+	"location_name":
+	{
+		"en": "Location name",
+		"ru": "Название локации"
+	},
+	"location_timezone":
+	{
+		"en": "Location timezone",
+		"ru": "Часовой пояс локации"
+	},
+	"input_incentive":
+	{
+		"en": "Input",
+		"ru": "Введите"
+	},
+	"no_results_found":
+	{
+		"en": "No results found",
+		"ru": "Ничего не найдено"
 	}
 }
