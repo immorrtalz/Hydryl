@@ -26,3 +26,4 @@ dist-ssr
 /target/
 /builds/
 *APK-outputs.lnk*
+src-tauri/sweep.timestamp
