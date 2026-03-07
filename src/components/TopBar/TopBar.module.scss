@@ -16,7 +16,7 @@
 	{
 		content: "";
 		position: absolute;
-		inset: calc(-1 * (24px + env(safe-area-inset-top))) -24px -24px -24px;
+		inset: calc(-1 * (24px + env(safe-area-inset-top))) -24px -24px;
 		pointer-events: none;
 		background: var(--black-0);
 		backdrop-filter: blur(0px);
