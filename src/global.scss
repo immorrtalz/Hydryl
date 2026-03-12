@@ -171,12 +171,11 @@ h1, h2, h3, h4, h5, h6, p, a
 html
 {
 	width: 100vw;
-	height: 100vh;
-	/* scroll-behavior: smooth;
+	height: fit-content;
 	overflow: hidden auto;
+	scroll-behavior: smooth;
 	scrollbar-width: thin;
-	scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
-	transition: top 0.7s cubic-bezier(0.66, 0, 0.34, 1); */
+	scrollbar-color: var(--white-35) transparent;
 }
 
 body
@@ -184,10 +183,6 @@ body
 	width: 100%;
 	height: 100%;
 	background: var(--dark);
-	overflow: hidden auto;
-	scroll-behavior: smooth;
-	scrollbar-width: thin;
-	scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 #root

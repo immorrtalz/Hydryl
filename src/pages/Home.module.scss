@@ -206,7 +206,7 @@
 		height: fit-content;
 		min-height: 120px;
 		border-radius: var(--main-border-radius);
-		overflow: clip;
+		overflow: hidden;
 
 		& .hourlyForecastItems
 		{
@@ -218,7 +218,7 @@
 			align-items: center;
 			flex-wrap: nowrap;
 			gap: 2px;
-			overflow: auto clip;
+			overflow: auto hidden;
 			pointer-events: all;
 			mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 8px, rgba(0, 0, 0, 1) calc(100% - 8px), transparent);
 

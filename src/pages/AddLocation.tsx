@@ -54,7 +54,7 @@ function AddLocation()
 				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/locations", NavigateDirection.Left)}>
 					<SVG name="chevronLeft"/>
 				</Button>
-				<p>{translate("add_location")}</p>
+				<p>{translate("add_a_location")}</p>
 			</TopBar>
 
 			<div className={styles.mainContentContainer}>
@@ -86,7 +86,7 @@ function AddLocation()
 				<GroupTitle>{translate("longitude")}</GroupTitle>
 				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
 
-				<Button type={ButtonType.Primary} className={styles.addLocationButton}>{ translate("add_location") }</Button>
+				<Button type={ButtonType.Primary} className={styles.addLocationButton}>{ translate("add_the_location") }</Button>
 			</div>
 
 		</div>

@@ -15,7 +15,7 @@ interface Props
 
 export function TextBox(props: Props)
 {
-	const onInput = (e: React.ChangeEvent<HTMLInputElement>) =>
+	const onInput = (e: React.InputEvent<HTMLInputElement>) =>
 	{
 		setValue((e.target as HTMLInputElement).value);
 		props.onInput?.(e);

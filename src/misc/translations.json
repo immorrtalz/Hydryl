@@ -9,9 +9,14 @@
 		"en": "Locations",
 		"ru": "Локации"
 	},
-	"add_location":
+	"add_a_location":
 	{
 		"en": "Add a location",
+		"ru": "Добавить локацию"
+	},
+	"add_the_location":
+	{
+		"en": "Add the location",
 		"ru": "Добавить локацию"
 	},
 	"general_settings":
