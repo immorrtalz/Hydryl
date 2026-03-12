@@ -639,15 +639,15 @@
 		"en": "Search a city",
 		"ru": "Поиск города"
 	},
-	"location_name":
+	"name":
 	{
-		"en": "Location name",
-		"ru": "Название локации"
+		"en": "Name",
+		"ru": "Название"
 	},
-	"location_timezone":
+	"timezone":
 	{
-		"en": "Location timezone",
-		"ru": "Часовой пояс локации"
+		"en": "Timezone",
+		"ru": "Часовой пояс"
 	},
 	"input_incentive":
 	{
@@ -658,5 +658,40 @@
 	{
 		"en": "No results found",
 		"ru": "Ничего не найдено"
+	},
+	"searching":
+	{
+		"en": "Searching...",
+		"ru": "Поиск..."
+	},
+	"mixed_language_input_not_supported":
+	{
+		"en": "Mixed language input is not supported",
+		"ru": "Ввод на нескольких языках не поддерживается"
+	},
+	"only_en_or_ru_input_is_supported":
+	{
+		"en": "Only English or Russian input is supported",
+		"ru": "Поддерживаются ввод только на Английском или Русском языках"
+	},
+	"error_fetching_locations":
+	{
+		"en": "Error fetching locations",
+		"ru": "Ошибка при поиске локаций"
+	},
+	"optional":
+	{
+		"en": "optional",
+		"ru": "необязательно"
+	},
+	"latitude":
+	{
+		"en": "Latitude",
+		"ru": "Широта"
+	},
+	"longitude":
+	{
+		"en": "Longitude",
+		"ru": "Долгота"
 	}
 }

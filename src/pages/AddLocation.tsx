@@ -1,15 +1,16 @@
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./AddLocation.module.scss";
 import { SVG } from "../components/SVG";
-import { useTranslations } from "../hooks/useTranslations";
+import { TranslationKey, useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { TopBar } from "../components/TopBar";
 import { GroupTitle } from "../components/GroupTitle";
 import { TextBox } from "../components/TextBox";
-import { useLocationSearch } from "../hooks/useLocationSearch";
+import { LocationSearchResultItem, useLocationSearch } from "../hooks/useLocationSearch";
 import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
+import { timeZoneOffsetInMinutes } from "../misc/utils";
 
 function AddLocation()
 {
@@ -18,7 +19,28 @@ function AddLocation()
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
-	const { fetchSearch, canSearch } = useLocationSearch();
+	const { fetchLocations, canSearch } = useLocationSearch();
+	const [searchResults, setSearchResults] = useState<LocationSearchResultItem[]>([]);
+	const [selectedSearchResult, setSelectedSearchResult] = useState<LocationSearchResultItem | null>(null);
+	const [searchStatus, setSearchStatus] = useState<string | null>(null);
+
+	const searchLocation = async (searchText: string) =>
+	{
+		try
+		{
+			setSearchStatus(translate("searching"));
+			const results = await fetchLocations(searchText);
+			setSearchStatus(null);
+			setSearchResults(results);
+		}
+		catch (e) { setSearchStatus(e as string); }
+	};
+
+	const onInput = () =>
+	{
+		setSearchStatus(null);
+		setSearchResults([]);
+	};
 
 	useEffect(() =>
 	{
@@ -36,26 +58,35 @@ function AddLocation()
 			</TopBar>
 
 			<div className={styles.mainContentContainer}>
-				<GroupTitle>{translate("search_a_city")}</GroupTitle>
+				<GroupTitle>{`${translate("search_a_city")} (${translate("optional")})`}</GroupTitle>
 
-				<SearchBox svgIconName="search" placeholder={translate("search")} onEditingEnded={e => fetchSearch(e.target.value)} disabled={!canSearch()}>
-					<SearchResultItem name="Ufa" country="Russia, Bashkortostan Republic" timezone="UTC+5"/>
-					<SearchResultItem name="Moscow" country="Russia, Moscow" timezone="UTC+3"/>
-					<SearchResultItem name="Tokyo" country="Japan, Tokyo" timezone="UTC+9"/>
-					<SearchResultItem name="Fukuoka" country="Japan, Fukuoka" timezone="UTC+9"/>
-					<SearchResultItem name="Sapporo" country="Japan, Hokkaido" timezone="UTC+9"/>
-					<SearchResultItem name="Ufa" country="Russia, Bashkortostan Republic" timezone="UTC+5"/>
-					<SearchResultItem name="Moscow" country="Russia, Moscow" timezone="UTC+3"/>
-					<SearchResultItem name="Tokyo" country="Japan, Tokyo" timezone="UTC+9"/>
-					<SearchResultItem name="Fukuoka" country="Japan, Fukuoka" timezone="UTC+9"/>
-					<SearchResultItem name="Sapporo" country="Japan, Hokkaido" timezone="UTC+9"/>
+				<SearchBox placeholder={translate("search")} disabled={!canSearch()} onInput={onInput} onSearch={searchLocation}
+					statusText={searchStatus !== null ? searchStatus : ""}>
+				{
+					searchResults.map((item, index) =>
+						<SearchResultItem key={index} name={item.name} country={item.country} admin1={item.admin1} timezone={timeZoneOffsetInMinutes(item.timezone)}
+							onClick={() =>
+							{
+								console.log("Selected location:", item);
+								setSelectedSearchResult(item);
+								setSearchResults([]);
+							}}/>)
+				}
 				</SearchBox>
 
-				<GroupTitle>{translate("location_name")}</GroupTitle>
-				<TextBox placeholder={`${translate("input_incentive")}...`}/>
+				<GroupTitle>{translate("name")}</GroupTitle>
+				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.name : ""}/>
 
-				<GroupTitle>{translate("location_timezone")}</GroupTitle>
-				<TextBox placeholder={`${translate("input_incentive")}...`}/>
+				<GroupTitle>{translate("timezone")}</GroupTitle>
+				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? timeZoneOffsetInMinutes(selectedSearchResult.timezone) : ""}/>
+
+				<GroupTitle>{translate("latitude")}</GroupTitle>
+				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>
+
+				<GroupTitle>{translate("longitude")}</GroupTitle>
+				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
+
+				<Button type={ButtonType.Primary} className={styles.addLocationButton}>{ translate("add_location") }</Button>
 			</div>
 
 		</div>

@@ -68,3 +68,30 @@ const formatHoursAsNumber = (hours: number, is12HourFormat: boolean = false): nu
 
 	return newHours;
 };
+
+export const timeZoneOffsetInMinutes = (ianaTimeZone: string): string =>
+{
+	const now = new Date();
+	now.setSeconds(0, 0);
+
+	// Format current time in `ianaTimeZone` as `M/DD/YYYY, HH:MM:SS`:
+	const tzDateString = now.toLocaleString('en-US',
+	{
+		timeZone: ianaTimeZone,
+		hourCycle: 'h23',
+	});
+
+	// Parse formatted date string:
+	const match = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+)/.exec(tzDateString);
+	if (match === null) return "";
+	const [_, month, day, year, hour, min] = match.map(Number);
+
+	// Change date string's time zone to UTC and get timestamp:
+	const tzTime = Date.UTC(year, month - 1, day, hour, min);
+
+	// Return the offset between UTC and target time zone:
+	const UTCOffsetMinutes = Math.floor((tzTime - now.getTime()) / (1000 * 60));
+	const hours = Math.floor(UTCOffsetMinutes / 60);
+	const minutes = UTCOffsetMinutes % 60;
+	return `UTC${hours >= 0 ? "+" : ""}${hours}${minutes > 0 ? ":" + minutes.toString().padStart(2, "0") : ""}`;
+};

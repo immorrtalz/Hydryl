@@ -14,6 +14,7 @@ interface Props
 	square?: boolean;
 	disabled?: boolean;
 	onClick?: (...args: any[]) => any;
+	className?: string;
 }
 
 export function Button(props: Props)
@@ -33,7 +34,7 @@ export function Button(props: Props)
 	if (props.square) dynamicClassNames.push(styles.squareButton);
 
 	return (
-		<button className={`${styles.button} ${dynamicClassNames.join(' ')} fontSemibold`} onClick={props.disabled ? undefined : onClick} disabled={props.disabled}>
+		<button className={`${styles.button} ${dynamicClassNames.join(' ')} ${props.className || ''} fontSemibold`} onClick={props.disabled ? undefined : onClick} disabled={props.disabled}>
 			{props.children}
 		</button>
 	);

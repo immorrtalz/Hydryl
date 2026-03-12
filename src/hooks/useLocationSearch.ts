@@ -1,6 +1,5 @@
 import { useState } from "react";
-//import { initialWeatherData, WeatherData } from "../misc/weather";
-//import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { useTranslations } from "./useTranslations";
 
 export interface LocationSearchResultItem
 {
@@ -15,29 +14,22 @@ export interface LocationSearchResultItem
 
 export function useLocationSearch()
 {
+	const { translate } = useTranslations();
 	const [searchFetchCooldown, setSearchFetchCooldown] = useState<NodeJS.Timeout | null>(null);
 
 	const canSearch = () => searchFetchCooldown === null;
 
-	const fetchSearch = async (searchText: string) =>
+	const fetchLocations = async (searchText: string): Promise<LocationSearchResultItem[]> =>
 	{
-		if (searchFetchCooldown !== null || searchText.length === 0) return;
+		if (!canSearch() || searchText.length === 0) return [];
 
 		const enCheck: boolean = /[a-zA-Z]/.test(searchText);
 		const ruCheck: boolean = /[а-яёА-ЯЁ]/.test(searchText);
 
 		if (enCheck && ruCheck)
-		{
-			const errorHeader = "Error fetching search data:";
-			console.error(errorHeader, "Mixed language input is not supported.");
-			return Promise.reject(`${errorHeader} Mixed language input is not supported.`);
-		}
+			return Promise.reject(translate('mixed_language_input_not_supported'));
 		else if (!enCheck && !ruCheck)
-		{
-			const errorHeader = "Error fetching search data:";
-			console.error(errorHeader, "Only EN or RU input is supported.");
-			return Promise.reject(`${errorHeader} Only EN or RU input is supported.`);
-		}
+			return Promise.reject(translate('only_en_or_ru_input_is_supported'));
 
 		setSearchFetchCooldown(setTimeout(() => setSearchFetchCooldown(null), 1000));
 
@@ -50,21 +42,21 @@ export function useLocationSearch()
 			const data = await response.json();
 
 			if (data.results === undefined || data.results.length === 0)
-			{
-				const errorHeader = "Error fetching search data:";
-				console.error(errorHeader, "No results found.");
-				return Promise.reject(`${errorHeader} No results found.`);
-			}
+				return Promise.reject(translate('no_results_found'));
 
-			console.log(data.results);
+			return data.results.map((item: LocationSearchResultItem) => (
+			{
+				latitude: item.latitude,
+				longitude: item.longitude,
+				elevation: item.elevation ?? 0,
+				timezone: item.timezone,
+				name: item.name,
+				country: item.country,
+				admin1: item.admin1
+			})) as LocationSearchResultItem[];
 		}
-		catch (e)
-		{
-			const errorHeader = "Error fetching search data:";
-			console.error(errorHeader, e);
-			return Promise.reject(`${errorHeader} ${e}`);
-		}
+		catch (e) { return Promise.reject(`${translate('error_fetching_locations')}: ${e}`); }
 	};
 
-	return { fetchSearch, canSearch };
+	return { fetchLocations, canSearch };
 }

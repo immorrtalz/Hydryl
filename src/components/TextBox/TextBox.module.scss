@@ -29,6 +29,16 @@
 		&:focus { background: var(--white-10); }
 		&::placeholder { color: var(--white-50); }
 
+		&:disabled
+		{
+			background: transparent;
+			border: 1px solid var(--white-10);
+			color: var(--white-50);
+			pointer-events: none;
+
+			&::placeholder { color: var(--white-35); }
+		}
+
 		&.withIcon { padding-left: 48px; }
 	}
 }

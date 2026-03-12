@@ -25,4 +25,10 @@
 	flex-grow: 1;
 
 	& > *:nth-child(even):not(:last-child) { margin-bottom: 16px; }
+
+	& .addLocationButton
+	{
+		width: 100%;
+		margin-top: auto;
+	}
 }
