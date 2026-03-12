@@ -12,7 +12,7 @@
 	justify-content: space-between;
 	flex-wrap: nowrap;
 	z-index: 1;
-	pointer-events: none;
+	pointer-events: all;
 	background: var(--black-0);
 	backdrop-filter: blur(0px);
 	border-bottom: 1px solid var(--white-0);
