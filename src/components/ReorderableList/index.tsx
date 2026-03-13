@@ -135,7 +135,7 @@ export function ReorderableList(props: Props)
 		setTimeout(() =>
 		{
 			ghost.remove();
-			listContainerRef.current!.style.pointerEvents = "";
+			if (listContainerRef.current !== null) listContainerRef.current.style.pointerEvents = "";
 
 			if (pendingOrderRef.current !== null)
 			{
@@ -166,7 +166,7 @@ export function ReorderableList(props: Props)
 		e.preventDefault();
 
 		const draggedItem = document.getElementById("draggedItem")!;
-		listContainerRef.current.insertBefore(draggedItem as Node, placeholderRef.current!);
+		if (draggedItem !== null) listContainerRef.current.insertBefore(draggedItem as Node, placeholderRef.current!);
 		placeholderRef.current!.style.display = "";
 
 		const items = Array.from(listContainerRef.current.querySelectorAll(`.${styles.reorderableItem}`));
