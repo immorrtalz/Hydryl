@@ -69,7 +69,7 @@ const formatHoursAsNumber = (hours: number, is12HourFormat: boolean = false): nu
 	return newHours;
 };
 
-export const timeZoneOffsetInMinutes = (ianaTimeZone: string): string =>
+export const getTimeZoneUTCOffset = (ianaTimeZone: string): string =>
 {
 	const now = new Date();
 	now.setSeconds(0, 0);
@@ -94,4 +94,17 @@ export const timeZoneOffsetInMinutes = (ianaTimeZone: string): string =>
 	const hours = Math.floor(UTCOffsetMinutes / 60);
 	const minutes = UTCOffsetMinutes % 60;
 	return `UTC${hours >= 0 ? "+" : ""}${hours}${minutes > 0 ? ":" + minutes.toString().padStart(2, "0") : ""}`;
+};
+
+/**
+	@params `num` A number to be rounded.
+
+	@params `fractionDigits` The number of decimal places to round to. Must be an integer between 0 and 20 (inclusive). If it's out of range or not an integer, it will be clamped to the nearest valid integer value.
+
+	@returns The rounded number.
+*/
+export const round = (num: number, fractionDigits: number = 0) =>
+{
+	const digits = fractionDigits < 0 || fractionDigits > 20 ? clamp(fractionDigits, 0, 20) : (Number.isInteger(fractionDigits) ? fractionDigits : Math.round(fractionDigits));
+	return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 };

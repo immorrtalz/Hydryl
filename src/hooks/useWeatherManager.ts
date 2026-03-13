@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import WeatherContext, { WeatherFetchStatus } from "../context/WeatherContext";
 import { initialWeatherData, WeatherData } from "../misc/weather";
 import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { round } from "../misc/utils";
 
 const WEATHER_FILE_NAME = 'weather';
 
@@ -19,7 +20,7 @@ export function useWeatherManager()
 		"models": "best_match",
 		"current": ["is_day", "weather_code", "temperature_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
 			"relative_humidity_2m", "precipitation", "precipitation_probability", "visibility", "cloud_cover", "uv_index"],
-		"timezone": "GMT+5",
+		"timezone": "auto",
 		"forecast_days": 6,
 		"forecast_hours": 25,
 		"temperature_unit": "celsius", //celsius, fahrenheit
@@ -40,7 +41,7 @@ export function useWeatherManager()
 
 	const fetchWeather = async () =>
 	{
-		if (weatherFetchStatus === 2 || weatherFetchCooldown !== null) return;
+		if (weatherFetchStatus === 2 || weatherFetchCooldown !== null) return Promise.reject("Weather fetch is already in progress or on cooldown.");
 		setWeatherFetchCooldown(setTimeout(() => setWeatherFetchCooldown(null), 2000));
 
 		try
@@ -54,53 +55,62 @@ export function useWeatherManager()
 			const hourly = response.hourly()!;
 			const daily = response.daily()!;
 
+			const v = (i: number) => current.variables(i)!.value();
+
+			const hVArr = (i: number) => Array.from(hourly.variables(i)!.valuesArray() || []);
+			const mappedHVArr = <T>(i: number, mapFn: (v: number) => T) => hVArr(i).map(val => mapFn(val));
+			const dVArr = (i: number) => Array.from(daily.variables(i)!.valuesArray() || []);
+			const mappedDVArr = <T>(i: number, mapFn: (v: number) => T) => dVArr(i).map(val => mapFn(val));
+			const int64LengthDVArr = (i: number) => [...Array(daily.variables(i)!.valuesInt64Length())];
+			const int64DVArr = (i: number, j: number) => daily.variables(i)!.valuesInt64(j);
+
 			// Note: The order of weather variables in the URL query and the indices below need to match!
 			const weatherData: WeatherData =
 			{
 				current:
 				{
-					time: new Date((Number(current.time())/*  + utcOffsetSeconds */) * 1000),
+					time: new Date(Number(current.time()) * 1000),
 					is_day: Boolean(current.variables(0)!.value()),
-					weather_code: current.variables(1)!.value(),
-					temperature_2m: Math.round(current.variables(2)!.value()),
-					surface_pressure: Math.round(current.variables(3)!.value() * 0.75006156130264), // mbar (hPa) to mmHg
-					wind_speed_10m: Math.round(current.variables(4)!.value() * 10) / 10,
-					wind_direction_10m: Math.round(current.variables(5)!.value()),
-					wind_gusts_10m: Math.round(current.variables(6)!.value()),
-					relative_humidity_2m: current.variables(7)!.value(),
-					precipitation: Math.round(current.variables(8)!.value()),
-					precipitation_probability: Math.round(current.variables(9)!.value()),
-					visibility: Math.round(current.variables(10)!.value() / 100) / 10,
-					cloud_cover: Math.round(current.variables(11)!.value()),
-					uv_index: Math.round(current.variables(12)!.value() * 10) / 10,
+					weather_code: v(1),
+					temperature_2m: round(v(2)),
+					surface_pressure: round(v(3)) * 0.75006156130264, // mbar (hPa) to mmHg
+					wind_speed_10m: round(v(4), 1),
+					wind_direction_10m: round(v(5)),
+					wind_gusts_10m: round(v(6)),
+					relative_humidity_2m: round(v(7)),
+					precipitation: round(v(8)),
+					precipitation_probability: round(v(9)),
+					visibility: round(v(10) / 1000, 1), // m -> km
+					cloud_cover: round(v(11)),
+					uv_index: round(v(12), 1)
 				},
 				hourly:
 				{
 					time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())]
 						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval()) * 1000)),
-					is_day: Array.from(hourly.variables(0)!.valuesArray() || []).map(value => Boolean(value)),
-					weather_code: Array.from(hourly.variables(1)!.valuesArray() || []),
-					temperature_2m: Array.from(hourly.variables(2)!.valuesArray()!.map(value => Math.round(value))),
-					precipitation_probability: Array.from(hourly.variables(3)!.valuesArray() || []).map(value => Math.round(value))
+					is_day: mappedHVArr(0, Boolean),
+					weather_code: hVArr(1),
+					temperature_2m: mappedHVArr(2, round),
+					precipitation_probability: mappedHVArr(3, round)
 				},
 				daily:
 				{
 					time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())]
 						.map((_, i) => new Date((Number(daily.time()) + i * daily.interval()) * 1000)),
-					weather_code: Array.from(daily.variables(0)!.valuesArray() || []),
-					temperature_2m_min: Array.from(daily.variables(1)!.valuesArray()!.map(value => Math.round(value))),
-					temperature_2m_max: Array.from(daily.variables(2)!.valuesArray()!.map(value => Math.round(value))),
-					wind_direction_10m_dominant: Array.from(daily.variables(3)!.valuesArray() || []).map(value => Math.round(value)),
-					wind_speed_10m_max: Array.from(daily.variables(4)!.valuesArray() || []).map(value => Math.round(value * 10) / 10),
-					sunrise: [...Array(daily.variables(5)!.valuesInt64Length())]
-						.map((_, i) => new Date((Number(daily.variables(5)!.valuesInt64(i))) * 1000)),
-					sunset: [...Array(daily.variables(6)!.valuesInt64Length())]
-						.map((_, i) => new Date((Number(daily.variables(6)!.valuesInt64(i))) * 1000)),
-					precipitation_probability_max: Array.from(daily.variables(7)!.valuesArray() || []).map(value => Math.round(value))
+					weather_code: dVArr(0),
+					temperature_2m_min: mappedDVArr(1, round),
+					temperature_2m_max: mappedDVArr(2, round),
+					wind_direction_10m_dominant: mappedDVArr(3, round),
+					wind_speed_10m_max: mappedDVArr(4, val => round(val, 1)),
+					sunrise: int64LengthDVArr(5).map((_, i) => new Date((Number(int64DVArr(5, i))) * 1000)),
+					sunset: int64LengthDVArr(6).map((_, i) => new Date((Number(int64DVArr(6, i))) * 1000)),
+					precipitation_probability_max: mappedDVArr(7, round)
 				}
 			};
 
 			setWeather(weatherData, WeatherFetchStatus.Fetched);
+
+			return weatherData;
 		}
 		catch (e)
 		{

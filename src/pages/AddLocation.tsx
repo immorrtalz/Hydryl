@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./AddLocation.module.scss";
 import { SVG } from "../components/SVG";
-import { TranslationKey, useTranslations } from "../hooks/useTranslations";
+import { useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { TopBar } from "../components/TopBar";
@@ -10,7 +10,7 @@ import { TextBox } from "../components/TextBox";
 import { LocationSearchResultItem, useLocationSearch } from "../hooks/useLocationSearch";
 import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
-import { timeZoneOffsetInMinutes } from "../misc/utils";
+import { getTimeZoneUTCOffset } from "../misc/utils";
 
 function AddLocation()
 {
@@ -64,7 +64,7 @@ function AddLocation()
 					statusText={searchStatus !== null ? searchStatus : ""}>
 				{
 					searchResults.map((item, index) =>
-						<SearchResultItem key={index} name={item.name} country={item.country} admin1={item.admin1} timezone={timeZoneOffsetInMinutes(item.timezone)}
+						<SearchResultItem key={index} name={item.name} country={item.country} admin1={item.admin1} timezone={getTimeZoneUTCOffset(item.timezone)}
 							onClick={() =>
 							{
 								console.log("Selected location:", item);
@@ -78,7 +78,7 @@ function AddLocation()
 				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.name : ""}/>
 
 				<GroupTitle>{translate("timezone")}</GroupTitle>
-				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? timeZoneOffsetInMinutes(selectedSearchResult.timezone) : ""}/>
+				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? getTimeZoneUTCOffset(selectedSearchResult.timezone) : ""}/>
 
 				<GroupTitle>{translate("latitude")}</GroupTitle>
 				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>

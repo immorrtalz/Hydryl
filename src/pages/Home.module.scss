@@ -17,10 +17,6 @@
 	width: fit-content;
 	max-width: calc(100vw - 50px * 2 - 24px * 4);
 	height: 50px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -63,6 +59,17 @@
 	justify-content: center;
 	flex-wrap: nowrap;
 	gap: 24px;
+
+	@media (max-height: 799px)
+	{
+		height: fit-content;
+
+		.mainInfoContainer
+		{
+			height: 100vh;
+			border-radius: 0 0 56px 56px;
+		}
+	}
 }
 
 .weatherFetchingNotifContainer
@@ -105,6 +112,7 @@
 	width: 100vw;
 	height: auto;
 	padding-bottom: 100px;
+	position: relative;
 	flex-shrink: 1;
 	flex-grow: 1;
 	display: flex;
@@ -113,6 +121,7 @@
 	justify-content: center;
 	flex-wrap: nowrap;
 	border-radius: 0 0 56px 56px;
+	isolation: isolate;
 
 	&::before
 	{
@@ -123,6 +132,17 @@
 		background: inherit;
 		border-radius: inherit;
 		filter: blur(128px);
+		pointer-events: none;
+	}
+
+	@media ((min-height: 800px) and (max-height: 880px)) or (max-height: 580px)
+	{
+		& .currentWeatherContainer
+		{
+			gap: 16px !important;
+
+			& .currentTempText { font-size: 96px !important; }
+		}
 	}
 
 	& .currentWeatherContainer
@@ -241,8 +261,10 @@
 .dailyForecastContainer
 {
 	width: calc(100% - 48px);
-	min-height: 240px;
+	/* min-height: 240px; */
 	padding: 4px 16px;
+	flex-grow: 0;
+	flex-shrink: 0;
 	background: var(--white-5);
 	border-radius: var(--main-border-radius);
 	display: flex;
