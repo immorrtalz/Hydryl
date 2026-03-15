@@ -67,7 +67,6 @@ function AddLocation()
 						<SearchResultItem key={index} name={item.name} country={item.country} admin1={item.admin1} timezone={getTimeZoneUTCOffset(item.timezone)}
 							onClick={() =>
 							{
-								console.log("Selected location:", item);
 								setSelectedSearchResult(item);
 								setSearchResults([]);
 							}}/>)
@@ -75,16 +74,16 @@ function AddLocation()
 				</SearchBox>
 
 				<GroupTitle>{translate("name")}</GroupTitle>
-				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.name : ""}/>
+				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.name : ""}/>
 
 				<GroupTitle>{translate("timezone")}</GroupTitle>
-				<TextBox placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? getTimeZoneUTCOffset(selectedSearchResult.timezone) : ""}/>
+				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? getTimeZoneUTCOffset(selectedSearchResult.timezone) : ""}/>
 
 				<GroupTitle>{translate("latitude")}</GroupTitle>
-				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>
+				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>
 
 				<GroupTitle>{translate("longitude")}</GroupTitle>
-				<TextBox disabled placeholder={`${translate("input_incentive")}...`} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
+				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
 
 				<Button type={ButtonType.Primary} className={styles.addLocationButton}>{ translate("add_the_location") }</Button>
 			</div>

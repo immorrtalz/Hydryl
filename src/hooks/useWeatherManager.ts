@@ -5,7 +5,7 @@ import { initialWeatherData, WeatherData } from "../misc/weather";
 import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { round } from "../misc/utils";
 
-const WEATHER_FILE_NAME = 'weather';
+const WEATHER_FILE_NAME = 'weather.json';
 
 export function useWeatherManager()
 {
@@ -30,14 +30,6 @@ export function useWeatherManager()
 
 	const [, setWeather, weatherFetchStatus, setWeatherFetchStatus] = useContext(WeatherContext);
 	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<NodeJS.Timeout | null>(null);
-
-	/* const setLocationCoords = (latitude: number, longitude: number, refetchWeather: boolean = false) =>
-	{
-		weatherFetchParams.latitude = latitude;
-		weatherFetchParams.longitude = longitude;
-
-		if (refetchWeather) fetchWeather().catch(() => {});
-	}; */
 
 	const fetchWeather = async () =>
 	{
@@ -182,5 +174,5 @@ export function useWeatherManager()
 		await writeTextFile(WEATHER_FILE_NAME, bytesString, { baseDir: BaseDirectory.AppConfig });
 	}
 
-	return { fetchWeather/* , setLocationCoords */, loadWeatherFromFile, saveWeatherToFile };
+	return { fetchWeather, loadWeatherFromFile, saveWeatherToFile };
 }
