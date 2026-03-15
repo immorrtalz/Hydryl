@@ -5,7 +5,7 @@ import { SVG } from '../SVG';
 interface Props
 {
 	locationName: string;
-	countryName: string;
+	countryName?: string;
 	currentTime: string;
 	timezone: string;
 	currentWeatherCode: number;
@@ -27,7 +27,7 @@ export function LocationItem(props: Props)
 
 				<div className={styles.locationNameContainer}>
 					<p>{props.locationName}</p>
-					<p>{props.countryName}</p>
+					{props.countryName && <p>{props.countryName}</p>}
 				</div>
 			</div>
 

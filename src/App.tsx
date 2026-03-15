@@ -4,17 +4,20 @@ import Home from "./pages/Home";
 import SettingsPage from "./pages/Settings";
 import Locations from "./pages/Locations";
 import AddLocation from "./pages/AddLocation";
-import { useWeatherManager } from "./hooks/useWeatherManager";
 import { useSettingsLoader } from "./hooks/useSettingsLoader";
+import { useLocationsManager } from "./hooks/useLocationsManager";
+import { useWeatherManager } from "./hooks/useWeatherManager";
 
 function App()
 {
 	const { loadSettingsFromFile } = useSettingsLoader();
+	const { loadLocationsFromFile } = useLocationsManager();
 	const { loadWeatherFromFile } = useWeatherManager();
 
 	useEffect(() =>
 	{
 		loadSettingsFromFile();
+		loadLocationsFromFile();
 		loadWeatherFromFile(true);
 	}, []);
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Locations.module.scss";
 import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
@@ -7,21 +7,16 @@ import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavi
 import { LocationItem } from "../components/LocationItem";
 import { ReorderableList } from "../components/ReorderableList";
 import { TopBar } from "../components/TopBar";
+import LocationContext from "../context/LocationContext";
+import { getCurrentTimeInTimezone, getTimeZoneUTCOffset } from "../misc/utils";
 
 function Locations()
 {
 	const { translate } = useTranslations();
+	const [currentLocationIndex, setCurrentLocationIndex, locations, setLocations] = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
-
-	const [locations, setLocations] = useState([
-		{ locationName: "Ufa", countryName: "Russia", currentTime: "17:08", timezone: "UTC+5", currentWeatherCode: 61, currentTemperature: 25 },
-		{ locationName: "Moscow", countryName: "Russia", currentTime: "17:08", timezone: "UTC+3", currentWeatherCode: 2, currentTemperature: 22 },
-		{ locationName: "Tokyo", countryName: "Japan", currentTime: "17:08", timezone: "UTC+9", currentWeatherCode: 2, currentTemperature: 14 },
-		{ locationName: "Fukuoka", countryName: "Japan", currentTime: "17:08", timezone: "UTC+9", currentWeatherCode: 0, currentTemperature: 17 },
-		{ locationName: "Sapporo", countryName: "Japan", currentTime: "17:08", timezone: "UTC+9", currentWeatherCode: 61, currentTemperature: 10 }
-	]);
 
 	const [reorderKey, setReorderKey] = useState(0);
 
@@ -30,6 +25,12 @@ function Locations()
 		const prevLocations = [...locations];
 		const sortedLocations = newOrder.map(i => prevLocations[i]);
 		setLocations(sortedLocations);
+
+		const newCurrentLocationIndex = newOrder.indexOf(currentLocationIndex);
+
+		if (newCurrentLocationIndex >= 0 && newCurrentLocationIndex !== currentLocationIndex)
+			setCurrentLocationIndex(newCurrentLocationIndex);
+
 		setReorderKey(k => k + 1);
 	};
 
@@ -55,13 +56,13 @@ function Locations()
 			{
 				locations.map(location => (
 					<LocationItem
-						key={`${location.locationName}-${location.countryName}`}
-						locationName={location.locationName}
-						countryName={location.countryName}
-						currentTime={location.currentTime}
-						timezone={location.timezone}
-						currentWeatherCode={location.currentWeatherCode}
-						currentTemperature={location.currentTemperature}/>))
+						key={`${location.name}-${location.latitude}-${location.longitude}`}
+						locationName={location.name}
+						countryName={location.country}
+						currentTime={getCurrentTimeInTimezone(location.timezone)}
+						timezone={getTimeZoneUTCOffset(location.timezone)}
+						currentWeatherCode={0}
+						currentTemperature={0}/>))
 			}
 			</ReorderableList>
 		</div>

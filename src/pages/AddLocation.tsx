@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./AddLocation.module.scss";
 import { SVG } from "../components/SVG";
 import { useTranslations } from "../hooks/useTranslations";
@@ -11,10 +11,12 @@ import { LocationSearchResultItem, useLocationSearch } from "../hooks/useLocatio
 import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
 import { getTimeZoneUTCOffset } from "../misc/utils";
+import LocationContext from "../context/LocationContext";
 
 function AddLocation()
 {
 	const { translate } = useTranslations();
+	const [,, locations, setLocations] = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
@@ -40,6 +42,22 @@ function AddLocation()
 	{
 		setSearchStatus(null);
 		setSearchResults([]);
+	};
+
+	const addLocation = () =>
+	{
+		if (selectedSearchResult === null) return;
+
+		setLocations([...locations,
+		{
+			name: selectedSearchResult.name,
+			latitude: selectedSearchResult.latitude,
+			longitude: selectedSearchResult.longitude,
+			timezone: selectedSearchResult.timezone,
+			country: selectedSearchResult.country
+		}]);
+
+		navigateTo("/locations", NavigateDirection.Left);
 	};
 
 	useEffect(() =>
@@ -79,13 +97,16 @@ function AddLocation()
 				<GroupTitle>{translate("timezone")}</GroupTitle>
 				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? getTimeZoneUTCOffset(selectedSearchResult.timezone) : ""}/>
 
+				<GroupTitle>{`${translate("country")} (${translate("optional")})`}</GroupTitle>
+				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.country : ""}/>
+
 				<GroupTitle>{translate("latitude")}</GroupTitle>
 				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>
 
 				<GroupTitle>{translate("longitude")}</GroupTitle>
 				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
 
-				<Button type={ButtonType.Primary} className={styles.addLocationButton}>{ translate("add_the_location") }</Button>
+				<Button type={ButtonType.Primary} className={styles.addLocationButton} disabled={selectedSearchResult === null} onClick={addLocation}>{ translate("add_the_location") }</Button>
 			</div>
 
 		</div>

@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { useWeatherManager } from "../hooks/useWeatherManager";
 import { TopBar } from "../components/TopBar";
+import LocationContext from "../context/LocationContext";
 
 function Home()
 {
@@ -25,13 +26,15 @@ function Home()
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
 	const { fetchWeather } = useWeatherManager();
+	const [currentLocationIndex,, locations] = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
 	const navigate = (path: string, direction: NavigateDirection) =>
 	{
-		if (weatherFetchStatus !== WeatherFetchStatus.Fetching) navigateTo(path, direction);
+		if (weatherFetchStatus !== WeatherFetchStatus.Fetching)
+			navigateTo(path, direction);
 	};
 
 	const [weather,, weatherFetchStatus] = useContext(WeatherContext);
@@ -55,7 +58,7 @@ function Home()
 				</Button>
 
 				<div className={styles.currentLocationClickableContainer} onClick={() => navigate("/locations", NavigateDirection.Right)}>
-					<p className={styles.currentLocationText}>Ufa</p>
+					<p className={styles.currentLocationText}>{locations[currentLocationIndex]?.name || "--"}</p>
 				</div>
 
 				<Button type={ButtonType.Secondary} square onClick={fetchWeather}>

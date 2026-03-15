@@ -69,6 +69,18 @@ const formatHoursAsNumber = (hours: number, is12HourFormat: boolean = false): nu
 	return newHours;
 };
 
+export const getCurrentTimeInTimezone = (ianaTimeZone: string, is12HourFormat: boolean = false): string =>
+{
+	try
+	{
+		let date = new Date();
+		date.setSeconds(0, 0);
+		date = new Date(date.toLocaleString('en-US', { timeZone: ianaTimeZone }));
+		return formatTimeFromDate(date, is12HourFormat);
+	}
+	catch (e) { return ''; }
+};
+
 export const getTimeZoneUTCOffset = (ianaTimeZone: string): string =>
 {
 	const now = new Date();

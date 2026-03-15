@@ -698,5 +698,10 @@
 	{
 		"en": "Longitude",
 		"ru": "Долгота"
+	},
+	"country":
+	{
+		"en": "Country",
+		"ru": "Страна"
 	}
 }
