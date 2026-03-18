@@ -39,6 +39,14 @@ export interface WeatherData
 	};
 }
 
+export enum WeatherFetchStatus
+{
+	Error = -1,
+	NotFetched = 0,
+	Fetched = 1,
+	Fetching = 2
+}
+
 export const initialWeatherData: WeatherData =
 {
 	current:
@@ -78,4 +86,20 @@ export const initialWeatherData: WeatherData =
 		sunset: Array(6).fill(new Date()),
 		precipitation_probability_max: Array(6).fill(0)
 	}
+};
+
+export interface WeatherContextValue
+{
+	weather: WeatherData;
+	setWeather: (weather: WeatherData) => void;
+	weatherFetchStatus: WeatherFetchStatus;
+	setWeatherFetchStatus: (status: WeatherFetchStatus) => void;
+}
+
+export const initialWeatherContextValue: WeatherContextValue =
+{
+	weather: initialWeatherData,
+	setWeather: () => {},
+	weatherFetchStatus: WeatherFetchStatus.NotFetched,
+	setWeatherFetchStatus: () => {}
 };

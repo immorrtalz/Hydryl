@@ -1,19 +1,27 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Locations.module.scss";
 import { SVG } from "../components/SVG";
-import { useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { LocationItem } from "../components/LocationItem";
 import { ReorderableList } from "../components/ReorderableList";
 import { TopBar } from "../components/TopBar";
-import LocationContext from "../context/LocationContext";
+import LocationContext from "../context/LocationsContext";
+
+import useTranslations from "../hooks/useTranslations";
+import useLocationsLoader from "../hooks/Loaders/useLocationsLoader";
+
 import { getCurrentTimeInTimezone, getTimeZoneUTCOffset } from "../misc/utils";
+import WeatherContext from "../context/WeatherContext";
+import { WeatherFetchStatus } from "../misc/weather";
 
 function Locations()
 {
 	const { translate } = useTranslations();
-	const [currentLocationIndex, setCurrentLocationIndex, locations, setLocations] = useContext(LocationContext);
+	const { currentLocationIndex, setCurrentLocationIndex, locations, setLocations } = useContext(LocationContext);
+	const { loadLocationsFromFile } = useLocationsLoader();
+
+	const { setWeatherFetchStatus } = useContext(WeatherContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
@@ -34,9 +42,21 @@ function Locations()
 		setReorderKey(k => k + 1);
 	};
 
+	const onSelectLocation = (locationIndex: number) =>
+	{
+		if (locationIndex !== currentLocationIndex)
+		{
+			setCurrentLocationIndex(locationIndex);
+			setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
+		}
+
+		navigateTo("/", NavigateDirection.Left);
+	};
+
 	useEffect(() =>
 	{
 		initialNavigateSetup();
+		loadLocationsFromFile();
 	}, []);
 
 	return (
@@ -54,7 +74,7 @@ function Locations()
 
 			<ReorderableList key={reorderKey} className={styles.mainContentContainer} ghostItemClassName='ghostLocationItem' onReorder={onReorder}>
 			{
-				locations.map(location => (
+				locations.map((location, index) => (
 					<LocationItem
 						key={`${location.name}-${location.latitude}-${location.longitude}`}
 						locationName={location.name}
@@ -62,7 +82,8 @@ function Locations()
 						currentTime={getCurrentTimeInTimezone(location.timezone)}
 						timezone={getTimeZoneUTCOffset(location.timezone)}
 						currentWeatherCode={0}
-						currentTemperature={0}/>))
+						currentTemperature={0}
+						onClick={() => onSelectLocation(index)}/>))
 			}
 			</ReorderableList>
 		</div>

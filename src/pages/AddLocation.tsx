@@ -1,27 +1,32 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./AddLocation.module.scss";
+
 import { SVG } from "../components/SVG";
-import { useTranslations } from "../hooks/useTranslations";
 import { Button, ButtonType } from "../components/Button";
-import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { TopBar } from "../components/TopBar";
 import { GroupTitle } from "../components/GroupTitle";
 import { TextBox } from "../components/TextBox";
-import { LocationSearchResultItem, useLocationSearch } from "../hooks/useLocationSearch";
 import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
+
+import LocationContext from "../context/LocationsContext";
 import { getTimeZoneUTCOffset } from "../misc/utils";
-import LocationContext from "../context/LocationContext";
+import { LocationSearchResultItem } from "../misc/locations";
+
+import useTranslations from "../hooks/useTranslations";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import useLocationsSearcher from "../hooks/useLocationsSearcher";
 
 function AddLocation()
 {
 	const { translate } = useTranslations();
-	const [,, locations, setLocations] = useContext(LocationContext);
+	const { locations, setLocations } = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
-	const { fetchLocations, canSearch } = useLocationSearch();
+	const { fetchLocations, canSearch } = useLocationsSearcher();
+
 	const [searchResults, setSearchResults] = useState<LocationSearchResultItem[]>([]);
 	const [selectedSearchResult, setSelectedSearchResult] = useState<LocationSearchResultItem | null>(null);
 	const [searchStatus, setSearchStatus] = useState<string | null>(null);
@@ -44,7 +49,7 @@ function AddLocation()
 		setSearchResults([]);
 	};
 
-	const addLocation = () =>
+	const onAddLocation = () =>
 	{
 		if (selectedSearchResult === null) return;
 
@@ -106,7 +111,7 @@ function AddLocation()
 				<GroupTitle>{translate("longitude")}</GroupTitle>
 				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
 
-				<Button type={ButtonType.Primary} className={styles.addLocationButton} disabled={selectedSearchResult === null} onClick={addLocation}>{ translate("add_the_location") }</Button>
+				<Button type={ButtonType.Primary} className={styles.addLocationButton} disabled={selectedSearchResult === null} onClick={onAddLocation}>{ translate("add_the_location") }</Button>
 			</div>
 
 		</div>

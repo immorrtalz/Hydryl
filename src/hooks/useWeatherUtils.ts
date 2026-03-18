@@ -1,5 +1,5 @@
 import { Distance, Precipitation, Pressure, settingOptions, settingTranslationKeys, WindSpeed } from "../misc/settings";
-import { TranslationKey, useTranslations } from "./useTranslations";
+import useTranslations, { TranslationKey } from "./useTranslations";
 
 export function useWeatherUtils()
 {

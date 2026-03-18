@@ -1,14 +1,14 @@
 import { exists, readTextFile, writeTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { useContext } from "react";
-import { initialSettings, Locale, settingOptions, Settings } from "../misc/settings";
+import { initialSettings, Locale, settingOptions, Settings } from "../../misc/settings";
 import { locale } from "@tauri-apps/plugin-os";
-import SettingsContext from "../context/SettingsContext";
+import SettingsContext from "../../context/SettingsContext";
 
 const SETTINGS_FILE_NAME = 'settings.json';
 
-export function useSettingsLoader()
+export default function useSettingsLoader()
 {
-	const [, setSettings] = useContext(SettingsContext);
+	const { setSettings } = useContext(SettingsContext);
 
 	const loadSettingsFromFile = async () =>
 	{

@@ -60,3 +60,15 @@ export const initialSettings: Settings =
 	pressure: "mmHg",
 	distance: "km"
 };
+
+export interface SettingsContextValue
+{
+	settings: Settings;
+	setSettings: (settings: Settings) => void;
+}
+
+export const initialSettingsContextValue: SettingsContextValue =
+{
+	settings: initialSettings,
+	setSettings: () => {}
+};

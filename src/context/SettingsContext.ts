@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { initialSettings, Settings } from '../misc/settings';
+import { SettingsContextValue, initialSettingsContextValue } from '../misc/settings';
 
-const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([initialSettings, () => {}]);
+const SettingsContext = createContext<SettingsContextValue>(initialSettingsContextValue);
 
 export default SettingsContext;

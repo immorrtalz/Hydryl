@@ -1,23 +1,26 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import styles from "./Settings.module.scss";
-import { SVG } from "../components/SVG";
-import { useTranslations } from "../hooks/useTranslations";
-import { Button, ButtonType } from "../components/Button";
-import SettingsContext from '../context/SettingsContext';
 import { getVersion } from '@tauri-apps/api/app';
 import { arch, version as osVersion, type } from '@tauri-apps/plugin-os';
-import { openUrl } from '@tauri-apps/plugin-opener';
-import { settingTranslationKeys, settingOptions, Settings } from "../misc/settings";
-import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
 import { confirm, message } from '@tauri-apps/plugin-dialog';
-import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { openUrl } from '@tauri-apps/plugin-opener';
+import styles from "./Settings.module.scss";
+
+import { SVG } from "../components/SVG";
+import { Button, ButtonType } from "../components/Button";
+import SettingsContext from '../context/SettingsContext';
 import { TopBar } from "../components/TopBar";
 import { GroupTitle } from "../components/GroupTitle";
 import { SettingsItem } from "../components/SettingsItem";
 
+import { settingTranslationKeys, settingOptions, Settings } from "../misc/settings";
+
+import useTranslations from "../hooks/useTranslations";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { useGitHubReleaseCheck } from "../hooks/useGitHubReleaseCheck";
+
 function SettingsPage()
 {
-	const [settings, setSettings] = useContext(SettingsContext);
+	const { settings, setSettings } = useContext(SettingsContext);
 	const { translate } = useTranslations();
 
 	const pageRef = useRef<HTMLDivElement | null>(null);

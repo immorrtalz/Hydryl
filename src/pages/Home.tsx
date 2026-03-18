@@ -1,32 +1,40 @@
 import { useContext, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import styles from "./Home.module.scss";
-import { useWeatherUtils } from "../hooks/useWeatherUtils";
-import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
+
+import { SVG } from "../components/SVG";
+import { Button, ButtonType } from "../components/Button";
+import { CurrentWeatherDetailsItem } from "../components/CurrentWeatherDetailsItem";
 import { HourlyForecastItem } from "../components/HourlyForecastItem";
 import { DailyForecastItem } from "../components/DailyForecastItem";
-import { SVG } from "../components/SVG";
-import { CurrentWeatherDetailsItem } from "../components/CurrentWeatherDetailsItem";
 import { SunriseVisualElement } from "../components/SunriseVisualElement";
-import { Button, ButtonType } from "../components/Button";
-import { TranslationKey, useTranslations } from "../hooks/useTranslations";
-import SettingsContext from "../context/SettingsContext";
-import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
-import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
-import WeatherContext, { WeatherFetchStatus } from "../context/WeatherContext";
-import { AnimatePresence, motion } from "motion/react";
-import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
-import { useWeatherManager } from "../hooks/useWeatherManager";
 import { TopBar } from "../components/TopBar";
-import LocationContext from "../context/LocationContext";
+
+import useTranslations, { TranslationKey } from "../hooks/useTranslations";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
+import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
+
+import { formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
+
+import SettingsContext from "../context/SettingsContext";
+import LocationContext from "../context/LocationsContext";
+import WeatherContext from "../context/WeatherContext";
+
+import useWeatherLoader from "../hooks/Loaders/useWeatherLoader";
+import useWeatherFetcher from "../hooks/useWeatherFetcher";
+import { useWeatherUtils } from "../hooks/useWeatherUtils";
+import { WeatherFetchStatus } from "../misc/weather";
 
 function Home()
 {
-	const [settings] = useContext(SettingsContext);
+	const { settings } = useContext(SettingsContext);
 	const { translate, translateWeekday, translateMonth } = useTranslations();
 	const { weatherCodeToText, weatherCodeToSVGName, degreesToCompassDirection, uvIndexToText,
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
-	const { fetchWeather } = useWeatherManager();
-	const [currentLocationIndex,, locations] = useContext(LocationContext);
+	const {} = useWeatherLoader();
+	const { fetchWeather } = useWeatherFetcher();
+	const { currentLocationIndex, locations } = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
@@ -37,7 +45,7 @@ function Home()
 			navigateTo(path, direction);
 	};
 
-	const [weather,, weatherFetchStatus] = useContext(WeatherContext);
+	const { weather, weatherFetchStatus } = useContext(WeatherContext);
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
 	const sunrise: Date = weather.daily.sunrise[0] ?? new Date(), sunset: Date = weather.daily.sunset[0] ?? new Date();
@@ -48,6 +56,12 @@ function Home()
 	useScrollOverflowMask(hourlyForecastRef);
 
 	useEffect(initialNavigateSetup, []);
+
+	useEffect(() =>
+	{
+		if (weatherFetchStatus === WeatherFetchStatus.NotFetched)
+			fetchWeather();
+	}, []);
 
 	return (
 		<div className={styles.page} ref={pageRef}>
@@ -61,7 +75,7 @@ function Home()
 					<p className={styles.currentLocationText}>{locations[currentLocationIndex]?.name || "--"}</p>
 				</div>
 
-				<Button type={ButtonType.Secondary} square onClick={fetchWeather}>
+				<Button type={ButtonType.Secondary} square onClick={fetchWeather} disabled={weatherFetchStatus === WeatherFetchStatus.Fetching}>
 					<SVG name="update"/>
 				</Button>
 			</TopBar>

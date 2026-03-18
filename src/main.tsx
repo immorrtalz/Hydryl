@@ -1,17 +1,20 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import './global.scss';
-import App from "./App";
+
 import SettingsContext from "./context/SettingsContext";
+import LocationsContext from "./context/LocationsContext";
+import WeatherContext from "./context/WeatherContext";
+
+import useSettingsLoader from "./hooks/Loaders/useSettingsLoader";
+import useLocationsLoader from "./hooks/Loaders/useLocationsLoader";
+import useWeatherLoader from "./hooks/Loaders/useWeatherLoader";
+
 import { initialSettings, Settings } from "./misc/settings";
-import { useSettingsLoader } from "./hooks/useSettingsLoader";
-import WeatherContext, { WeatherFetchStatus } from "./context/WeatherContext";
-import { initialWeatherData, WeatherData } from "./misc/weather";
-import { useWeatherManager } from "./hooks/useWeatherManager";
-import React from "react";
-import LocationContext from "./context/LocationContext";
-import { initialLocation, LocationItem } from "./misc/location";
-import { useLocationsManager } from "./hooks/useLocationsManager";
+import { initialLocation, LocationItem } from "./misc/locations";
+import { initialWeatherData, WeatherData, WeatherFetchStatus } from "./misc/weather";
+
+import App from "./App";
 
 function AppRoot()
 {
@@ -20,13 +23,13 @@ function AppRoot()
 
 	const [currentLocationIndex, internal_setCurrentLocationIndex] = useState(0);
 	const [locations, internal_setLocations] = useState<LocationItem[]>([initialLocation]);
-	const { saveLocationsToFile } = useLocationsManager();
+	const { saveLocationsToFile } = useLocationsLoader();
 	const currentLocationIndexRef = useRef(currentLocationIndex);
 	const locationsRef = useRef<LocationItem[]>(locations);
 
 	const [weather, internal_setWeather] = useState<WeatherData>(initialWeatherData);
-	const [weatherFetchStatus, setWeatherFetchStatus] = useState(0);
-	const { saveWeatherToFile } = useWeatherManager();
+	const [weatherFetchStatus, setWeatherFetchStatus] = useState(WeatherFetchStatus.NotFetched);
+	const { saveWeatherToFile } = useWeatherLoader();
 
 	const setSettings = (newSettings: Settings) =>
 	{
@@ -67,12 +70,12 @@ function AppRoot()
 
 	return (
 		<React.StrictMode>
-			<SettingsContext.Provider value={[settings, setSettings]}>
-				<LocationContext.Provider value={[currentLocationIndex, setCurrentLocationIndex, locations, setLocations]}>
-					<WeatherContext.Provider value={[weather, setWeather, weatherFetchStatus, setWeatherFetchStatus]}>
+			<SettingsContext.Provider value={{ settings, setSettings }}>
+				<LocationsContext.Provider value={{ currentLocationIndex, setCurrentLocationIndex, locations, setLocations }}>
+					<WeatherContext.Provider value={{ weather, setWeather, weatherFetchStatus, setWeatherFetchStatus }}>
 						<App/>
 					</WeatherContext.Provider>
-				</LocationContext.Provider>
+				</LocationsContext.Provider>
 			</SettingsContext.Provider>
 		</React.StrictMode>);
 }

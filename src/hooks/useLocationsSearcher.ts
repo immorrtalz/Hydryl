@@ -1,18 +1,8 @@
 import { useState } from "react";
-import { useTranslations } from "./useTranslations";
+import useTranslations from "./useTranslations";
+import { LocationSearchResultItem } from "../misc/locations";
 
-export interface LocationSearchResultItem
-{
-	latitude: number;
-	longitude: number;
-	elevation: number;
-	timezone: string;
-	name: string;
-	country: string;
-	admin1?: string;
-};
-
-export function useLocationSearch()
+export default function useLocationsSearcher()
 {
 	const { translate } = useTranslations();
 	const [searchFetchCooldown, setSearchFetchCooldown] = useState<NodeJS.Timeout | null>(null);
@@ -31,7 +21,14 @@ export function useLocationSearch()
 		else if (!enCheck && !ruCheck)
 			return Promise.reject(translate('only_en_or_ru_input_is_supported'));
 
-		setSearchFetchCooldown(setTimeout(() => setSearchFetchCooldown(null), 1000));
+		setSearchFetchCooldown(setTimeout(() =>
+		{
+			if (searchFetchCooldown !== null)
+			{
+				clearTimeout(searchFetchCooldown);
+				setSearchFetchCooldown(null);
+			}
+		}, 1000));
 
 		const language = enCheck ? 'en' : 'ru';
 		const apiUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchText)}&count=10&language=${language}&format=json`;

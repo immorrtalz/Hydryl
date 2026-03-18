@@ -1,13 +1,13 @@
 import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { useContext } from "react";
-import { initialLocation, initialLocationsData, LocationItem, StoredLocationsData } from "../misc/location";
-import LocationContext from "../context/LocationContext";
+import { initialLocation, initialLocationsData, LocationItem, StoredLocationsData } from "../../misc/locations";
+import LocationContext from "../../context/LocationsContext";
 
 const LOCATIONS_FILE_NAME = 'locations.json';
 
-export function useLocationsManager()
+export default function useLocationsLoader()
 {
-	const [, setCurrentLocationIndex,, setLocations] = useContext(LocationContext);
+	const { setCurrentLocationIndex, setLocations } = useContext(LocationContext);
 
 	const isLocationItemValid = (item: any): item is LocationItem =>
 		typeof item === "object" && item !== null &&
