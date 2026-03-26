@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import babel from "vite-plugin-babel";
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
-export default defineConfig(async () =>
+export default defineConfig(() =>
 {
 	return {
 		define:
@@ -12,23 +13,28 @@ export default defineConfig(async () =>
 			'import.meta.env.VITE_APP_BUILD_PROFILE': JSON.stringify(process.env.NODE_ENV)
 		},
 
-		presets: ["@babel/preset-typescript"],
-
-		plugins: [react(
-		{
-			babel:
+		plugins: [
+			react({}),
+			babel(
 			{
-				plugins: ['babel-plugin-react-compiler'],
-			},
-		})],
-
-		rollupOptions:
-		{
-			output:
-			{
-				manualChunks(id: string | string[]) // Group npm packages into a 'vendor' chunk
+				filter: /\.[jt]sx?$/,
+				babelConfig:
 				{
-					if (id.includes('node_modules')) return 'vendor';
+					presets: ["@babel/preset-typescript"],
+					plugins: ["babel-plugin-react-compiler"],
+				}
+			})],
+
+		build:
+		{
+			rolldownOptions:
+			{
+				output:
+				{
+					manualChunks(id: string) // Group npm packages into a 'vendor' chunk
+					{
+						if (id.includes('node_modules')) return 'vendor';
+					}
 				}
 			}
 		},
@@ -43,14 +49,13 @@ export default defineConfig(async () =>
 		{
 			port: 1420,
 			strictPort: true,
-			host: host || true,
-			hmr: host
-				? {
-						protocol: "ws",
-						host,
-						port: 1421,
-					}
-				: undefined,
+			host: true,
+			hmr:
+				{
+					protocol: "ws",
+					host,
+					port: 1421,
+				},
 			watch:
 			{
 				// 3. tell vite to ignore watching `src-tauri`
