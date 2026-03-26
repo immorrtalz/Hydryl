@@ -619,16 +619,6 @@
 		"en": "up to",
 		"ru": "до"
 	},
-	"pull_to_refresh":
-	{
-		"en": "Pull to refresh",
-		"ru": "Тяните, чтобы обновить"
-	},
-	"release_to_refresh":
-	{
-		"en": "Release to refresh",
-		"ru": "Отпустите, чтобы обновить"
-	},
 	"now":
 	{
 		"en": "Now",

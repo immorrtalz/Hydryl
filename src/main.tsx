@@ -24,8 +24,6 @@ function AppRoot()
 	const [currentLocationIndex, internal_setCurrentLocationIndex] = useState(0);
 	const [locations, internal_setLocations] = useState<LocationItem[]>([initialLocation]);
 	const { saveLocationsToFile } = useLocationsLoader();
-	const currentLocationIndexRef = useRef(currentLocationIndex);
-	const locationsRef = useRef<LocationItem[]>(locations);
 
 	const [weather, internal_setWeather] = useState<WeatherData>(initialWeatherData);
 	const [weatherFetchStatus, setWeatherFetchStatus] = useState(WeatherFetchStatus.NotFetched);
@@ -39,26 +37,20 @@ function AppRoot()
 
 	const setCurrentLocationIndex = (newCurrentLocationIndex: number) =>
 	{
-		internal_setCurrentLocationIndex(newCurrentLocationIndex);
-		currentLocationIndexRef.current = newCurrentLocationIndex;
-		saveLocationsToFile({ currentLocationIndex: newCurrentLocationIndex, locations: locationsRef.current });
+		const safeLocationIndex = newCurrentLocationIndex >= locations.length || newCurrentLocationIndex < 0 ? 0 : newCurrentLocationIndex;
+		internal_setCurrentLocationIndex(safeLocationIndex);
+		setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
+		saveLocationsToFile({ currentLocationIndex: safeLocationIndex, locations });
 	};
 
-	// TODO: Review this vibecoded function
 	const setLocations = (newLocations: LocationItem[]) =>
 	{
 		internal_setLocations(newLocations);
-		locationsRef.current = newLocations;
 
-		const safeLocationIndex = newLocations.length > 0 ? Math.min(currentLocationIndexRef.current, newLocations.length - 1) : 0;
+		if (currentLocationIndex >= newLocations.length || currentLocationIndex < 0)
+			internal_setCurrentLocationIndex(0);
 
-		if (safeLocationIndex !== currentLocationIndexRef.current)
-		{
-			internal_setCurrentLocationIndex(safeLocationIndex);
-			currentLocationIndexRef.current = safeLocationIndex;
-		}
-
-		saveLocationsToFile({ currentLocationIndex: safeLocationIndex, locations: newLocations });
+		saveLocationsToFile({ currentLocationIndex: 0, locations: newLocations });
 	};
 
 	const setWeather = (newWeather: WeatherData, _weatherFetchStatus: WeatherFetchStatus = WeatherFetchStatus.Fetched) =>

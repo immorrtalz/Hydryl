@@ -12,16 +12,12 @@ import useTranslations from "../hooks/useTranslations";
 import useLocationsLoader from "../hooks/Loaders/useLocationsLoader";
 
 import { getCurrentTimeInTimezone, getTimeZoneUTCOffset } from "../misc/utils";
-import WeatherContext from "../context/WeatherContext";
-import { WeatherFetchStatus } from "../misc/weather";
 
 function Locations()
 {
 	const { translate } = useTranslations();
 	const { currentLocationIndex, setCurrentLocationIndex, locations, setLocations } = useContext(LocationContext);
 	const { loadLocationsFromFile } = useLocationsLoader();
-
-	const { setWeatherFetchStatus } = useContext(WeatherContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
@@ -45,10 +41,7 @@ function Locations()
 	const onSelectLocation = (locationIndex: number) =>
 	{
 		if (locationIndex !== currentLocationIndex)
-		{
 			setCurrentLocationIndex(locationIndex);
-			setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
-		}
 
 		navigateTo("/", NavigateDirection.Left);
 	};

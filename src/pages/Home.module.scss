@@ -21,6 +21,7 @@
 	align-items: center;
 	justify-content: center;
 	background: hsl(from white h s l / 0.03);
+	backdrop-filter: var(--blur-bg);
 	color: var(--white-90);
 	border: 1px solid var(--white-15);
 	border-radius: 20px;
@@ -45,6 +46,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		line-height: 50px;
 	}
 }
 
@@ -104,6 +106,7 @@
 		font-weight: 500;
 		color: var(--white-80);
 		text-align: center;
+		line-height: 50px;
 	}
 }
 
@@ -189,7 +192,7 @@
 			text-align: center;
 			font-size: 128px;
 			color: transparent;
-			background: linear-gradient(to bottom right, var(--white-90), var(--white-65));
+			background: linear-gradient(to bottom right, var(--white-90) 10%, var(--white-50) 90%);
 			background-clip: text;
 			-webkit-background-clip: text;
 		}

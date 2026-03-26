@@ -109,10 +109,8 @@ export const getTimeZoneUTCOffset = (ianaTimeZone: string): string =>
 };
 
 /**
-	@params `num` A number to be rounded.
-
-	@params `fractionDigits` The number of decimal places to round to. Must be an integer between 0 and 20 (inclusive). If it's out of range or not an integer, it will be clamped to the nearest valid integer value.
-
+	@param `num` A number to be rounded.
+	@param `fractionDigits` The number of decimal places to round to. Must be an integer between 0 and 20 (inclusive). If it's out of range or not an integer, it will be clamped to the nearest valid integer value.
 	@returns The rounded number.
 */
 export const round = (num: number, fractionDigits: number = 0) =>
