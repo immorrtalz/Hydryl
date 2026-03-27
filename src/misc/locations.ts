@@ -3,8 +3,6 @@ export interface LocationItem
 	name: string;
 	latitude: number;
 	longitude: number;
-	timezone: string;
-	country?: string;
 };
 
 export interface StoredLocationsData
@@ -13,13 +11,20 @@ export interface StoredLocationsData
 	locations: LocationItem[];
 }
 
+export interface LocationSearchResultItem
+{
+	name: string;
+	latitude: number;
+	longitude: number;
+	country?: "United Kingdom";
+	admin1?: string;
+};
+
 export const initialLocation: LocationItem =
 {
 	name: "London",
 	latitude: 51.5074,
-	longitude: -0.1278,
-	timezone: "Europe/London",
-	country: "United Kingdom"
+	longitude: -0.1278
 };
 
 export const initialLocationsData: StoredLocationsData =
@@ -42,15 +47,4 @@ export const initialLocationsContextValue: LocationsContextValue =
 	setCurrentLocationIndex: () => {},
 	locations: [initialLocation],
 	setLocations: () => {}
-};
-
-export interface LocationSearchResultItem
-{
-	latitude: number;
-	longitude: number;
-	elevation: number;
-	timezone: string;
-	name: string;
-	country: string;
-	admin1?: string;
 };

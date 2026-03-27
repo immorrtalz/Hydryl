@@ -7,11 +7,9 @@ export default function useLocationsSearcher()
 	const { translate } = useTranslations();
 	const [searchFetchCooldown, setSearchFetchCooldown] = useState<NodeJS.Timeout | null>(null);
 
-	const canSearch = () => searchFetchCooldown === null;
-
 	const fetchLocations = async (searchText: string): Promise<LocationSearchResultItem[]> =>
 	{
-		if (!canSearch() || searchText.length === 0) return [];
+		if (searchFetchCooldown !== null || searchText.length === 0) return [];
 
 		const enCheck: boolean = /[a-zA-Z]/.test(searchText);
 		const ruCheck: boolean = /[а-яёА-ЯЁ]/.test(searchText);
@@ -21,14 +19,13 @@ export default function useLocationsSearcher()
 		else if (!enCheck && !ruCheck)
 			return Promise.reject(translate('only_en_or_ru_input_is_supported'));
 
-		setSearchFetchCooldown(setTimeout(() =>
+		const cooldown = setTimeout(() =>
 		{
-			if (searchFetchCooldown !== null)
-			{
-				clearTimeout(searchFetchCooldown);
-				setSearchFetchCooldown(null);
-			}
-		}, 1000));
+			if (searchFetchCooldown !== null) clearTimeout(searchFetchCooldown);
+			setSearchFetchCooldown(null);
+		}, 1000);
+
+		setSearchFetchCooldown(cooldown);
 
 		const language = enCheck ? 'en' : 'ru';
 		const apiUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchText)}&count=10&language=${language}&format=json`;
@@ -45,8 +42,6 @@ export default function useLocationsSearcher()
 			{
 				latitude: item.latitude,
 				longitude: item.longitude,
-				elevation: item.elevation ?? 0,
-				timezone: item.timezone,
 				name: item.name,
 				country: item.country,
 				admin1: item.admin1
@@ -55,5 +50,5 @@ export default function useLocationsSearcher()
 		catch (e) { return Promise.reject(`${translate('error_fetching_locations')}: ${e}`); }
 	};
 
-	return { fetchLocations, canSearch };
+	return { fetchLocations, searchFetchCooldown };
 }

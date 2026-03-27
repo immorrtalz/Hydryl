@@ -15,6 +15,7 @@ interface Props
 	onSearch?: (...args: any[]) => any;
 	children?: React.ReactNode | React.ReactNode[];
 	statusText?: string;
+	name: string;
 }
 
 export function SearchBox(props: Props)
@@ -44,7 +45,7 @@ export function SearchBox(props: Props)
 		<div className={styles.container}>
 			<div className={styles.textBoxWithButtonContainer}>
 				<TextBox svgIconName={props.svgIconName} placeholder={props.placeholder} maxLength={props.maxLength} disabled={props.disabled}
-					onInput={onInput} onEditingEnded={onEditingEnded}/>
+					onInput={onInput} onEditingEnded={onEditingEnded} name={props.name}/>
 
 				<Button type={ButtonType.Secondary} square onClick={onSearch}>
 					<SVG name="search"/>

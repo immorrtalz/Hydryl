@@ -693,5 +693,10 @@
 	{
 		"en": "Country",
 		"ru": "Страна"
+	},
+	"new_location":
+	{
+		"en": "New Location",
+		"ru": "Новая локация"
 	}
 }

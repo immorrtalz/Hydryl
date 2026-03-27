@@ -5,9 +5,7 @@ import { SVG } from '../SVG';
 interface Props
 {
 	locationName: string;
-	countryName?: string;
-	currentTime: string;
-	timezone: string;
+	currentTime?: string;
 	currentWeatherCode: number;
 	currentTemperature: number;
 	onClick?: (...args: any[]) => any;
@@ -27,19 +25,14 @@ export function LocationItem(props: Props)
 
 				<div className={styles.locationNameContainer}>
 					<p>{props.locationName}</p>
-					{props.countryName && <p>{props.countryName}</p>}
+					{ props.currentTime && <p>{props.currentTime}</p> }
 				</div>
 			</div>
 
-			<div className={styles.detailsContainer}>
-				<div className={styles.timeContainer}>
-					<p>{props.currentTime}</p>
-					<p>{props.timezone}</p>
-				</div>
-
+			{/* <div className={styles.detailsContainer}>
 				<SVG name="cloudSun"/>
 				<p className={styles.temperatureText}>{props.currentTemperature}º</p>
-			</div>
+			</div> */}
 		</div>
 	);
 }

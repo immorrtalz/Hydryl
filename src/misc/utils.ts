@@ -113,8 +113,15 @@ export const getTimeZoneUTCOffset = (ianaTimeZone: string): string =>
 	@param `fractionDigits` The number of decimal places to round to. Must be an integer between 0 and 20 (inclusive). If it's out of range or not an integer, it will be clamped to the nearest valid integer value.
 	@returns The rounded number.
 */
-export const round = (num: number, fractionDigits: number = 0) =>
+export const round = (num: number, fractionDigits: number = 0): number =>
 {
 	const digits = fractionDigits < 0 || fractionDigits > 20 ? clamp(fractionDigits, 0, 20) : (Number.isInteger(fractionDigits) ? fractionDigits : Math.round(fractionDigits));
 	return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
+};
+
+export const addHoursToDate = (date: Date, hours: number): Date =>
+{
+	const result = new Date(date);
+	result.setTime(result.getTime() + hours * 60 * 60 * 1000);
+	return result;
 };

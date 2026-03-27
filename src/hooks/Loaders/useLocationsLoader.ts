@@ -14,7 +14,7 @@ export default function useLocationsLoader()
 		typeof item.name === "string" && item.name.length > 0 &&
 		typeof item.latitude === "number" && Number.isFinite(item.latitude) &&
 		typeof item.longitude === "number" && Number.isFinite(item.longitude) &&
-		typeof item.timezone === "string" && item.timezone.length > 0 &&
+		(item.timezone === undefined || (typeof item.timezone === "string" && item.timezone.length > 0)) &&
 		(item.country === undefined || typeof item.country === "string");
 
 	const loadLocationsFromFile = async () =>

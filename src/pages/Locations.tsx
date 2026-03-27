@@ -71,9 +71,7 @@ function Locations()
 					<LocationItem
 						key={`${location.name}-${location.latitude}-${location.longitude}`}
 						locationName={location.name}
-						countryName={location.country}
-						currentTime={getCurrentTimeInTimezone(location.timezone)}
-						timezone={getTimeZoneUTCOffset(location.timezone)}
+						/* currentTime={getCurrentTimeInTimezone(location.timezone)} */
 						currentWeatherCode={0}
 						currentTemperature={0}
 						onClick={() => onSelectLocation(index)}/>))

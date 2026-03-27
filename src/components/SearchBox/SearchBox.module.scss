@@ -95,12 +95,6 @@
 			}
 		}
 
-		& .timezone
-		{
-			font-size: 14px;
-			color: var(--white-50);
-		}
-
 		&:active:not(.disabled)
 		{
 			background: var(--white-10);
@@ -112,8 +106,6 @@
 				& .name { color: var(--white-90); }
 				& .country { color: var(--white-75); }
 			}
-
-			& .timezone { color: var(--white-75); }
 		}
 	}
 }

@@ -5,7 +5,6 @@ interface Props
 	name: string;
 	country?: string;
 	admin1?: string;
-	timezone?: string;
 	disabled?: boolean;
 	onClick?: (...args: any[]) => any;
 }
@@ -23,7 +22,5 @@ export function SearchResultItem(props: Props)
 				<p className={styles.name}>{props.name}</p>
 				{ props.country && <p className={styles.country}>{props.country}{props.admin1 ? `, ${props.admin1}` : ''}</p> }
 			</div>
-
-			{ props.timezone && <p className={styles.timezone}>{props.timezone}</p> }
 		</div>);
 }

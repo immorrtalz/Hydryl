@@ -21,6 +21,7 @@
 	{
 		display: flex;
 		flex-direction: row;
+		flex-wrap: nowrap;
 		align-items: center;
 		justify-content: space-between;
 		flex-wrap: nowrap;
@@ -39,30 +40,73 @@
 			height: 40px;
 		}
 
-		& .temperatureText
+		& .temperatureContainer
 		{
-			font-size: var(--main-font-size);
-			font-weight: 600;
+			width: fit-content;
+			height: fit-content;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-items: center;
+			justify-content: center;
 
-			&:nth-child(3)
+			& .temperatureTextsContainer
 			{
-				width: 30px;
-				color: var(--white-90);
-				text-align: right;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				align-items: center;
+				justify-content: space-between;
+				flex-wrap: nowrap;
+				gap: 2px;
+
+				& .temperatureText
+				{
+					font-size: var(--main-font-size);
+					font-weight: 600;
+
+					&:nth-child(1)
+					{
+						width: 30px;
+						color: var(--white-90);
+						text-align: right;
+					}
+
+					&:nth-child(3)
+					{
+						width: 30px;
+						color: var(--white-90);
+						text-align: left;
+					}
+				}
 			}
 
-			&:nth-child(4)
+			& .temperatureDeltaContainer
 			{
-				color: var(--white-25);
-				text-align: center;
-			}
+				position: absolute;
+				transform: translateY(14px);
+				width: fit-content;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				align-items: center;
+				justify-content: center;
+				gap: 2px;
+				opacity: 0.75;
 
-			&:nth-child(5)
-			{
-				width: 30px;
-				color: var(--white-90);
-				text-align: left;
+				& > svg
+				{
+					width: 24px;
+					height: 24px;
+					flex-shrink: 0;
+				}
 			}
 		}
 	}
+}
+
+.slashText
+{
+	color: var(--white-25);
+	text-align: center;
 }

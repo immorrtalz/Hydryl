@@ -27,6 +27,8 @@
 		color: var(--white-90);
 		pointer-events: all;
 
+		&::-webkit-outer-spin-button, &::-webkit-inner-spin-button { -webkit-appearance: none; }
+
 		&:focus { background: var(--white-10); }
 		&::placeholder { color: var(--white-50); }
 

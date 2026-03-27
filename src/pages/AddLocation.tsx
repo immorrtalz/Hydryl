@@ -11,7 +11,7 @@ import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
 
 import LocationContext from "../context/LocationsContext";
 import { getTimeZoneUTCOffset } from "../misc/utils";
-import { LocationSearchResultItem } from "../misc/locations";
+import { LocationItem, LocationSearchResultItem } from "../misc/locations";
 
 import useTranslations from "../hooks/useTranslations";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
@@ -25,11 +25,33 @@ function AddLocation()
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
-	const { fetchLocations, canSearch } = useLocationsSearcher();
+	const { fetchLocations, searchFetchCooldown } = useLocationsSearcher();
+
+	const [constructedLocationItem, internal_setConstructedLocationItem] = useState<LocationItem>({ name: '', latitude: 0, longitude: 0 });
+	const [isConstructedLocationItemValid, setIsConstructedLocationItemValid] = useState(false);
 
 	const [searchResults, setSearchResults] = useState<LocationSearchResultItem[]>([]);
-	const [selectedSearchResult, setSelectedSearchResult] = useState<LocationSearchResultItem | null>(null);
 	const [searchStatus, setSearchStatus] = useState<string | null>(null);
+
+	const setConstructedLocationItem = (newConstructedLocationItem: LocationItem) =>
+	{
+		internal_setConstructedLocationItem(newConstructedLocationItem);
+		validateLocationItem(newConstructedLocationItem);
+	};
+
+	const validateLocationItem = (locationItem: LocationItem) =>
+	{
+		let result = true;
+
+		if (locationItem.name.trim() === ''
+			|| isNaN(locationItem.latitude)
+			|| Math.abs(locationItem.latitude) > 90
+			|| isNaN(locationItem.longitude)
+			|| Math.abs(locationItem.longitude) > 180)
+			result = false;
+
+		setIsConstructedLocationItemValid(result);
+	};
 
 	const searchLocation = async (searchText: string) =>
 	{
@@ -43,23 +65,30 @@ function AddLocation()
 		catch (e) { setSearchStatus(e as string); }
 	};
 
-	const onInput = () =>
+	const onSearchInput = () =>
 	{
 		setSearchStatus(null);
 		setSearchResults([]);
 	};
 
+	const onNameInput = (e: React.InputEvent<HTMLInputElement>) =>
+		setConstructedLocationItem({...constructedLocationItem, name: (e.target as HTMLInputElement).value });
+
+	const onLatitudeInput = (e: React.InputEvent<HTMLInputElement>) =>
+		setConstructedLocationItem({...constructedLocationItem, latitude: (e.target as HTMLInputElement).valueAsNumber });
+
+	const onLongitudeInput = (e: React.InputEvent<HTMLInputElement>) =>
+		setConstructedLocationItem({...constructedLocationItem, longitude: (e.target as HTMLInputElement).valueAsNumber });
+
 	const onAddLocation = () =>
 	{
-		if (selectedSearchResult === null) return;
+		if (!isConstructedLocationItemValid) return;
 
 		setLocations([...locations,
 		{
-			name: selectedSearchResult.name,
-			latitude: selectedSearchResult.latitude,
-			longitude: selectedSearchResult.longitude,
-			timezone: selectedSearchResult.timezone,
-			country: selectedSearchResult.country
+			name: constructedLocationItem.name,
+			latitude: constructedLocationItem.latitude,
+			longitude: constructedLocationItem.longitude
 		}]);
 
 		navigateTo("/locations", NavigateDirection.Left);
@@ -78,40 +107,42 @@ function AddLocation()
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p>{translate("add_a_location")}</p>
+				<Button type={ButtonType.Secondary} square>
+					<SVG name="location"/>
+				</Button>
 			</TopBar>
 
 			<div className={styles.mainContentContainer}>
 				<GroupTitle>{`${translate("search_a_city")} (${translate("optional")})`}</GroupTitle>
 
-				<SearchBox placeholder={translate("search")} disabled={!canSearch()} onInput={onInput} onSearch={searchLocation}
-					statusText={searchStatus !== null ? searchStatus : ""}>
+				<SearchBox placeholder={translate("search")} disabled={searchFetchCooldown !== null} onInput={onSearchInput} onSearch={searchLocation}
+					statusText={searchStatus !== null ? searchStatus : ""} name="input-search">
 				{
 					searchResults.map((item, index) =>
-						<SearchResultItem key={index} name={item.name} country={item.country} admin1={item.admin1} timezone={getTimeZoneUTCOffset(item.timezone)}
+						<SearchResultItem key={`${index}-${item.name}-${item.country}`} name={item.name} country={item.country} admin1={item.admin1}
 							onClick={() =>
 							{
-								setSelectedSearchResult(item);
+								setConstructedLocationItem({ name: item.name, latitude: item.latitude, longitude: item.longitude });
 								setSearchResults([]);
 							}}/>)
 				}
 				</SearchBox>
 
 				<GroupTitle>{translate("name")}</GroupTitle>
-				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.name : ""}/>
-
-				<GroupTitle>{translate("timezone")}</GroupTitle>
-				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? getTimeZoneUTCOffset(selectedSearchResult.timezone) : ""}/>
-
-				<GroupTitle>{`${translate("country")} (${translate("optional")})`}</GroupTitle>
-				<TextBox placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.country : ""}/>
+				<TextBox placeholder={translate("input_incentive")}
+					value={constructedLocationItem !== null ? constructedLocationItem.name : ""} onInput={onNameInput} name="input-name"/>
 
 				<GroupTitle>{translate("latitude")}</GroupTitle>
-				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.latitude.toString() : ""}/>
+				<TextBox type="number" min={-90} max={90} placeholder={translate("input_incentive")}
+					value={constructedLocationItem !== null ? constructedLocationItem.latitude.toString() : ""} onInput={onLatitudeInput} name="input-latitude"/>
 
 				<GroupTitle>{translate("longitude")}</GroupTitle>
-				<TextBox disabled placeholder={translate("input_incentive")} value={selectedSearchResult !== null ? selectedSearchResult.longitude.toString() : ""}/>
+				<TextBox type="number" min={-180} max={180} placeholder={translate("input_incentive")}
+					value={constructedLocationItem !== null ? constructedLocationItem.longitude.toString() : ""} onInput={onLongitudeInput} name="input-longitude"/>
 
-				<Button type={ButtonType.Primary} className={styles.addLocationButton} disabled={selectedSearchResult === null} onClick={onAddLocation}>{ translate("add_the_location") }</Button>
+				<Button type={ButtonType.Primary} className={styles.addLocationButton} disabled={!isConstructedLocationItemValid} onClick={onAddLocation}>
+					{ translate("add_the_location") }
+				</Button>
 			</div>
 
 		</div>

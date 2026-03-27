@@ -38,8 +38,13 @@ function AppRoot()
 	const setCurrentLocationIndex = (newCurrentLocationIndex: number) =>
 	{
 		const safeLocationIndex = newCurrentLocationIndex >= locations.length || newCurrentLocationIndex < 0 ? 0 : newCurrentLocationIndex;
-		internal_setCurrentLocationIndex(safeLocationIndex);
-		setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
+
+		if (safeLocationIndex !== currentLocationIndex)
+		{
+			internal_setCurrentLocationIndex(safeLocationIndex);
+			setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
+		}
+
 		saveLocationsToFile({ currentLocationIndex: safeLocationIndex, locations });
 	};
 
