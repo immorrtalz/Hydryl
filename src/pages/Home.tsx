@@ -45,8 +45,6 @@ function Home()
 			navigateTo(path, direction);
 	};
 
-	const heroContainerRef = useRef<HTMLDivElement | null>(null);
-
 	const { weather, weatherFetchStatus } = useContext(WeatherContext);
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
@@ -68,7 +66,7 @@ function Home()
 	return (
 		<div className={styles.page} ref={pageRef}>
 
-			<TopBar useBgBlur useSolidBg={heroContainerRef.current !== null && heroContainerRef.current.scrollTop < 0.1}>
+			<TopBar useBgBlur>
 				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", NavigateDirection.Left)}>
 					<SVG name="settings"/>
 				</Button>
@@ -82,7 +80,7 @@ function Home()
 				</Button>
 			</TopBar>
 
-			<div className={styles.heroContainer} ref={heroContainerRef}>
+			<div className={styles.heroContainer}>
 				<AnimatePresence>
 				{
 					weatherFetchStatus !== WeatherFetchStatus.Fetched &&

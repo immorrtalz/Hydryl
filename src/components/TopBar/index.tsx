@@ -5,6 +5,8 @@ interface Props
 {
 	children?: ReactElement[];
 	className?: string;
+	useBgBlur?: boolean;
+	useSolidBg?: boolean;
 }
 
 export function TopBar(props: Props)
@@ -15,8 +17,16 @@ export function TopBar(props: Props)
 	{
 		if (topBarRef.current !== null)
 		{
-			if (document.documentElement.scrollTop > 0) topBarRef.current.classList.add(styles.scrolledTopBar);
+			if (document.documentElement.scrollTop > 0)
+				topBarRef.current.classList.add(styles.scrolledTopBar);
 			else topBarRef.current.classList.remove(styles.scrolledTopBar);
+
+			if (props.useBgBlur === true)
+			{
+				if (document.documentElement.scrollTop > window.innerHeight * 0.5 - topBarRef.current.offsetHeight - 24)
+					topBarRef.current.classList.add(styles.useSolidBg);
+				else topBarRef.current.classList.remove(styles.useSolidBg);
+			}
 		}
 	};
 
@@ -29,7 +39,7 @@ export function TopBar(props: Props)
 	}, []);
 
 	return (
-		<div className={`${styles.topBar} ${props.className ?? ''}`} ref={topBarRef}>
+		<div className={`${styles.topBar} ${props.className || ''} ${props.useBgBlur === true ? styles.useBgBlur : styles.useSolidBg} ${props.useSolidBg === true && props.useBgBlur === false ? styles.useSolidBg : ''}`} ref={topBarRef}>
 			{props.children}
 		</div>
 	);

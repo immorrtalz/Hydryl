@@ -14,15 +14,19 @@
 	z-index: 10;
 	pointer-events: all;
 	background: var(--black-0);
-	backdrop-filter: blur(0px);
 	border-bottom: 1px solid var(--white-0);
+
+	&.useBgBlur { backdrop-filter: blur(0px); }
 
 	&.scrolledTopBar
 	{
 		background: var(--black-25);
-		backdrop-filter: var(--blur-bg);
 		border-bottom: 1px solid var(--white-15);
+
+		&.useBgBlur { backdrop-filter: var(--blur-bg); }
 	}
+
+	&.useSolidBg { background: var(--dark); }
 
 	& > p
 	{
