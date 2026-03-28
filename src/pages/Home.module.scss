@@ -230,6 +230,7 @@
 		min-height: 120px;
 		border-radius: var(--main-border-radius);
 		overflow: hidden;
+		isolation: isolate;
 
 		& .hourlyForecastItems
 		{
@@ -264,7 +265,6 @@
 .dailyForecastContainer
 {
 	width: calc(100% - 48px);
-	/* min-height: 240px; */
 	padding: 4px 16px;
 	flex-grow: 0;
 	flex-shrink: 0;

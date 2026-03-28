@@ -45,6 +45,8 @@ function Home()
 			navigateTo(path, direction);
 	};
 
+	const heroContainerRef = useRef<HTMLDivElement | null>(null);
+
 	const { weather, weatherFetchStatus } = useContext(WeatherContext);
 
 	const currentHours: number = (weather.current.time.getHours() ?? 0) + (weather.current.time.getMinutes() ?? 0) / 60;
@@ -66,7 +68,7 @@ function Home()
 	return (
 		<div className={styles.page} ref={pageRef}>
 
-			<TopBar>
+			<TopBar useBgBlur useSolidBg={heroContainerRef.current !== null && heroContainerRef.current.scrollTop < 0.1}>
 				<Button type={ButtonType.Secondary} square onClick={() => navigate("/settings", NavigateDirection.Left)}>
 					<SVG name="settings"/>
 				</Button>
@@ -80,7 +82,7 @@ function Home()
 				</Button>
 			</TopBar>
 
-			<div className={styles.heroContainer}>
+			<div className={styles.heroContainer} ref={heroContainerRef}>
 				<AnimatePresence>
 				{
 					weatherFetchStatus !== WeatherFetchStatus.Fetched &&
@@ -94,24 +96,24 @@ function Home()
 				}
 				</AnimatePresence>
 
-				<div className={styles.mainInfoContainer} style={{ background: getCSSGradient(sunrise, sunset, weather.current.weather_code ?? 0) }}>
+				<div className={styles.mainInfoContainer} style={{ background: getCSSGradient(sunrise, sunset, weather.current.weatherCode ?? 0) }}>
 
 					<div className={styles.currentWeatherContainer}>
 						<div className={styles.currentPrecipContainer}>
-							<SVG name={weatherCodeToSVGName(weather.current.weather_code ?? -1, weather.current.is_day ?? true)} className={styles.currentPrecipIcon}/>
-							<p className={styles.currentPrecipText}>{weatherCodeToText(weather.current.weather_code ?? -1)}</p>
+							<SVG name={weatherCodeToSVGName(weather.current.weatherCode ?? -1, weather.current.isDay ?? true)} className={styles.currentPrecipIcon}/>
+							<p className={styles.currentPrecipText}>{weatherCodeToText(weather.current.weatherCode ?? -1)}</p>
 						</div>
 
 						<h1 className={styles.currentTempText}>
-							{settings.temperature === "celsius" ? weather.current.temperature_2m + 'º' : Math.round(weather.current.temperature_2m * 9 / 5 + 32) + 'º'}
+							{settings.temperature === "celsius" ? weather.current.temperature + 'º' : Math.round(weather.current.temperature * 9 / 5 + 32) + 'º'}
 						</h1>
 
 						<div className={styles.currentDayNightTempContainer}>
-							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperature_2m_min[0] :
-								celsiusToFahrenheit(weather.daily.temperature_2m_min[0])}º</p>
+							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperatureMin[0] :
+								celsiusToFahrenheit(weather.daily.temperatureMin[0])}º</p>
 							<p className={styles.currentDayNightTempText}>/</p>
-							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperature_2m_max[0] :
-								celsiusToFahrenheit(weather.daily.temperature_2m_max[0])}º</p>
+							<p className={styles.currentDayNightTempText}>{settings.temperature === "celsius" ? weather.daily.temperatureMax[0] :
+								celsiusToFahrenheit(weather.daily.temperatureMax[0])}º</p>
 						</div>
 					</div>
 
@@ -120,12 +122,12 @@ function Home()
 						{
 							weather.hourly.time.map((time, index) =>
 								<HourlyForecastItem key={`${index}-${time}`}
-									temperature={settings.temperature === "celsius" ? Math.round(weather.hourly.temperature_2m[index]) :
-										celsiusToFahrenheit(Math.round(weather.hourly.temperature_2m[index]))}
-									weatherCode={weather.hourly.weather_code[index]}
-									isDay={weather.hourly.is_day[index]}
-									isNightVariant={!weather.hourly.is_day[0]}
-									precipProbability={weather.hourly.precipitation_probability[index]}
+									temperature={settings.temperature === "celsius" ? Math.round(weather.hourly.temperature[index]) :
+										celsiusToFahrenheit(Math.round(weather.hourly.temperature[index]))}
+									weatherCode={weather.hourly.weatherCode[index]}
+									isDay={weather.hourly.isDay[index]}
+									isNightVariant={!weather.hourly.isDay[0]}
+									precipProbability={weather.hourly.precipitationProbability[index]}
 									time={index === 0 ? translate("now") :
 										addHoursToDate(new Date(), index).getHours() === 0 ? `${addHoursToDate(new Date(), index).getDate().toString().padStart(2, '0')}.${(addHoursToDate(new Date(), index).getMonth() + 1).toString().padStart(2, '0')}` :
 										formatHoursFromDate(addHoursToDate(new Date(), index), settings.time === "12")}/>)
@@ -145,16 +147,16 @@ function Home()
 
 							return (<DailyForecastItem key={`${index}-${time.toString()}`}
 								date={`${index === 1 ? translate("tomorrow") + ', ' + weekday.toLowerCase() : ''}${index === 1 ? '' : weekday}, ${translateMonth(time.getMonth(), true).toLowerCase()} ${time.getDate()}`}
-								weatherCode={weather.daily.weather_code[index]}
-								precipitationProbability={weather.daily.precipitation_probability_max[index]}
-								temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index])
-									: celsiusToFahrenheit(weather.daily.temperature_2m_min[index])}
-								temperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_max[index])
-									: celsiusToFahrenheit(weather.daily.temperature_2m_max[index])}
-								prevTemperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_min[index - 1])
-									: celsiusToFahrenheit(weather.daily.temperature_2m_min[index - 1])}
-								prevTemperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperature_2m_max[index - 1])
-									: celsiusToFahrenheit(weather.daily.temperature_2m_max[index - 1])}/>);
+								weatherCode={weather.daily.weatherCode[index]}
+								precipitationProbability={weather.daily.precipitationProbabilityMax[index]}
+								temperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperatureMin[index])
+									: celsiusToFahrenheit(weather.daily.temperatureMin[index])}
+								temperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperatureMax[index])
+									: celsiusToFahrenheit(weather.daily.temperatureMax[index])}
+								prevTemperatureNight={settings.temperature === "celsius" ? Math.round(weather.daily.temperatureMin[index - 1])
+									: celsiusToFahrenheit(weather.daily.temperatureMin[index - 1])}
+								prevTemperatureDay={settings.temperature === "celsius" ? Math.round(weather.daily.temperatureMax[index - 1])
+									: celsiusToFahrenheit(weather.daily.temperatureMax[index - 1])}/>);
 						}
 						else return null;
 					})
@@ -167,23 +169,23 @@ function Home()
 				{
 					[
 						{ titleKey: "wind" as TranslationKey,
-							content: `${windSpeedToText(weather.current.wind_speed_10m, settings.windSpeed)} ${degreesToCompassDirection(weather.current.wind_direction_10m)}` },
+							content: `${windSpeedToText(weather.current.windSpeed, settings.windSpeed)} ${degreesToCompassDirection(weather.current.windDirection)}` },
 						{ titleKey: "wind_gusts" as TranslationKey,
-							content: `${translate("up_to")} ${windSpeedToText(weather.current.wind_gusts_10m, settings.windSpeed)}` },
+							content: `${translate("up_to")} ${windSpeedToText(weather.current.windGusts, settings.windSpeed)}` },
 						{ titleKey: "humidity" as TranslationKey,
-							content: `${weather.current.relative_humidity_2m} %` },
+							content: `${weather.current.relativeHumidity} %` },
 						{ titleKey: "precipitation" as TranslationKey,
 							content: precipitationToText(weather.current.precipitation, settings.precipitation) },
 						{ titleKey: "precipitation_probability" as TranslationKey,
-							content: `${weather.current.precipitation_probability} %` },
+							content: `${weather.current.precipitationProbability} %` },
 						{ titleKey: "pressure" as TranslationKey,
-							content: pressureToText(weather.current.surface_pressure, settings.pressure) },
+							content: pressureToText(weather.current.surfacePressure, settings.pressure) },
 						{ titleKey: "cloud_cover" as TranslationKey,
-							content: `${weather.current.cloud_cover} %` },
+							content: `${weather.current.cloudCover} %` },
 						{ titleKey: "visibility" as TranslationKey,
 							content: distanceToText(weather.current.visibility, settings.distance) },
 						{ titleKey: "uv_index" as TranslationKey,
-							content: `${weather.current.uv_index} (${uvIndexToText(weather.current.uv_index)})` }
+							content: `${weather.current.uvIndex} (${uvIndexToText(weather.current.uvIndex)})` }
 					].map(({ titleKey, content }) => <CurrentWeatherDetailsItem key={`weather-details-${titleKey}`} title={translate(titleKey)} content={content}/>)
 				}
 				</div>

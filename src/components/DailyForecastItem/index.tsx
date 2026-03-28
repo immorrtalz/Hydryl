@@ -52,8 +52,7 @@ export function DailyForecastItem(props: Props)
 							<SVG key={`temperature-delta-${index}`} name={sign === -1 ? 'temperatureDeltaArrowDown'
 								: sign === 0 ? 'temperatureDeltaCircle'
 								: 'temperatureDeltaArrowUp'}
-								className={styles.weatherIcon}
-								style={sign === -1 ? { transform: 'rotateZ(180deg)' } : {}}/>)
+								className={styles.weatherIcon}/>)
 					}
 					</div>
 				</div>

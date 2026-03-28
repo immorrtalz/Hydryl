@@ -3,9 +3,12 @@ import { fetchWeatherApi } from "openmeteo";
 import LocationContext from "../context/LocationsContext";
 import WeatherContext from "../context/WeatherContext";
 import { WeatherData, WeatherFetchStatus } from "../misc/weather";
-import { round } from "../misc/utils";
+import { lerp, round } from "../misc/utils";
 
 const API_URL = "https://api.open-meteo.com/v1/forecast";
+// Open meteo has an issue - temperature is always a little higher that it should be, and apparent temperature is usually much closer to technically real one,
+// so they're being averaged, and just temperature (not apparent) gets more weight
+const TEMPERATURE_WEIGHT_OVER_APPARENT = 0.25;
 
 export default function useWeatherFetcher()
 {
@@ -15,10 +18,10 @@ export default function useWeatherFetcher()
 	{
 		"latitude": locations[currentLocationIndex].latitude,
 		"longitude": locations[currentLocationIndex].longitude,
-		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset", "precipitation_probability_max"],
-		"hourly": ["is_day", "weather_code", "temperature_2m", "precipitation_probability"],
+		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "apparent_temperature_min", "apparent_temperature_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset", "precipitation_probability_max"],
+		"hourly": ["is_day", "weather_code", "temperature_2m", "apparent_temperature", "precipitation_probability"],
 		"models": "best_match",
-		"current": ["is_day", "weather_code", "temperature_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
+		"current": ["is_day", "weather_code", "temperature_2m", "apparent_temperature", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m",
 			"relative_humidity_2m", "precipitation", "precipitation_probability", "visibility", "cloud_cover", "uv_index"],
 		"timezone": "auto",
 		"forecast_days": 6,
@@ -29,18 +32,17 @@ export default function useWeatherFetcher()
 	};
 
 	const { setWeather, weatherFetchStatus, setWeatherFetchStatus } = useContext(WeatherContext);
-	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<NodeJS.Timeout | null>(null);
+	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<ReturnType<typeof setTimeout> | null>(null);
 
 	const fetchWeather = async () =>
 	{
-		if (weatherFetchStatus === WeatherFetchStatus.Fetching || weatherFetchCooldown !== null) return Promise.reject("Weather fetch is already in progress or on cooldown.");
+		if (weatherFetchStatus === WeatherFetchStatus.Fetching || weatherFetchCooldown !== null)
+			return Promise.reject("Weather fetch is already in progress or on cooldown.");
+
 		setWeatherFetchCooldown(setTimeout(() =>
 		{
-			if (weatherFetchCooldown !== null)
-			{
-				clearTimeout(weatherFetchCooldown);
-				setWeatherFetchCooldown(null);
-			}
+			if (weatherFetchCooldown !== null) clearTimeout(weatherFetchCooldown);
+			setWeatherFetchCooldown(null);
 		}, 2000));
 
 		try
@@ -68,47 +70,50 @@ export default function useWeatherFetcher()
 			const int64LengthDVArr = (i: number) => [...Array(daily.variables(i)!.valuesInt64Length())];
 			const int64DVArr = (i: number, j: number) => daily.variables(i)!.valuesInt64(j);
 
+			const lerpTwoNumbersArrays = (array1: number[], array2: number[], t: number): number[] =>
+				array1.length === 0 || array2.length === 0 || array1.length !== array2.length ? [] : array1.map((val, i) => lerp(val, array2[i], t));
+
 			// Note: The order of weather variables in the URL query and the indices below need to match!
 			const weatherData: WeatherData =
 			{
 				current:
 				{
 					time: new Date(Number(current.time()) * 1000),
-					is_day: Boolean(current.variables(0)!.value()),
-					weather_code: cV(1),
-					temperature_2m: round(cV(2)),
-					surface_pressure: round(cV(3)) * 0.75006156130264, // mbar (hPa) to mmHg
-					wind_speed_10m: round(cV(4), 1),
-					wind_direction_10m: round(cV(5)),
-					wind_gusts_10m: round(cV(6)),
-					relative_humidity_2m: round(cV(7)),
-					precipitation: round(cV(8)),
-					precipitation_probability: round(cV(9)),
-					visibility: round(cV(10) / 1000, 1), // m -> km
-					cloud_cover: round(cV(11)),
-					uv_index: round(cV(12), 1)
+					isDay: Boolean(current.variables(0)!.value()),
+					weatherCode: cV(1),
+					temperature: round(lerp(cV(2), cV(3), TEMPERATURE_WEIGHT_OVER_APPARENT)),
+					surfacePressure: round(cV(4)) * 0.75006156130264, // mbar (hPa) to mmHg
+					windSpeed: round(cV(5), 1),
+					windDirection: round(cV(6)),
+					windGusts: round(cV(7)),
+					relativeHumidity: round(cV(8)),
+					precipitation: round(cV(9)),
+					precipitationProbability: round(cV(10)),
+					visibility: round(cV(11) / 1000, 1), // m -> km
+					cloudCover: round(cV(12)),
+					uvIndex: round(cV(13), 1)
 				},
 				hourly:
 				{
 					time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())]
 						.map((_, i) => new Date((Number(hourly.time()) + i * hourly.interval()) * 1000)),
-					is_day: mappedHVArr(0, Boolean),
-					weather_code: hVArr(1),
-					temperature_2m: mappedHVArr(2, round),
-					precipitation_probability: mappedHVArr(3, round)
+					isDay: mappedHVArr(0, Boolean),
+					weatherCode: hVArr(1),
+					temperature: lerpTwoNumbersArrays(hVArr(2), hVArr(3), TEMPERATURE_WEIGHT_OVER_APPARENT).map(val => round(val)),
+					precipitationProbability: mappedHVArr(4, round)
 				},
 				daily:
 				{
 					time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())]
 						.map((_, i) => new Date((Number(daily.time()) + i * daily.interval()) * 1000)),
-					weather_code: dVArr(0),
-					temperature_2m_min: mappedDVArr(1, round),
-					temperature_2m_max: mappedDVArr(2, round),
-					wind_direction_10m_dominant: mappedDVArr(3, round),
-					wind_speed_10m_max: mappedDVArr(4, val => round(val, 1)),
-					sunrise: int64LengthDVArr(5).map((_, i) => new Date((Number(int64DVArr(5, i))) * 1000)),
-					sunset: int64LengthDVArr(6).map((_, i) => new Date((Number(int64DVArr(6, i))) * 1000)),
-					precipitation_probability_max: mappedDVArr(7, round)
+					weatherCode: dVArr(0),
+					temperatureMin: lerpTwoNumbersArrays(dVArr(1), dVArr(3), TEMPERATURE_WEIGHT_OVER_APPARENT).map(val => round(val)),
+					temperatureMax: lerpTwoNumbersArrays(dVArr(2), dVArr(4), TEMPERATURE_WEIGHT_OVER_APPARENT).map(val => round(val)),
+					windDirectionDominant: mappedDVArr(5, round),
+					windSpeedMax: mappedDVArr(6, val => round(val, 1)),
+					sunrise: int64LengthDVArr(7).map((_, i) => new Date((Number(int64DVArr(7, i))) * 1000)),
+					sunset: int64LengthDVArr(8).map((_, i) => new Date((Number(int64DVArr(8, i))) * 1000)),
+					precipitationProbabilityMax: mappedDVArr(9, round)
 				}
 			};
 

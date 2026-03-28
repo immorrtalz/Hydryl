@@ -5,7 +5,7 @@
 	left: 0;
 	right: 0;
 	padding: 0 24px;
-	height: calc(24px + calc(24px + env(safe-area-inset-top)) * 2);
+	height: calc(50px + 16px * 2 + env(safe-area-inset-top));
 	display: flex;
 	flex-direction: row;
 	align-items: center;
