@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { message } from "@tauri-apps/plugin-dialog";
 import styles from "./AddLocation.module.scss";
 
 import { SVG } from "../components/SVG";
@@ -10,11 +11,11 @@ import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
 
 import LocationContext from "../context/LocationsContext";
-import { getTimeZoneUTCOffset } from "../misc/utils";
 import { LocationItem, LocationSearchResultItem } from "../misc/locations";
 
 import useTranslations from "../hooks/useTranslations";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
+import useGeoLocation from "../hooks/useGeoLocation";
 import useLocationsSearcher from "../hooks/useLocationsSearcher";
 
 function AddLocation()
@@ -25,6 +26,7 @@ function AddLocation()
 	const pageRef = useRef<HTMLDivElement | null>(null);
 	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
 
+	const { getCurrentGeoLocation } = useGeoLocation();
 	const { fetchLocations, searchFetchCooldown } = useLocationsSearcher();
 
 	const [constructedLocationItem, internal_setConstructedLocationItem] = useState<LocationItem>({ name: '', latitude: 0, longitude: 0 });
@@ -51,6 +53,19 @@ function AddLocation()
 			result = false;
 
 		setIsConstructedLocationItemValid(result);
+	};
+
+	const fillFieldsWithCurrentLocation = async () =>
+	{
+		try
+		{
+			const pos = await getCurrentGeoLocation();
+			setConstructedLocationItem({ name: translate('new_location'), latitude: pos.latitude, longitude: pos.longitude });
+		}
+		catch (error)
+		{
+			await message(error instanceof Error ? error.message : String(error), { title: translate('could_not_get_your_current_location'), kind: 'error' });
+		}
 	};
 
 	const searchLocation = async (searchText: string) =>
@@ -107,7 +122,7 @@ function AddLocation()
 					<SVG name="chevronLeft"/>
 				</Button>
 				<p>{translate("add_a_location")}</p>
-				<Button type={ButtonType.Secondary} square>
+				<Button type={ButtonType.Secondary} square onClick={fillFieldsWithCurrentLocation}>
 					<SVG name="location"/>
 				</Button>
 			</TopBar>

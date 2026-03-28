@@ -4,8 +4,8 @@
 	top: 0;
 	left: 0;
 	right: 0;
-	padding: 0 24px;
-	height: calc(50px + 16px * 2 + env(safe-area-inset-top));
+	padding: calc(env(safe-area-inset-top) + 16px) 24px 16px;
+	height: fit-content;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -31,7 +31,7 @@
 	& > p
 	{
 		position: absolute;
-		top: 50%;
+		top: calc(50% + env(safe-area-inset-top) * 0.5);
 		left: 50%;
 		transform: translate(-50%, -50%);
 		font-size: var(--larger-font-size);

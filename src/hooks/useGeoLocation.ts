@@ -1,21 +1,21 @@
-import { checkPermissions, requestPermissions, getCurrentPosition } from '@tauri-apps/plugin-geolocation';
+import { requestPermissions, getCurrentPosition } from '@tauri-apps/plugin-geolocation';
+import useTranslations from './useTranslations';
 
-export function useGeoLocation()
+export default function useGeoLocation()
 {
-	const getGeoLocation = async (): Promise<{ latitude: number; longitude: number; } | null> =>
+	const { translate } = useTranslations();
+
+	const getCurrentGeoLocation = async (): Promise<{ latitude: number; longitude: number; }> =>
 	{
-		let permissions = await checkPermissions();
+		const permissions = await requestPermissions(['coarseLocation']);
 
-		if (permissions.location === 'prompt' || permissions.location === 'prompt-with-rationale') permissions = await requestPermissions(['location']);
-
-		if (permissions.location === 'granted')
+		if (permissions.coarseLocation === 'granted' || permissions.location === 'granted')
 		{
-			const pos = await getCurrentPosition({ enableHighAccuracy: false, timeout: 0, maximumAge: 0 });
-			console.log(pos);
+			const pos = await getCurrentPosition({ enableHighAccuracy: false, timeout: 0, maximumAge: 600000 }); // 10 minutes cache is acceptable
 			return { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
 		}
-		else return null;
+		else return Promise.reject(translate('location_permission_not_granted'));
 	}
 
-	return { getGeoLocation };
+	return { getCurrentGeoLocation };
 }

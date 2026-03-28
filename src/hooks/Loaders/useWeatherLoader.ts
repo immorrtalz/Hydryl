@@ -48,11 +48,7 @@ export default function useWeatherLoader()
 		setWeather(weatherToSet);
 		if (!weatherFileExists) saveWeatherToFile(weatherToSet);
 
-		/* if (locations[currentLocationIndex] !== undefined)
-			setLastFetchedLocation(locations[currentLocationIndex]); */
-
 		const isSavedWeatherOutdated = (new Date().getTime() - weatherToSet.current.time.getTime() >= 1000 * 60 * 30) || !weatherFileExists;
-		//if (autoFetch && isSavedWeatherOutdated) fetchWeather(locations[currentLocationIndex]).catch(() => {});
 
 		return isSavedWeatherOutdated;
 	};
