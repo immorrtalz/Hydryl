@@ -4,10 +4,9 @@ import { SVG } from '../SVG';
 
 interface Props
 {
+	isCurrentLocation: boolean;
 	locationName: string;
-	currentTime?: string;
-	currentWeatherCode: number;
-	currentTemperature: number;
+	isInEditMode?: boolean;
 	onClick?: (...args: any[]) => any;
 }
 
@@ -16,22 +15,19 @@ export function LocationItem(props: Props)
 	const onClick = (e: React.MouseEvent<HTMLElement>) => props.onClick?.(e);
 
 	return (
-		<div onClick={onClick} className={styles.locationItem}>
+		<div className={styles.outerContainer}>
 
-			<span className="dragZone"/>
+				<span className="dragZone"/>
+				<span className="actionZone" onClick={onClick}/>
 
-			<div className={styles.mainContainer}>
-				<SVG name="drag"/>
+				<div className={styles.mainContainer}>
+					<SVG name="drag"/>
 
 				<div className={styles.locationNameContainer}>
 					<p>{props.locationName}</p>
 					{ props.currentTime && <p>{props.currentTime}</p> }
 				</div>
 			</div>
-
-			{/* <div className={styles.detailsContainer}>
-				<SVG name="cloudSun"/>
-				<p className={styles.temperatureText}>{props.currentTemperature}º</p>
 			</div> */}
 		</div>
 	);

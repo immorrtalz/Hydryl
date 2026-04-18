@@ -1,3 +1,4 @@
+import { SvgName } from "../components/SVG";
 import { Distance, Precipitation, Pressure, settingOptions, settingTranslationKeys, WindSpeed } from "../misc/settings";
 import useTranslations, { TranslationKey } from "./useTranslations";
 
@@ -43,9 +44,9 @@ export function useWeatherUtils()
 			return translate(weatherTranslationKeys[code]) || "Unknown";
 		},
 
-		weatherCodeToSVGName: (code: number, isDay: boolean): string =>
+		weatherCodeToSVGName: (code: number, isDay: boolean): SvgName =>
 		{
-			const weatherNames: Record<number, string> =
+			const weatherNames: Record<number, SvgName> =
 			{
 				0: isDay ? "sun" : "moon",
 				1: isDay ? "sun" : "moon",

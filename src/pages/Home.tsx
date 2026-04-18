@@ -34,10 +34,10 @@ function Home()
 		celsiusToFahrenheit, windSpeedToText, precipitationToText, pressureToText, distanceToText } = useWeatherUtils();
 	const {} = useWeatherLoader();
 	const { fetchWeather } = useWeatherFetcher();
-	const { currentLocationIndex, locations } = useContext(LocationContext);
+	const { locations } = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef);
 
 	const navigate = (path: string, direction: NavigateDirection) =>
 	{
@@ -72,7 +72,7 @@ function Home()
 				</Button>
 
 				<div className={styles.currentLocationClickableContainer} onClick={() => navigate("/locations", NavigateDirection.Right)}>
-					<p className={styles.currentLocationText}>{locations[currentLocationIndex]?.name || "--"}</p>
+					<p className={styles.currentLocationText}>{locations.find(item => item.isCurrent)?.name || "--"}</p>
 				</div>
 
 				<Button type={ButtonType.Secondary} square onClick={fetchWeather} disabled={weatherFetchStatus === WeatherFetchStatus.Fetching}>

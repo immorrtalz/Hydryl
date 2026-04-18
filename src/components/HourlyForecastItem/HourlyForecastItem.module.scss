@@ -42,7 +42,7 @@
 
 	& .timeText
 	{
-		font-size: 14px;
+		font-size: var(--smaller-font-size);
 		font-weight: 600;
 		color: var(--white-65);
 		text-align: center;

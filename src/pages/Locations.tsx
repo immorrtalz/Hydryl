@@ -2,38 +2,38 @@ import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Locations.module.scss";
 import { SVG } from "../components/SVG";
 import { Button, ButtonType } from "../components/Button";
-import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import { LocationItem } from "../components/LocationItem";
 import { ReorderableList } from "../components/ReorderableList";
 import { TopBar } from "../components/TopBar";
 import LocationContext from "../context/LocationsContext";
 
+import { initialLocationsData } from "../misc/locations";
+import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
 import useTranslations from "../hooks/useTranslations";
-import useLocationsLoader from "../hooks/Loaders/useLocationsLoader";
-
-import { getCurrentTimeInTimezone, getTimeZoneUTCOffset } from "../misc/utils";
 
 function Locations()
 {
 	const { translate } = useTranslations();
-	const { currentLocationIndex, setCurrentLocationIndex, locations, setLocations } = useContext(LocationContext);
-	const { loadLocationsFromFile } = useLocationsLoader();
+	const { locations, setLocations } = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef);
 
 	const [reorderKey, setReorderKey] = useState(0);
 
+	const setCurrentLocationIndex = (newCurrentLocationIndex: number, saveToFile: boolean) =>
+		setLocations(locations.map((loc, index) => ({ ...loc, isCurrent: index === newCurrentLocationIndex })), saveToFile);
 	const onReorder = (newOrder: number[]) =>
 	{
 		const prevLocations = [...locations];
 		const sortedLocations = newOrder.map(i => prevLocations[i]);
-		setLocations(sortedLocations);
+		setLocations(sortedLocations, true);
 
+		const currentLocationIndex = locations.findIndex(loc => loc.isCurrent);
 		const newCurrentLocationIndex = newOrder.indexOf(currentLocationIndex);
 
 		if (newCurrentLocationIndex >= 0 && newCurrentLocationIndex !== currentLocationIndex)
-			setCurrentLocationIndex(newCurrentLocationIndex);
+			setCurrentLocationIndex(newCurrentLocationIndex, true);
 
 		setReorderKey(k => k + 1);
 	};
@@ -41,7 +41,7 @@ function Locations()
 	const onSelectLocation = (locationIndex: number) =>
 	{
 		if (locationIndex !== currentLocationIndex)
-			setCurrentLocationIndex(locationIndex);
+			setCurrentLocationIndex(locationIndex, true);
 
 		navigateTo("/", NavigateDirection.Left);
 	};
@@ -49,7 +49,6 @@ function Locations()
 	useEffect(() =>
 	{
 		initialNavigateSetup();
-		loadLocationsFromFile();
 	}, []);
 
 	return (
@@ -70,11 +69,8 @@ function Locations()
 				locations.map((location, index) => (
 					<LocationItem
 						key={`${location.name}-${location.latitude}-${location.longitude}`}
+						isCurrentLocation={location.isCurrent}
 						locationName={location.name}
-						/* currentTime={getCurrentTimeInTimezone(location.timezone)} */
-						currentWeatherCode={0}
-						currentTemperature={0}
-						onClick={() => onSelectLocation(index)}/>))
 			}
 			</ReorderableList>
 		</div>

@@ -4,6 +4,7 @@ import LocationContext from "../context/LocationsContext";
 import WeatherContext from "../context/WeatherContext";
 import { WeatherData, WeatherFetchStatus } from "../misc/weather";
 import { lerp, round } from "../misc/utils";
+import { initialLocation } from "../misc/locations";
 
 const API_URL = "https://api.open-meteo.com/v1/forecast";
 // Open meteo has an issue - temperature is always a little higher that it should be, and apparent temperature is usually much closer to technically real one,
@@ -12,12 +13,12 @@ const TEMPERATURE_WEIGHT_OVER_APPARENT = 0.25;
 
 export default function useWeatherFetcher()
 {
-	const { currentLocationIndex, locations } = useContext(LocationContext);
+	const { locations } = useContext(LocationContext);
 
 	let weatherFetchParams =
 	{
-		"latitude": locations[currentLocationIndex].latitude,
-		"longitude": locations[currentLocationIndex].longitude,
+		"latitude": locations.find(loc => loc.isCurrent)?.latitude || initialLocation.latitude,
+		"longitude": locations.find(loc => loc.isCurrent)?.longitude || initialLocation.longitude,
 		"daily": ["weather_code", "temperature_2m_min", "temperature_2m_max", "apparent_temperature_min", "apparent_temperature_max", "wind_direction_10m_dominant", "wind_speed_10m_max", "sunrise", "sunset", "precipitation_probability_max"],
 		"hourly": ["is_day", "weather_code", "temperature_2m", "apparent_temperature", "precipitation_probability"],
 		"models": "best_match",
@@ -117,7 +118,7 @@ export default function useWeatherFetcher()
 				}
 			};
 
-			setWeather(weatherData);
+			setWeather(weatherData, true);
 			setWeatherFetchStatus(WeatherFetchStatus.Fetched);
 
 			return weatherData;

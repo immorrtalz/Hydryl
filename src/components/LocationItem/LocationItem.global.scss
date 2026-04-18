@@ -10,6 +10,18 @@
 	pointer-events: all;
 }
 
+.actionZone
+{
+	position: absolute;
+	inset: 0 0 0 auto;
+	width: calc(100% - 56px);
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: inherit;
+	border-bottom-right-radius: inherit;
+	pointer-events: all;
+}
+
 .ghostLocationItem
 {
 	width: 100%;

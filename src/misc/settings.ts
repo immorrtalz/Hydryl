@@ -64,7 +64,7 @@ export const initialSettings: Settings =
 export interface SettingsContextValue
 {
 	settings: Settings;
-	setSettings: (settings: Settings) => void;
+	setSettings: (settings: Settings, saveToFile: boolean) => void;
 }
 
 export const initialSettingsContextValue: SettingsContextValue =

@@ -91,7 +91,7 @@ export const initialWeatherData: WeatherData =
 export interface WeatherContextValue
 {
 	weather: WeatherData;
-	setWeather: (weather: WeatherData) => void;
+	setWeather: (weather: WeatherData, saveToFile: boolean) => void;
 	weatherFetchStatus: WeatherFetchStatus;
 	setWeatherFetchStatus: (status: WeatherFetchStatus) => void;
 }

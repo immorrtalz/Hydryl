@@ -1,11 +1,13 @@
 import { ReactElement } from "react";
 
 export const names = ['menu', 'search', 'chevronLeft', 'chevronRight', 'chevronUp', 'chevronDown', 'reset', 'update', 'drag', 'settings', 'plus', 'cross', 'sun', 'moon', 'fog', 'rimeFog',
-	'cloud', 'cloudSun', 'cloudMoon', 'cloudDrizzle', 'cloudRain', 'cloudHeavyRain', 'cloudThunderstorm', 'snow', 'heavySnow', 'snowStorm', 'snowGrains', 'windArrow', 'location', 'temperatureDeltaArrowUp', 'temperatureDeltaArrowDown', 'temperatureDeltaCircle'];
+	'cloud', 'cloudSun', 'cloudMoon', 'cloudDrizzle', 'cloudRain', 'cloudHeavyRain', 'cloudThunderstorm', 'snow', 'heavySnow', 'snowStorm', 'snowGrains', 'windArrow', 'location', 'temperatureDeltaArrowUp', 'temperatureDeltaArrowDown', 'temperatureDeltaCircle', 'delete', 'edit'] as const;
+
+export type SvgName = typeof names[number];
 
 interface Props
 {
-	name: typeof names[number];
+	name: SvgName;
 	className?: string;
 	style?: React.CSSProperties;
 }
@@ -19,7 +21,7 @@ interface SvgParams
 
 export function SVG(props: Props)
 {
-	const ParamsMap: Record<string, SvgParams> =
+	const ParamsMap: Record<SvgName, SvgParams> =
 	{
 		'menu': { width: '32', height: '32', viewBox: '0 0 32 32' },
 		'search': { width: '32', height: '32', viewBox: '0 0 32 32' },
@@ -53,9 +55,11 @@ export function SVG(props: Props)
 		'temperatureDeltaArrowUp': { width: '32', height: '32', viewBox: '0 0 32 32' },
 		'temperatureDeltaArrowDown': { width: '32', height: '32', viewBox: '0 0 32 32' },
 		'temperatureDeltaCircle': { width: '32', height: '32', viewBox: '0 0 32 32' },
+		'delete': { width: '32', height: '32', viewBox: '0 0 32 32' },
+		'edit': { width: '32', height: '32', viewBox: '0 0 32 32' },
 	};
 
-	const PathsMap: Record<string, ReactElement> =
+	const PathsMap: Record<SvgName, ReactElement> =
 	{
 		'menu':
 			<>
@@ -172,6 +176,16 @@ export function SVG(props: Props)
 		'temperatureDeltaArrowUp': <path d="M14.4382 12.3506C15.2389 11.3498 16.7611 11.3498 17.5617 12.3506L22.0503 17.9614C22.8361 18.9435 22.1368 20.3984 20.879 20.3984H11.1209C9.86316 20.3984 9.1639 18.9435 9.94962 17.9614L14.4382 12.3506Z" fill="#FF6633"/>,
 		'temperatureDeltaArrowDown': <path d="M17.5636 19.6478C16.763 20.6486 15.2408 20.6486 14.4401 19.6478L9.95151 14.037C9.16579 13.0549 9.86505 11.6 11.1228 11.6L20.8809 11.6C22.1387 11.6 22.838 13.0549 22.0522 14.037L17.5636 19.6478Z" fill="#409FFF"/>,
 		'temperatureDeltaCircle': <path d="M21 16C21 18.7614 18.7614 21 16 21C13.2386 21 11 18.7614 11 16C11 13.2386 13.2386 11 16 11C18.7614 11 21 13.2386 21 16Z" fill="#FFFFFF" fillOpacity="0.75"/>,
+		'delete':
+		<>
+			<path d="M13.5996 21.5H18.4004L19.8424 14.2883C19.934 13.8299 20.3365 13.5 20.8039 13.5C21.4227 13.5 21.8868 14.0661 21.7654 14.6729L20.3216 21.8922C20.1346 22.8271 19.3138 23.5 18.3604 23.5H13.6396C12.6862 23.5 11.8654 22.8271 11.6784 21.8922L10.2346 14.6729C10.1132 14.0661 10.5773 13.5 11.1961 13.5C11.6635 13.5 12.066 13.8299 12.1576 14.2883L13.5996 21.5Z"/>
+			<path d="M18 8.5C18.5523 8.5 19 8.94772 19 9.5H22C22.5523 9.5 23 9.94772 23 10.5C23 11.0523 22.5523 11.5 22 11.5H10C9.44772 11.5 9 11.0523 9 10.5C9 9.94772 9.44772 9.5 10 9.5H13C13 8.94772 13.4477 8.5 14 8.5H18Z"/>
+		</>,
+		'edit':
+		<>
+			<path d="M18.6306 10.5442C19.0211 10.1537 19.6543 10.1537 20.0448 10.5442L21.459 11.9584C21.8495 12.3489 21.8495 12.9821 21.459 13.3726L12.1947 22.6369C12.0102 22.8215 11.7806 22.9547 11.5288 23.0234L8.44606 23.8641C8.25944 23.915 8.08819 23.7438 8.13909 23.5572L8.97982 20.4745C9.04851 20.2226 9.18173 19.9931 9.36631 19.8085L18.6306 10.5442Z"/>
+			<path d="M20.7519 8.4229C21.1424 8.03237 21.7756 8.03237 22.1661 8.4229L23.5803 9.83711C23.9709 10.2276 23.9709 10.8608 23.5803 11.2513C23.1898 11.6418 22.5566 11.6418 22.1661 11.2513L20.7519 9.83711C20.3614 9.44659 20.3614 8.81342 20.7519 8.4229Z"/>
+		</>,
 	};
 
 	return (

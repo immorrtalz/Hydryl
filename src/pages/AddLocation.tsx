@@ -60,7 +60,7 @@ function AddLocation()
 		try
 		{
 			const pos = await getCurrentGeoLocation();
-			setConstructedLocationItem({ name: translate('new_location'), latitude: pos.latitude, longitude: pos.longitude });
+			setConstructedLocationItem({ isCurrent: false, name: translate('new_location'), latitude: pos.latitude, longitude: pos.longitude });
 		}
 		catch (error)
 		{
@@ -101,10 +101,11 @@ function AddLocation()
 
 		setLocations([...locations,
 		{
+			isCurrent: false,
 			name: constructedLocationItem.name,
 			latitude: constructedLocationItem.latitude,
 			longitude: constructedLocationItem.longitude
-		}]);
+		}], true);
 
 		navigateTo("/locations", NavigateDirection.Left);
 	};
@@ -137,7 +138,7 @@ function AddLocation()
 						<SearchResultItem key={`${index}-${item.name}-${item.country}`} name={item.name} country={item.country} admin1={item.admin1}
 							onClick={() =>
 							{
-								setConstructedLocationItem({ name: item.name, latitude: item.latitude, longitude: item.longitude });
+								setConstructedLocationItem({ isCurrent: false, name: item.name, latitude: item.latitude, longitude: item.longitude });
 								setSearchResults([]);
 							}}/>)
 				}

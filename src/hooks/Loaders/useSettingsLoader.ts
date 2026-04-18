@@ -58,7 +58,7 @@ export default function useSettingsLoader()
 		const osLocale = settingsFileExists ? null : await getOSLocale();
 		const settingsToSave = settingsFileExists ? await readSettingsFile() : { ...initialSettings, locale: osLocale as Locale };
 
-		setSettings(settingsToSave);
+		setSettings(settingsToSave, false);
 		if (!settingsFileExists) await saveSettingsToFile(settingsToSave);
 	};
 

@@ -45,7 +45,7 @@ export default function useWeatherLoader()
 		};
 
 		const weatherToSet = weatherFileExists ? await readWeatherFile() : initialWeatherData;
-		setWeather(weatherToSet);
+		setWeather(weatherToSet, false);
 		if (!weatherFileExists) saveWeatherToFile(weatherToSet);
 
 		const isSavedWeatherOutdated = (new Date().getTime() - weatherToSet.current.time.getTime() >= 1000 * 60 * 30) || !weatherFileExists;

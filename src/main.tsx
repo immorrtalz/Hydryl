@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import './global.scss';
 
@@ -21,7 +21,6 @@ function AppRoot()
 	const [settings, internal_setSettings] = useState<Settings>(initialSettings);
 	const { saveSettingsToFile } = useSettingsLoader();
 
-	const [currentLocationIndex, internal_setCurrentLocationIndex] = useState(0);
 	const [locations, internal_setLocations] = useState<LocationItem[]>([initialLocation]);
 	const { saveLocationsToFile } = useLocationsLoader();
 
@@ -29,46 +28,28 @@ function AppRoot()
 	const [weatherFetchStatus, setWeatherFetchStatus] = useState(WeatherFetchStatus.NotFetched);
 	const { saveWeatherToFile } = useWeatherLoader();
 
-	const setSettings = (newSettings: Settings) =>
+	const setSettings = (newSettings: Settings, saveToFile: boolean) =>
 	{
 		internal_setSettings(newSettings);
-		saveSettingsToFile(newSettings);
+		if (saveToFile) saveSettingsToFile(newSettings);
 	};
 
-	const setCurrentLocationIndex = (newCurrentLocationIndex: number) =>
-	{
-		const safeLocationIndex = newCurrentLocationIndex >= locations.length || newCurrentLocationIndex < 0 ? 0 : newCurrentLocationIndex;
-
-		if (safeLocationIndex !== currentLocationIndex)
-		{
-			internal_setCurrentLocationIndex(safeLocationIndex);
-			setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
-		}
-
-		saveLocationsToFile({ currentLocationIndex: safeLocationIndex, locations });
-	};
-
-	const setLocations = (newLocations: LocationItem[]) =>
+	const setLocations = (newLocations: LocationItem[], saveToFile: boolean) =>
 	{
 		internal_setLocations(newLocations);
-
-		if (currentLocationIndex >= newLocations.length || currentLocationIndex < 0)
-			internal_setCurrentLocationIndex(0);
-
-		saveLocationsToFile({ currentLocationIndex: 0, locations: newLocations });
+		if (saveToFile) saveLocationsToFile({ locations: newLocations });
 	};
 
-	const setWeather = (newWeather: WeatherData, _weatherFetchStatus: WeatherFetchStatus = WeatherFetchStatus.Fetched) =>
+	const setWeather = (newWeather: WeatherData, saveToFile: boolean) =>
 	{
 		internal_setWeather(newWeather);
-		setWeatherFetchStatus(_weatherFetchStatus);
-		saveWeatherToFile(newWeather);
+		if (saveToFile) saveWeatherToFile(newWeather);
 	};
 
 	return (
 		<React.StrictMode>
 			<SettingsContext.Provider value={{ settings, setSettings }}>
-				<LocationsContext.Provider value={{ currentLocationIndex, setCurrentLocationIndex, locations, setLocations }}>
+				<LocationsContext.Provider value={{ locations, setLocations }}>
 					<WeatherContext.Provider value={{ weather, setWeather, weatherFetchStatus, setWeatherFetchStatus }}>
 						<App/>
 					</WeatherContext.Provider>

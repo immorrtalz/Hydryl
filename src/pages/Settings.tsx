@@ -24,7 +24,7 @@ function SettingsPage()
 	const { translate } = useTranslations();
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef);
 
 	const [envParams, setEnvParams] = useState<string[]>(["", ""]);
 
@@ -35,7 +35,7 @@ function SettingsPage()
 			value
 		}));
 
-	const changeSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings({...settings, [key]: value});
+	const changeSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings({...settings, [key]: value}, true);
 
 	const openGitHubRepo = async () => await openUrl('https://github.com/immorrtalz/Hydryl').catch(e => console.error(e));
 	const { getUpdateUrl } = useGitHubReleaseCheck();
