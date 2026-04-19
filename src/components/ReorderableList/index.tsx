@@ -7,6 +7,7 @@ interface Props
 	children?: ReactElement[];
 	className?: string;
 	ghostItemClassName?: string;
+	disableFeature?: boolean;
 	onReorder?: (newOrder: number[]) => void;
 }
 
@@ -147,13 +148,17 @@ export function ReorderableList(props: Props)
 
 	const onDragOver = (e: React.DragEvent<HTMLElement>) =>
 	{
+		if (props.disableFeature) return;
+
 		if (e.dataTransfer?.types.includes("reorderable"))
 			e.preventDefault();
+
 		movePlaceholder(e);
 	};
 
 	const onDragLeave = (e: React.DragEvent<HTMLElement>) =>
 	{
+		if (props.disableFeature) return;
 		const relatedTarget = e.relatedTarget as Node | null;
 
 		if (relatedTarget === null || !listContainerRef.current!.contains(relatedTarget))
@@ -162,7 +167,7 @@ export function ReorderableList(props: Props)
 
 	const onDrop = (e: React.DragEvent<HTMLElement>) =>
 	{
-		if (listContainerRef.current === null) return;
+		if (props.disableFeature || listContainerRef.current === null) return;
 		e.preventDefault();
 
 		const draggedItem = document.getElementById("draggedItem")!;
@@ -183,6 +188,8 @@ export function ReorderableList(props: Props)
 
 	useEffect(() =>
 	{
+		if (props.disableFeature) return;
+
 		const items = listContainerRef.current ? Array.from(listContainerRef.current.children) as HTMLElement[] : [];
 		const handlers = handlersRef.current;
 
@@ -224,7 +231,7 @@ export function ReorderableList(props: Props)
 
 			handlers.clear();
 		};
-	}, [props.children]);
+	}, [props.children, props.disableFeature]);
 
 	return (
 		<div className={`${styles.listContainer} ${props.className ?? ''}`}

@@ -16,8 +16,8 @@
 {
 	flex-grow: 1;
 	height: 100%;
-	padding: 0 8px;
-	border-radius: 20px;
+	padding: 8px;
+	border-radius: 25px;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
@@ -31,10 +31,44 @@
 	border: 1px solid var(--white-0);
 	overflow: hidden;
 
+	& input
+	{
+		flex-grow: 1;
+		flex-shrink: 0;
+		border-radius: 16px;
+	}
+
+	& button
+	{
+		width: 46px !important;
+		height: 46px !important;
+		border-radius: 16px;
+		flex-shrink: 0;
+
+		& svg { fill: var(--white-75); }
+	}
+
 	&.currentLocationItem
 	{
 		background: var(--white-10);
 		border: 1px solid var(--white-15);
+	}
+
+	&.bulkSelected
+	{
+		background: var(--white-10);
+		border: 2px dashed var(--white-25);
+
+		& .mainContainer > svg
+		{
+			opacity: 0.25;
+		}
+	}
+
+	&:active
+	{
+		background: var(--white-10);
+		color: var(--white-50);
 	}
 
 	& .mainContainer
@@ -57,9 +91,10 @@
 
 		& .locationNameContainer
 		{
+			height: 100%;
 			display: flex;
-			flex-direction: column;
-			justify-content: center;
+			flex-direction: row;
+			align-items: center;
 			flex-wrap: nowrap;
 			flex-grow: 1;
 

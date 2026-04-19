@@ -11,13 +11,17 @@ import useLocationsLoader from "./hooks/Loaders/useLocationsLoader";
 import useWeatherLoader from "./hooks/Loaders/useWeatherLoader";
 
 import { initialSettings, Settings } from "./misc/settings";
-import { initialLocation, LocationItem } from "./misc/locations";
+import { initialLocation, LocationItem, validateLocationItem } from "./misc/locations";
 import { initialWeatherData, WeatherData, WeatherFetchStatus } from "./misc/weather";
 
 import App from "./App";
 
+import useTranslations from "./hooks/useTranslations";
+
 function AppRoot()
 {
+	const { translate } = useTranslations();
+
 	const [settings, internal_setSettings] = useState<Settings>(initialSettings);
 	const { saveSettingsToFile } = useSettingsLoader();
 
@@ -36,8 +40,21 @@ function AppRoot()
 
 	const setLocations = (newLocations: LocationItem[], saveToFile: boolean) =>
 	{
-		internal_setLocations(newLocations);
-		if (saveToFile) saveLocationsToFile({ locations: newLocations });
+		const localNewLocations = [...newLocations];
+		const currentLocationsCount = localNewLocations.reduce((count, loc) => count + (loc.isCurrent ? 1 : 0), 0);
+
+		if (currentLocationsCount === 0) localNewLocations[0].isCurrent = true;
+		else if (currentLocationsCount > 1)
+		{
+			for (let i = 0; i < localNewLocations.length; i++)
+				localNewLocations[i].isCurrent = i === 0;
+		}
+
+		localNewLocations.map(loc => validateLocationItem(loc, translate('new_location')));
+
+		internal_setLocations(localNewLocations);
+		setWeatherFetchStatus(WeatherFetchStatus.NotFetched);
+		if (saveToFile) saveLocationsToFile({ locations: localNewLocations });
 	};
 
 	const setWeather = (newWeather: WeatherData, saveToFile: boolean) =>

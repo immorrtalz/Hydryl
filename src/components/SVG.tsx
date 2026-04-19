@@ -1,7 +1,8 @@
 import { ReactElement } from "react";
 
 export const names = ['menu', 'search', 'chevronLeft', 'chevronRight', 'chevronUp', 'chevronDown', 'reset', 'update', 'drag', 'settings', 'plus', 'cross', 'sun', 'moon', 'fog', 'rimeFog',
-	'cloud', 'cloudSun', 'cloudMoon', 'cloudDrizzle', 'cloudRain', 'cloudHeavyRain', 'cloudThunderstorm', 'snow', 'heavySnow', 'snowStorm', 'snowGrains', 'windArrow', 'location', 'temperatureDeltaArrowUp', 'temperatureDeltaArrowDown', 'temperatureDeltaCircle', 'delete', 'edit'] as const;
+	'cloud', 'cloudSun', 'cloudMoon', 'cloudDrizzle', 'cloudRain', 'cloudHeavyRain', 'cloudThunderstorm', 'snow', 'heavySnow', 'snowStorm', 'snowGrains', 'windArrow', 'location',
+	'temperatureDeltaArrowUp', 'temperatureDeltaArrowDown', 'temperatureDeltaCircle', 'delete', 'edit', 'checkmark'] as const;
 
 export type SvgName = typeof names[number];
 
@@ -57,6 +58,7 @@ export function SVG(props: Props)
 		'temperatureDeltaCircle': { width: '32', height: '32', viewBox: '0 0 32 32' },
 		'delete': { width: '32', height: '32', viewBox: '0 0 32 32' },
 		'edit': { width: '32', height: '32', viewBox: '0 0 32 32' },
+		'checkmark': { width: '32', height: '32', viewBox: '0 0 32 32' },
 	};
 
 	const PathsMap: Record<SvgName, ReactElement> =
@@ -186,6 +188,7 @@ export function SVG(props: Props)
 			<path d="M18.6306 10.5442C19.0211 10.1537 19.6543 10.1537 20.0448 10.5442L21.459 11.9584C21.8495 12.3489 21.8495 12.9821 21.459 13.3726L12.1947 22.6369C12.0102 22.8215 11.7806 22.9547 11.5288 23.0234L8.44606 23.8641C8.25944 23.915 8.08819 23.7438 8.13909 23.5572L8.97982 20.4745C9.04851 20.2226 9.18173 19.9931 9.36631 19.8085L18.6306 10.5442Z"/>
 			<path d="M20.7519 8.4229C21.1424 8.03237 21.7756 8.03237 22.1661 8.4229L23.5803 9.83711C23.9709 10.2276 23.9709 10.8608 23.5803 11.2513C23.1898 11.6418 22.5566 11.6418 22.1661 11.2513L20.7519 9.83711C20.3614 9.44659 20.3614 8.81342 20.7519 8.4229Z"/>
 		</>,
+		'checkmark': <path d="M23.5551 9.79744C24.082 10.2489 24.1507 11.0512 23.7086 11.5892L15.4911 21.5913C14.5518 22.7346 12.8552 22.8102 11.822 21.7549L8.36471 18.2237C7.87843 17.727 7.87843 16.9218 8.36471 16.4251C8.85099 15.9284 9.6394 15.9284 10.1257 16.4251L13.5834 19.9567L21.801 9.95429C22.243 9.41632 23.0283 9.3461 23.5551 9.79744Z"/>,
 	};
 
 	return (

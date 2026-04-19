@@ -1,3 +1,5 @@
+import { clamp } from "./utils";
+
 export interface LocationItem
 {
 	isCurrent: boolean;
@@ -43,4 +45,19 @@ export const initialLocationsContextValue: LocationsContextValue =
 {
 	locations: [initialLocation],
 	setLocations: () => {}
+};
+
+export const isLocationItemValid = (locationItem: LocationItem): boolean =>
+	locationItem.name.trim() !== ''
+		&& !isNaN(locationItem.latitude)
+		&& Math.abs(locationItem.latitude) <= 90
+		&& !isNaN(locationItem.longitude)
+		&& Math.abs(locationItem.longitude) <= 180;
+
+export const validateLocationItem = (locationItem: LocationItem, nameForReplacement: string = ''): LocationItem =>
+{
+	return { ...locationItem,
+		name: nameForReplacement === '' ? locationItem.name.trim() : nameForReplacement,
+		latitude: clamp(locationItem.latitude, -90, 90),
+		longitude: clamp(locationItem.longitude, -180, 180)};
 };

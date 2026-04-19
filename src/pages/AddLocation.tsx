@@ -11,7 +11,8 @@ import { SearchBox } from "../components/SearchBox";
 import { SearchResultItem } from "../components/SearchBox/SearchResultItem";
 
 import LocationContext from "../context/LocationsContext";
-import { LocationItem, LocationSearchResultItem } from "../misc/locations";
+import { clamp } from "../misc/utils";
+import { LocationItem, LocationSearchResultItem, isLocationItemValid, validateLocationItem } from "../misc/locations";
 
 import useTranslations from "../hooks/useTranslations";
 import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavigate";
@@ -24,12 +25,12 @@ function AddLocation()
 	const { locations, setLocations } = useContext(LocationContext);
 
 	const pageRef = useRef<HTMLDivElement | null>(null);
-	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef, styles);
+	const { initialNavigateSetup, navigateTo } = useAnimatedNavigate(pageRef);
 
 	const { getCurrentGeoLocation } = useGeoLocation();
 	const { fetchLocations, searchFetchCooldown } = useLocationsSearcher();
 
-	const [constructedLocationItem, internal_setConstructedLocationItem] = useState<LocationItem>({ name: '', latitude: 0, longitude: 0 });
+	const [constructedLocationItem, internal_setConstructedLocationItem] = useState<LocationItem>({ isCurrent: false, name: '', latitude: 0, longitude: 0 });
 	const [isConstructedLocationItemValid, setIsConstructedLocationItemValid] = useState(false);
 
 	const [searchResults, setSearchResults] = useState<LocationSearchResultItem[]>([]);
@@ -37,22 +38,8 @@ function AddLocation()
 
 	const setConstructedLocationItem = (newConstructedLocationItem: LocationItem) =>
 	{
-		internal_setConstructedLocationItem(newConstructedLocationItem);
-		validateLocationItem(newConstructedLocationItem);
-	};
-
-	const validateLocationItem = (locationItem: LocationItem) =>
-	{
-		let result = true;
-
-		if (locationItem.name.trim() === ''
-			|| isNaN(locationItem.latitude)
-			|| Math.abs(locationItem.latitude) > 90
-			|| isNaN(locationItem.longitude)
-			|| Math.abs(locationItem.longitude) > 180)
-			result = false;
-
-		setIsConstructedLocationItemValid(result);
+		internal_setConstructedLocationItem(validateLocationItem(newConstructedLocationItem));
+		setIsConstructedLocationItemValid(isLocationItemValid(validateLocationItem(newConstructedLocationItem)));
 	};
 
 	const fillFieldsWithCurrentLocation = async () =>
@@ -122,7 +109,9 @@ function AddLocation()
 				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/locations", NavigateDirection.Left)}>
 					<SVG name="chevronLeft"/>
 				</Button>
+
 				<p>{translate("add_a_location")}</p>
+
 				<Button type={ButtonType.Secondary} square onClick={fillFieldsWithCurrentLocation}>
 					<SVG name="location"/>
 				</Button>

@@ -7,14 +7,14 @@ export enum NavigateDirection
 	Right = 'right'
 }
 
-export function useAnimatedNavigate(pageRef: RefObject<HTMLDivElement | null>, styles: CSSModuleClasses)
+export function useAnimatedNavigate(pageRef: RefObject<HTMLDivElement | null>)
 {
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	const initialNavigateSetup = () =>
 	{
-		const fromDirection: NavigateDirection = (location.state as { fromDirection?: NavigateDirection })?.fromDirection ?? NavigateDirection.Left;
+		const fromDirection: NavigateDirection = (location.state as { fromDirection: NavigateDirection })?.fromDirection ?? NavigateDirection.Left;
 		pageRef.current?.classList.add(fromDirection === NavigateDirection.Left ? 'viewTransitionLeftSecond' : 'viewTransitionRightSecond');
 	};
 

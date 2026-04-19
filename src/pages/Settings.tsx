@@ -87,6 +87,7 @@ function SettingsPage()
 				<Button type={ButtonType.Secondary} square onClick={() => navigateTo("/", NavigateDirection.Right)}>
 					<SVG name="chevronLeft"/>
 				</Button>
+
 				<p>{translate("settings")}</p>
 			</TopBar>
 
