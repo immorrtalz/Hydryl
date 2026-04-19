@@ -13,6 +13,7 @@ interface Props
 	onInput?: (...args: any[]) => any;
 	onEditingEnded?: (...args: any[]) => any;
 	onSearch?: (...args: any[]) => any;
+	onCancelResults?: (...args: any[]) => any;
 	children?: React.ReactNode | React.ReactNode[];
 	statusText?: string;
 	name: string;
@@ -20,23 +21,21 @@ interface Props
 
 export function SearchBox(props: Props)
 {
-	const onInput = (e: FormEvent<HTMLInputElement>) =>
+	const onInput = (e: React.InputEvent<HTMLInputElement>) =>
 	{
 		prevSearchBoxValueRef.current = searchBoxValueRef.current;
 		searchBoxValueRef.current = (e.target as HTMLInputElement).value;
 		props.onInput?.(e);
 	};
 
-	const onEditingEnded = (e: FormEvent<HTMLInputElement>) =>
+	const onEditingEnded = (e: React.SubmitEvent<HTMLInputElement>) =>
 	{
 		if (prevSearchBoxValueRef.current !== searchBoxValueRef.current) onSearch();
 		props.onEditingEnded?.(e);
 	};
 
-	const onSearch = () =>
-	{
-		props.onSearch?.(searchBoxValueRef.current);
-	};
+	const onSearch = () => props.onSearch?.(searchBoxValueRef.current);
+	const onCancelResults = () => props.onCancelResults?.();
 
 	const searchBoxValueRef = useRef<string>("");
 	const prevSearchBoxValueRef = useRef<string>("");
@@ -51,23 +50,17 @@ export function SearchBox(props: Props)
 					<SVG name="search"/>
 				</Button>
 
-				{
-					props.children !== undefined && (Array.isArray(props.children) ? props.children.length > 0 : true) &&
-						<>
-							<span className={styles.searchResultsTouchObstackle}/>
-
-							<div className={styles.searchResultsContainer}>
-							{
-								props.children
-							}
-							</div>
-						</>
-				}
+			{ props.children !== undefined && (Array.isArray(props.children) ? props.children.length > 0 : true) &&
+				<>
+					<span className={styles.searchResultsTouchObstacle} onClick={onCancelResults}/>
+					<div className={styles.searchResultsContainer}>{ props.children }</div>
+				</>
+			}
 			</div>
 
-			{
-				props.statusText !== undefined && props.statusText.length > 0 &&
-					<p className={styles.statusText}>{props.statusText}</p>
-			}
+		{
+			props.statusText !== undefined && props.statusText.length > 0 &&
+				<p className={styles.statusText}>{props.statusText}</p>
+		}
 		</div>);
 }

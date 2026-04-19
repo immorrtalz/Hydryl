@@ -1,6 +1,6 @@
 .container
 {
-	width: 52px;
+	width: 56px;
 	height: 120px;
 	padding: 12px 0;
 	flex-shrink: 0;
@@ -40,9 +40,17 @@
 		text-align: center;
 	}
 
+	&:nth-child(1) .timeText
+	{
+		height: 14px;
+		line-height: 14px;
+		font-size: var(--smaller-font-size);
+	}
+
 	& .timeText
 	{
-		font-size: var(--smaller-font-size);
+		height: 14px;
+		font-size: 14px;
 		font-weight: 600;
 		color: var(--white-65);
 		text-align: center;

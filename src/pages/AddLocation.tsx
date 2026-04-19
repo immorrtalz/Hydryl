@@ -121,7 +121,7 @@ function AddLocation()
 				<GroupTitle>{`${translate("search_a_city")} (${translate("optional")})`}</GroupTitle>
 
 				<SearchBox placeholder={translate("search")} disabled={searchFetchCooldown !== null} onInput={onSearchInput} onSearch={searchLocation}
-					statusText={searchStatus !== null ? searchStatus : ""} name="input-search">
+					onCancelResults={() => setSearchResults([])} statusText={searchStatus !== null ? searchStatus : ""} name="input-search">
 				{
 					searchResults.map((item, index) =>
 						<SearchResultItem key={`${index}-${item.name}-${item.country}`} name={item.name} country={item.country} admin1={item.admin1}
