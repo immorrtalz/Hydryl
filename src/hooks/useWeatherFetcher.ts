@@ -33,18 +33,20 @@ export default function useWeatherFetcher()
 	};
 
 	const { setWeather, weatherFetchStatus, setWeatherFetchStatus } = useContext(WeatherContext);
-	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<ReturnType<typeof setTimeout> | null>(null);
+	const [weatherFetchCooldown, setWeatherFetchCooldown] = useState<number | null>(null);
 
 	const fetchWeather = async () =>
 	{
 		if (weatherFetchStatus === WeatherFetchStatus.Fetching || weatherFetchCooldown !== null)
 			return Promise.reject("Weather fetch is already in progress or on cooldown.");
 
-		setWeatherFetchCooldown(setTimeout(() =>
+		const cooldown = setTimeout(() =>
 		{
 			if (weatherFetchCooldown !== null) clearTimeout(weatherFetchCooldown);
 			setWeatherFetchCooldown(null);
-		}, 2000));
+		}, 2000);
+
+		setWeatherFetchCooldown(cooldown);
 
 		try
 		{

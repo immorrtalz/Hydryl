@@ -15,7 +15,7 @@ import { NavigateDirection, useAnimatedNavigate } from "../hooks/useAnimatedNavi
 import { useScrollOverflowMask } from "../hooks/useScrollOverflowMask";
 import { useTimeWeatherBg } from "../hooks/useTimeWeatherBg";
 
-import { addHoursToDate, formatHoursFromDate, formatTimeFromDate } from "../misc/utils";
+import { addHoursToDate, formatHoursFromDate, formatTimeFromDate, nbsp } from "../misc/utils";
 
 import SettingsContext from "../context/SettingsContext";
 import LocationContext from "../context/LocationsContext";
@@ -167,19 +167,19 @@ function Home()
 				{
 					[
 						{ titleKey: "wind" as TranslationKey,
-							content: `${windSpeedToText(weather.current.windSpeed, settings.windSpeed)} ${degreesToCompassDirection(weather.current.windDirection)}` },
+							content: `${windSpeedToText(weather.current.windSpeed, settings.windSpeed)}${nbsp}${degreesToCompassDirection(weather.current.windDirection)}` },
 						{ titleKey: "wind_gusts" as TranslationKey,
-							content: `${translate("up_to")} ${windSpeedToText(weather.current.windGusts, settings.windSpeed)}` },
+							content: `${translate("up_to")}${nbsp}${windSpeedToText(weather.current.windGusts, settings.windSpeed)}` },
 						{ titleKey: "humidity" as TranslationKey,
-							content: `${weather.current.relativeHumidity} %` },
+							content: `${weather.current.relativeHumidity}${nbsp}%` },
 						{ titleKey: "precipitation" as TranslationKey,
 							content: precipitationToText(weather.current.precipitation, settings.precipitation) },
 						{ titleKey: "precipitation_probability" as TranslationKey,
-							content: `${weather.current.precipitationProbability} %` },
+							content: `${weather.current.precipitationProbability}${nbsp}%` },
 						{ titleKey: "pressure" as TranslationKey,
 							content: pressureToText(weather.current.surfacePressure, settings.pressure) },
 						{ titleKey: "cloud_cover" as TranslationKey,
-							content: `${weather.current.cloudCover} %` },
+							content: `${weather.current.cloudCover}${nbsp}%` },
 						{ titleKey: "visibility" as TranslationKey,
 							content: distanceToText(weather.current.visibility, settings.distance) },
 						{ titleKey: "uv_index" as TranslationKey,

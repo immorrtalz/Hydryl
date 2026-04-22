@@ -5,7 +5,7 @@ import { LocationSearchResultItem } from "../misc/locations";
 export default function useLocationsSearcher()
 {
 	const { translate } = useTranslations();
-	const [searchFetchCooldown, setSearchFetchCooldown] = useState<ReturnType<typeof setTimeout> | null>(null);
+	const [searchFetchCooldown, setSearchFetchCooldown] = useState<number | null>(null);
 
 	const fetchLocations = async (searchText: string): Promise<LocationSearchResultItem[]> =>
 	{

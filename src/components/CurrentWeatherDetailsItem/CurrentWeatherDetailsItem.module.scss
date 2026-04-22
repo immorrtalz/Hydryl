@@ -7,20 +7,32 @@
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: nowrap;
+	gap: 32px;
 
 	&:not(:last-child) { border-bottom: 1px solid var(--white-10); }
 
 	& .titleText
 	{
+		width: 65%;
 		font-size: var(--main-font-size);
 		color: var(--white-75);
 		font-weight: 500;
+		text-wrap: pretty;
+		white-space: normal;
+		flex-grow: 1;
+		flex-shrink: 1;
 	}
 
 	& .contentText
 	{
+		width: 35%;
 		font-size: var(--main-font-size);
 		color: var(--white-90);
 		font-weight: 600;
+		text-align: right;
+		text-wrap: pretty;
+		white-space: normal;
+		flex-grow: 1;
+		flex-shrink: 1;
 	}
 }

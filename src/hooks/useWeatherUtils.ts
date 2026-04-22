@@ -1,5 +1,6 @@
 import { SvgName } from "../components/SVG";
 import { Distance, Precipitation, Pressure, settingOptions, settingTranslationKeys, WindSpeed } from "../misc/settings";
+import { nbsp } from "../misc/utils";
 import useTranslations, { TranslationKey } from "./useTranslations";
 
 export function useWeatherUtils()
@@ -105,7 +106,7 @@ export function useWeatherUtils()
 				knots: 1.94384
 			};
 
-			return `${Math.round(windSpeed * conversionMultipliers[windSpeedUnit])} ${translate(settingTranslationKeys["windSpeed"][settingOptions.windSpeed.indexOf(windSpeedUnit)])}`;
+			return `${Math.round(windSpeed * conversionMultipliers[windSpeedUnit])}${nbsp}${translate(settingTranslationKeys["windSpeed"][settingOptions.windSpeed.indexOf(windSpeedUnit)])}`;
 		},
 
 		precipitationToText: (precipitation: number, precipitationUnit: Precipitation): string =>
@@ -116,7 +117,7 @@ export function useWeatherUtils()
 				inch: 0.03937,
 			};
 
-			return `${Math.round(precipitation * conversionMultipliers[precipitationUnit])} ${translate(settingTranslationKeys["precipitation"][settingOptions.precipitation.indexOf(precipitationUnit)])}`;
+			return `${Math.round(precipitation * conversionMultipliers[precipitationUnit])}${nbsp}${translate(settingTranslationKeys["precipitation"][settingOptions.precipitation.indexOf(precipitationUnit)])}`;
 		},
 
 		pressureToText: (pressure: number, pressureUnit: Pressure): string =>
@@ -141,7 +142,7 @@ export function useWeatherUtils()
 				mi: 0.621371
 			};
 
-			return `${Math.round(distance * conversionMultipliers[distanceUnit])} ${translate(settingTranslationKeys["distance"][settingOptions.distance.indexOf(distanceUnit)])}`;
+			return `${Math.round(distance * conversionMultipliers[distanceUnit])}${nbsp}${translate(settingTranslationKeys["distance"][settingOptions.distance.indexOf(distanceUnit)])}`;
 		}
 	};
 }

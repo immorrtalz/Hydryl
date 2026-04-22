@@ -125,3 +125,5 @@ export const addHoursToDate = (date: Date, hours: number): Date =>
 	result.setTime(result.getTime() + hours * 60 * 60 * 1000);
 	return result;
 };
+
+export const nbsp = ' ';
